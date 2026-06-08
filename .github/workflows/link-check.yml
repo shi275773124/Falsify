@@ -23,7 +23,7 @@ jobs:
             --no-progress
             --exclude-mail
             --exclude-path .git
-            --exclude 'github\.com/shi275773124/obsidian-dual-agent'
+            --exclude 'github\.com/shi275773124/Falsify'
             --exclude 'img\.shields\.io'
             --exclude 'yourdomain'
             --exclude 'example\.com'

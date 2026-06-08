@@ -3,7 +3,7 @@
 A ready-to-run dual-agent research workspace. Fork it, edit one file, point two
 agents at it, and go.
 
-This is the [Agent Review Kit](https://github.com/shi275773124/obsidian-dual-agent)
+This is the [Agent Review Kit](https://github.com/shi275773124/Falsify)
 protocol, pre-wired into an empty vault so you don't start from a blank page.
 
 ## Start in 4 steps
@@ -45,4 +45,4 @@ demo-vault/
 > first-hand sources arbitrate → `[BOTH]` → ship, with Git keeping the trail.
 
 Full protocol, prompts, and templates:
-[Agent Review Kit](https://github.com/shi275773124/obsidian-dual-agent).
+[Agent Review Kit](https://github.com/shi275773124/Falsify).

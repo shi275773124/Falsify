@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/shi275773124/obsidian-dual-agent"
+Homepage = "https://github.com/shi275773124/Falsify"
 
 [project.scripts]
 falsify = "falsify:main"

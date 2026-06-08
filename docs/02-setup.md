@@ -29,9 +29,9 @@ cd ~/agent-vault
 git init -b main
 
 # Copy templates from this repo
-curl -fsSL https://raw.githubusercontent.com/shi275773124/obsidian-dual-agent/main/templates/AGENTS.md \
+curl -fsSL https://raw.githubusercontent.com/shi275773124/Falsify/main/templates/AGENTS.md \
     -o AGENTS.md
-curl -fsSL https://raw.githubusercontent.com/shi275773124/obsidian-dual-agent/main/templates/.gitignore \
+curl -fsSL https://raw.githubusercontent.com/shi275773124/Falsify/main/templates/.gitignore \
     -o .gitignore
 
 # Create the standard folder layout (optional but recommended)

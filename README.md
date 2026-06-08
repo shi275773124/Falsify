@@ -3,7 +3,7 @@
 > **Your unfair advantage: two top AIs from different vendors cross-examine your work — you keep only what survives.**
 > Ask once, they fight it out. Spends tokens, saves your brain — and it's the one thing a single vendor's `--verify` flag can't copy: OpenAI won't let you use Claude as the reviewer. Cross-vendor review is yours alone.
 
-[![falsify](https://github.com/shi275773124/obsidian-dual-agent/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/obsidian-dual-agent/actions/workflows/falsify.yml)
+[![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![中文](https://img.shields.io/badge/lang-中文-red.svg)](./README.zh-CN.md)
 
@@ -35,9 +35,22 @@ A single AI writes it; you have to verify it. **Falsify makes a second, differen
 
 ---
 
-## Real case: 4 errors that would have shipped, caught by the second AI
+## Real case: a Sharpe 4.06 strategy, killed before it reached real money
 
-Two independent agents (different models) ran a horizontal comparison of **~12 competing venues** (names redacted). One draft, one audit, a report in **under 30 minutes**: 80+ cited URLs, and **Agent B caught 4 critical pricing errors** that would have shipped without it.
+A single AI produced a quant strategy that passed everything — `Sharpe 4.06–4.31`, `PBO 0.000`, `DSR p < 1e-7`, 6 of 7 audit gates. The next step in the workflow was a small **live test with real money**.
+
+Falsify forced a second model (a different vendor) to re-audit it adversarially. Five rounds later it was reclassified `NOT_VIABLE`: the Sharpe wasn't alpha — it was trading cost amortized over a holding period the strategy's own design never actually held (assumed ~14 days, real ~1.5 days → **cost understated ~9×**). Spread the cost correctly and the edge vanishes.
+
+Along the way the reviewer caught **itself** three times — asserting a cause, re-running the numbers, then retracting when the data disagreed. A model auditing its own work defends what it wrote; an independent one re-derives and walks itself back.
+
+> Why it takes two vendors: when the author and reviewer are the same model, `PBO=0` and `DSR p<1e-7` only prove the result is consistent *with its own assumption* — not that the assumption is real. A reviewer with different blind spots is the only thing that questions the assumption itself.
+
+**→ Full sanitized audit log, numbers verbatim:** [examples/real-cases/01](./examples/real-cases/01-fictional-horizon-quant-audit.md)
+
+<details>
+<summary>Also — 4 pricing errors caught in a ~12-venue comparison (reproducible transcript)</summary>
+
+Two independent agents (different models) ran a horizontal comparison of ~12 competing venues, 80+ cited URLs, in under 30 minutes. Agent B caught 4 critical pricing errors that would have shipped:
 
 | Caught | Single agent | After dual-agent review |
 |---|---|---|
@@ -46,7 +59,9 @@ Two independent agents (different models) ran a horizontal comparison of **~12 c
 | Venue C premium tier "not public" | Actually in the docs | B verifies, marks conflict |
 | Venue D base fee wrong row | Wrong row in the table | B audits, requires source |
 
-> Not a perfect AI — just errors that **can't ship quietly**.
+Verbatim transcript: [examples/.../06](./examples/comparison-case-study/06-real-review-deepseek.md)
+
+</details>
 
 ---
 
@@ -118,6 +133,5 @@ MIT — fork it, ship it, write a blog post about it.
 <summary>Support</summary>
 
 - 🐦 [@aishikejian](https://x.com/aishikejian) · ☕ [Buy me a coffee](https://buymeacoffee.com/chris168) · ⭐ Star it
-- 🪙 ETH / USDT-ERC20 / any EVM: `0x1C06DeC922015ee7817aC21d37Da2da2F07d7119`
 
 </details>

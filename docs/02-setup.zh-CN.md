@@ -29,9 +29,9 @@ cd ~/agent-vault
 git init -b main
 
 # 从本 repo 拉模板
-curl -fsSL https://raw.githubusercontent.com/shi275773124/obsidian-dual-agent/main/templates/AGENTS.md \
+curl -fsSL https://raw.githubusercontent.com/shi275773124/Falsify/main/templates/AGENTS.md \
     -o AGENTS.md
-curl -fsSL https://raw.githubusercontent.com/shi275773124/obsidian-dual-agent/main/templates/.gitignore \
+curl -fsSL https://raw.githubusercontent.com/shi275773124/Falsify/main/templates/.gitignore \
     -o .gitignore
 
 # 推荐目录结构（可改）

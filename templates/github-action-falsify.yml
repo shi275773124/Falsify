@@ -41,7 +41,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install falsify
-        run: pip install "git+https://github.com/shi275773124/obsidian-dual-agent.git"
+        run: pip install "git+https://github.com/shi275773124/Falsify.git"
 
       - name: Collect changed content
         id: changed

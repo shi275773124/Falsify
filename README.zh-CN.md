@@ -3,7 +3,7 @@
 > **你的 unfair advantage:让两个不同厂商的顶尖 AI 互相审查，你只取站得住脚的结论。**
 > 一次提问，它们替你死磕。花 token，省心力——而且这是单厂商一个 `--verify` 复制不了的:OpenAI 不会让你用 Claude 当审稿人,跨厂商互查只有你能做。
 
-[![falsify](https://github.com/shi275773124/obsidian-dual-agent/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/obsidian-dual-agent/actions/workflows/falsify.yml)
+[![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![English](https://img.shields.io/badge/lang-English-blue.svg)](./README.md)
 
@@ -37,9 +37,22 @@
 
 ---
 
-## 真实案例:4 个本来会 ship 的错,被第二个 AI 拦下
+## 真实案例:一个 Sharpe 4.06 的策略,在上真钱前被拦下
 
-两个独立 Agent(不同模型)做了一份**约 12 家同品类竞品的费率横向研究**(平台名已脱敏)。一次起稿、一次审计,**约 30 分钟内**出报告:80+ 引用 URL,**Agent B 抓出 4 处关键费率错**——没有它,这 4 个错会直接 ship。
+单 AI 跑出一个量化策略,所有指标全过——`Sharpe 4.06–4.31`、`PBO 0.000`、`DSR p < 1e-7`、7 门审计过 6 门。工作流的下一步,就是小仓位**上真钱实测**。
+
+Falsify 强制第二个模型(不同厂商)对抗复审。5 轮之后,策略被改判 `NOT_VIABLE`:这个 Sharpe 不是 alpha——是把交易成本摊到一个**策略自己设计上从未真正持有过**的持有期上(假设约 14 天,真实约 1.5 天 → **成本被低估约 9 倍**)。把成本按真实持有期摊回去,edge 就没了。
+
+而且过程中,reviewer **三次自己打脸**——先下一个结论,重跑数字,再在数据对不上时撤回自己的断言。一个审自己活的模型只会维护它写的东西;一个独立的模型会重新推导、把自己拉回来。
+
+> 为什么必须两个厂商:当作者和审稿人是同一个模型,`PBO=0`、`DSR p<1e-7` 只能证明结果**在它自己的假设内部**自洽——证明不了那个假设本身是不是真的。只有一个盲区不同的审稿人,才会去质疑假设本身。
+
+**→ 完整脱敏审计日志,数字原样:** [examples/real-cases/01](./examples/real-cases/01-fictional-horizon-quant-audit.zh-CN.md)
+
+<details>
+<summary>另外——一份约 12 家竞品费率横评里抓出的 4 个错(可复现逐字记录)</summary>
+
+两个独立 Agent(不同模型)做了约 12 家同品类竞品的费率横评,80+ 引用 URL,约 30 分钟出报告。Agent B 抓出 4 处本来会 ship 的关键费率错:
 
 | 被拦下的问题 | 单 Agent 会怎样 | 双 Agent 互审后 |
 |---|---|---|
@@ -48,7 +61,9 @@
 | Venue C 高级档"未公开" | 其实 docs 已写,被过早放弃 | B 查证并标冲突 |
 | Venue D base 费率读错行 | 错误行混进对比表 | B 审表,要求回源 |
 
-> 不是让 AI 永远对,而是让错误**更难悄悄混进最终结果**。
+逐字记录:[examples/.../06](./examples/comparison-case-study/06-real-review-deepseek.md)
+
+</details>
 
 ---
 
@@ -120,6 +135,5 @@ MIT —— 随便 fork、随便 ship、欢迎写文章传播。
 <summary>支持作者</summary>
 
 - 🐦 [@aishikejian](https://x.com/aishikejian) · ☕ [Buy me a coffee](https://buymeacoffee.com/chris168) · ⭐ Star
-- 🪙 ETH / USDT-ERC20 / 任意 EVM:`0x1C06DeC922015ee7817aC21d37Da2da2F07d7119`
 
 </details>
