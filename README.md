@@ -75,7 +75,7 @@ Verbatim transcript: [examples/.../06](./examples/comparison-case-study/06-real-
 
 > Different vendors on purpose: one model's blind spot is the other's catch — and neither one owns the referee.
 
-**② CLI mode — one command, bring a provider key.** Automated and scriptable, exit code straight into CI.
+**② CLI mode — one command.** Automated and scriptable, exit code straight into CI. Key-free if you want it: `-p claude` (also `codex` / `gemini` / `hermes`, or any agent via `FALSIFY_<NAME>_CMD`) routes through an agent CLI you're already logged into — no key, rides your subscription. Or bring a provider API key:
 
 ```bash
 pip install -e .                       # or just python falsify.py

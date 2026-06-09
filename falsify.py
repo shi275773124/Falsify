@@ -23,6 +23,12 @@ Or set it once in ./.falsify or ~/.falsify (run `falsify init`), then:
     falsify review report.md
     cat report.md | falsify review -        # paste-and-go via stdin
 
+No API key? Point it at an agent CLI you're already logged into — it rides
+your existing subscription (Claude, Codex, Gemini, Hermes, or any other):
+
+    falsify review report.md --provider claude    # or: codex / gemini / hermes
+    # any other agent: FALSIFY_AGENT_CMD='myagent --headless' falsify review report.md -p myagent
+
     falsify lint   report.md               # no API: tags + ship-blockers
     falsify run    brief.md                # full loop: draft then review
 """
@@ -31,6 +37,8 @@ import argparse
 import json
 import os
 import re
+import shlex
+import shutil
 import subprocess
 import sys
 import urllib.error
@@ -43,7 +51,7 @@ for _s in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 # provider -> (base_url, default_model, key_env). model None = user must set one.
 PRESETS = {
@@ -53,6 +61,22 @@ PRESETS = {
     "moonshot":    ("https://api.moonshot.cn/v1",      None,          "MOONSHOT_API_KEY"),
     "siliconflow": ("https://api.siliconflow.cn/v1",   None,          "SILICONFLOW_API_KEY"),
     "local":       ("http://127.0.0.1:4163/v1",        None,          None),
+}
+
+# Agent-CLI providers: instead of an HTTP+key call, shell out to a locally
+# installed agent CLI that's already logged into its own subscription — so no
+# API key is needed (it rides the subscription you already pay for). The prompt
+# is sent on the agent's stdin; its stdout is taken as the response.
+#
+# These defaults are best-effort across CLI versions. Override the exact command
+# for any agent with FALSIFY_<AGENT>_CMD (a shell string), or set a generic
+# FALSIFY_AGENT_CMD. Any provider name with such a command set is treated as an
+# agent CLI, so any vendor's tool can be wired in — not just the ones below.
+AGENT_CLIS = {
+    "claude": ["claude", "-p"],         # Claude Code print mode (prompt on stdin)
+    "codex":  ["codex", "exec", "-"],   # Codex headless exec (prompt on stdin)
+    "gemini": ["gemini"],               # Gemini CLI (reads piped stdin as the prompt)
+    "hermes": ["hermes"],               # Hermes Agent (override via FALSIFY_HERMES_CMD)
 }
 
 SHIP_BLOCKERS = ["[CONFLICT]", "[NEEDS-SOURCE]", "[NEEDS-AUDIT]", "[UNCONFIRMED]"]
@@ -227,6 +251,70 @@ def chat(system, user, base, key, model):
         raise FalsifyError(f"unexpected API response: {json.dumps(data)[:300]}")
 
 
+def agent_cmd(agent):
+    """The argv for an agent CLI: an override (FALSIFY_<AGENT>_CMD / FALSIFY_AGENT_CMD)
+    wins, else a built-in default. None if neither exists."""
+    override = setting(f"FALSIFY_{agent.upper()}_CMD") or setting("FALSIFY_AGENT_CMD")
+    if override:
+        return shlex.split(override)
+    if agent in AGENT_CLIS:
+        return list(AGENT_CLIS[agent])
+    return None
+
+
+def agent_for(args):
+    """Return the provider name if it should run as an agent CLI, else None.
+    Any provider with a built-in default OR a configured command counts."""
+    prov = (getattr(args, "provider", None) or setting("FALSIFY_PROVIDER") or "").lower()
+    if prov and (prov in AGENT_CLIS or agent_cmd(prov) is not None):
+        return prov
+    return None
+
+
+def run_agent_cli(agent, cmd, system, user):
+    """Send the prompt to a locally-authenticated agent CLI on stdin; return stdout."""
+    exe = cmd[0]
+    if shutil.which(exe) is None:
+        raise FalsifyError(
+            f"agent CLI '{exe}' not found on PATH. Install it and log in with your "
+            f"subscription, or set FALSIFY_{agent.upper()}_CMD='<cmd that reads a "
+            f"prompt on stdin and prints the reply>'.")
+    prompt = f"{system}\n\n---\n\n{user}"
+    try:
+        r = subprocess.run(cmd, input=prompt, capture_output=True,
+                           text=True, encoding="utf-8", errors="replace", timeout=600)
+    except subprocess.TimeoutExpired:
+        raise FalsifyError(f"agent '{agent}' timed out after 600s")
+    except OSError as e:
+        raise FalsifyError(f"failed to run agent '{agent}' ({' '.join(cmd)}): {e}")
+    if r.returncode != 0:
+        msg = (r.stderr or r.stdout or "").strip()[:300]
+        raise FalsifyError(f"agent '{agent}' exited {r.returncode}: {msg}")
+    out = (r.stdout or "").strip()
+    if not out:
+        err = (r.stderr or "").strip()[:200]
+        raise FalsifyError(f"agent '{agent}' returned no output"
+                           + (f" (stderr: {err})" if err else ""))
+    return out
+
+
+def llm(system, user, args, dry_run=False):
+    """One entry point for both backends: an agent CLI (no key) or an
+    OpenAI-compatible HTTP endpoint (key). Returns the text, or None on dry-run."""
+    agent = agent_for(args)
+    if agent:
+        cmd = agent_cmd(agent)
+        if dry_run:
+            print(f"[dry-run] agent={agent} cmd={' '.join(cmd)} (prompt via stdin, no API key)")
+            return None
+        return run_agent_cli(agent, cmd, system, user)
+    base, key, model = resolve(args)
+    if dry_run:
+        print(f"[dry-run] http base={base} model={model}")
+        return None
+    return chat(system, user, base, key, model)
+
+
 def parse_verdict(text):
     m = re.search(r"VERDICT:\s*(PROCEED|HOLD(?:-\d+)?|ARCHIVE)", text, re.IGNORECASE)
     if not m:
@@ -308,7 +396,6 @@ def git_show(ref, path):
 
 
 def cmd_review(args):
-    base, key, model = resolve(args)
     cur = read_input(args.file)
     if getattr(args, "against", None):
         old = git_show(args.against, args.file)
@@ -320,10 +407,9 @@ def cmd_review(args):
     else:
         system = SKEPTIC_SYSTEM
         user = f"Audit this draft. Find what would ship wrong.\n\n{cur}"
-    if args.dry_run:
-        print(f"[dry-run] base={base} model={model} against={getattr(args, 'against', None)}")
+    out = llm(system, user, args, dry_run=args.dry_run)
+    if out is None:  # dry-run
         return
-    out = chat(system, user, base, key, model)
     if args.out:
         Path(args.out).write_text(out, encoding="utf-8")
         print(f"[audit written to {args.out}]", file=sys.stderr)
@@ -331,9 +417,8 @@ def cmd_review(args):
 
 
 def cmd_draft(args):
-    base, key, model = resolve(args)
     brief = read_input(args.file)
-    out = chat(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", base, key, model)
+    out = llm(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", args)
     if args.out:
         Path(args.out).write_text(out, encoding="utf-8")
         print(f"[draft written to {args.out}]", file=sys.stderr)
@@ -342,16 +427,14 @@ def cmd_draft(args):
 
 
 def cmd_run(args):
-    base, key, model = resolve(args)
     brief = read_input(args.file)
     print("[1/2] Agent A drafting…", file=sys.stderr)
-    draft = chat(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", base, key, model)
+    draft = llm(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", args)
     if args.out:
         Path(args.out).write_text(draft, encoding="utf-8")
     print("[2/2] Agent B (Skeptic) reviewing…", file=sys.stderr)
-    audit = chat(SKEPTIC_SYSTEM,
-                 f"Audit this draft. Find what would ship wrong.\n\n{draft}",
-                 base, key, model)
+    audit = llm(SKEPTIC_SYSTEM,
+                f"Audit this draft. Find what would ship wrong.\n\n{draft}", args)
     finish(audit)
 
 
@@ -378,7 +461,10 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def add_api_flags(sp):
-        sp.add_argument("-p", "--provider", help="endpoint preset: " + ", ".join(PRESETS))
+        sp.add_argument("-p", "--provider",
+                        help="HTTP preset (" + ", ".join(PRESETS) + ") or a no-key "
+                             "agent CLI (" + ", ".join(AGENT_CLIS) + ", or any with "
+                             "FALSIFY_<NAME>_CMD set)")
         sp.add_argument("-m", "--model", help="override model")
         sp.add_argument("--base", help="override API base URL")
 
