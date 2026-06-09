@@ -1,7 +1,7 @@
 # Falsify
 
 > **Your unfair advantage: two top AIs from different vendors cross-examine your work — you keep only what survives.**
-> Ask once, they fight it out. Spends tokens, saves your brain — and it's the one thing a single vendor's `--verify` flag can't copy: OpenAI won't let you use Claude as the reviewer. Cross-vendor review is yours alone.
+> **No API key.** Point the AI subscriptions you already pay for (Claude, ChatGPT/Codex, Gemini) at one shared folder and let them audit each other. Falsify is the neutral referee — it reviews the *judgment*, not just the diff, and the referee isn't owned by either contestant.
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -65,7 +65,17 @@ Verbatim transcript: [examples/.../06](./examples/comparison-case-study/06-real-
 
 ---
 
-## One command
+## Two ways to run it
+
+**① Vault mode — zero API key.** Point two agent apps you're already logged into (Claude Code, Codex, Gemini CLI…) at one Git-synced folder. They draft and audit each other through it; you arbitrate the conflicts. No key, no per-token cost — it rides the subscriptions you already pay for.
+
+1. **Fork [`demo-vault/`](./demo-vault/)** — a Git-synced folder pre-wired with the rules. (Open it in Obsidian for a nicer reader — not required.)
+2. **Edit `research/00-brief.md`** (topic + 1–3 questions), then point two agents at the folder, one as `AGENT-A`, one as `AGENT-B`. Both read [`AGENTS.md`](./demo-vault/AGENTS.md) on startup — that's what makes them tag, not overwrite, and send conflicts to first-hand sources.
+3. **Stay hands-off** while they draft → audit → flag `[CONFLICT]`s. Arbitrate against first-hand sources, ship the `[BOTH]` report. Git keeps the evidence trail.
+
+> Different vendors on purpose: one model's blind spot is the other's catch — and neither one owns the referee.
+
+**② CLI mode — one command, bring a provider key.** Automated and scriptable, exit code straight into CI.
 
 ```bash
 pip install -e .                       # or just python falsify.py
@@ -75,8 +85,7 @@ falsify review report.md -p deepseek   # a second model audits it -> Verdict (PR
 
 `-p` is a provider preset (deepseek / openai / openrouter / moonshot / siliconflow / local) that fills in the endpoint and model — **you only supply the key**. Tired of typing it? `falsify init` saves it once, then just `falsify review report.md`; or `cat report.md | falsify review -` to paste-and-go.
 
-`review`'s **exit code is the Verdict** (`PROCEED=0 / HOLD=1 / ARCHIVE=2`) — drop it straight into CI.
-Try `lint` with no key (pure local):
+`review`'s **exit code is the Verdict** (`PROCEED=0 / HOLD=1 / ARCHIVE=2`) — drop it straight into CI. No key handy? `falsify lint <file>` runs a pure-local ship-blocker check (no API):
 
 ```bash
 falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABLE
