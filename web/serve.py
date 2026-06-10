@@ -121,18 +121,20 @@ async function go(){
     const r=await fetch('/review',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({text:t,scenario:document.getElementById('s').value})});
     const d=await r.json();
-    if(d.error){out.innerHTML='<p class="err">'+d.error+'</p>';b.disabled=false;return}
+    if(d.error){out.innerHTML='<p class="err">'+esc(d.error)+'</p>';b.disabled=false;return}
     if(d.raw){out.innerHTML='<div class="verdict '+d.verdict+'">Verdict: '+d.verdict+'</div><pre>'+esc(d.raw)+'</pre>';b.disabled=false;return}
     const n=d.risks.length;
     let h='<div class="verdict '+d.verdict+'">Verdict: '+d.verdict+'</div>';
     h+='<p class="lead">'+(n?('You almost shipped '+n+' issue'+(n>1?'s':'')+':'):'No material issues found.')+'</p>';
     for(const x of d.risks){
-      h+='<div class="risk '+(x.severity||'low')+'"><span class="tag">'+(x.severity||'')+' · '+(x.type||'')+'</span><div>'+esc(x.issue||'')+'</div></div>';
+      const sev=normSeverity(x.severity);
+      h+='<div class="risk '+sev+'"><span class="tag">'+esc(sev)+' · '+esc(x.type||'')+'</span><div>'+esc(x.issue||'')+'</div></div>';
     }
     out.innerHTML=h;
-  }catch(e){out.innerHTML='<p class="err">'+e+'</p>'}
+  }catch(e){out.innerHTML='<p class="err">'+esc(String(e))+'</p>'}
   b.disabled=false;
 }
+function normSeverity(s){s=String(s||'low').toLowerCase();return ['high','med','low'].includes(s)?s:'low'}
 function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 </script>
 </div></body></html>"""

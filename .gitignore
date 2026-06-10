@@ -16,6 +16,8 @@ demo-output.txt
 assets/_preview_*.png
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
 
 # falsify local config (may hold a key)
 .falsify

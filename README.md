@@ -81,11 +81,16 @@ Verbatim transcript: [examples/.../06](./examples/comparison-case-study/06-real-
 pip install -e .                       # or just python falsify.py
 export DEEPSEEK_API_KEY=sk-...         # or OPENAI_API_KEY / OPENROUTER_API_KEY…
 falsify review report.md -p deepseek   # a second model audits it -> Verdict (PROCEED/HOLD/ARCHIVE)
+falsify run brief.md --drafter claude --reviewer deepseek   # draft with one model, audit with another
 ```
+
+`run` is the full loop. Use `--drafter/--reviewer` (plus optional `--drafter-model/--reviewer-model`) to preserve the core Falsify rule: author and reviewer should be independent. If both roles resolve to the same effective endpoint + model (or the same agent CLI command), the CLI warns that independence is weakened.
 
 `-p` is a provider preset (deepseek / openai / openrouter / moonshot / siliconflow / local) that fills in the endpoint and model — **you only supply the key**. Tired of typing it? `falsify init` saves it once, then just `falsify review report.md`; or `cat report.md | falsify review -` to paste-and-go.
 
-`review`'s **exit code is the Verdict** (`PROCEED=0 / HOLD=1 / ARCHIVE=2`) — drop it straight into CI. No key handy? `falsify lint <file>` runs a pure-local ship-blocker check (no API):
+`review`'s **exit code is the Verdict** (`PROCEED=0 / HOLD=1 / ARCHIVE=2`) — drop it straight into CI. Falsify treats the reviewed draft as untrusted evidence: draft text is delimited in the review prompt, and the CLI parses the **last** `VERDICT:` line from the reviewer output so a `VERDICT:` embedded in the draft cannot silently pass the gate.
+
+No key handy? `falsify lint <file>` runs a pure-local ship-blocker check (no API):
 
 ```bash
 falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABLE

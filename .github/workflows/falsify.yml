@@ -19,8 +19,28 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Install test dependencies
+        run: python -m pip install -e '.[dev]'
+
+      - name: Run unit tests
+        run: python -m pytest tests -q
+
       - name: falsify --version
         run: python falsify.py --version
+
+      - name: review dry-run must resolve without an API call
+        run: python falsify.py review --dry-run -p deepseek examples/comparison-case-study/05-final-excerpt.md
+
+      - name: run exposes independent drafter/reviewer flags
+        run: python falsify.py run --help | grep -E -- '--drafter|--reviewer'
+
+      - name: unknown provider must fail closed
+        run: |
+          if python falsify.py review --dry-run -p nosuchprovider examples/comparison-case-study/05-final-excerpt.md; then
+            echo "::error::unknown provider unexpectedly passed"
+            exit 1
+          fi
+          echo "OK — unknown provider correctly failed"
 
       - name: A shippable doc must PASS lint
         run: python falsify.py lint examples/comparison-case-study/05-final-excerpt.md

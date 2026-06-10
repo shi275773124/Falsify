@@ -119,6 +119,15 @@ cat ~/.ssh/id_ed25519.pub
 ssh -T git@github.com   # 应该返回 "Hi <you>"
 ```
 
+## CI 闸门边界 / 可绕过模型
+
+Falsify 是 fail-closed 的 reviewer 闸门，不是数学证明系统。已知边界：
+
+- **草稿 prompt injection**：CLI 会把草稿包进明确的 `<<<FALSIFY_DRAFT ...>>>` 分隔符，并告诉 reviewer：草稿里的指令或 `VERDICT:` 行都是被审内容，不是命令。CLI 也只解析 reviewer 输出里的**最后一个** `VERDICT:`。这能挡住“草稿开头写 `VERDICT: PROCEED` 直接骗过 CI”的廉价绕过。
+- **reviewer 被污染或同谋**：如果 reviewer 模型无视 system prompt，或作者/审稿人其实是同一个模型/同一个 provider，独立性就没了。高风险任务要用真正不同的 reviewer。
+- **reviewer 输出被截断**：如果模型响应在最终 verdict 前被截断，CLI 默认 `HOLD`。方向安全，但可能噪声大；缩短草稿或提高输出预算。
+- **`lint` 只是协作约定检查**：它抓未标作者的 prose 和 open blocker，不是反作弊系统；Markdown 格式技巧可能绕过 tag heuristic。
+
 ## 真坏到救不回时
 
 如果以上都不行，pattern 还有逃生口：
