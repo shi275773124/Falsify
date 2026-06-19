@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![中文](https://img.shields.io/badge/lang-中文-red.svg)](./README.zh-CN.md)
 
-[中文版](./README.zh-CN.md) · [Setup](./docs/02-setup.md) · [Layer 1 · Peer Review](./docs/03-collaboration.md) · [Layer 2 · Adversarial Review](./docs/05-adversarial-review.md)
+[中文版](./README.zh-CN.md) · [Setup](./docs/02-setup.md) · [Layer 1 · Peer Review](./docs/03-collaboration.md) · [Layer 2 · Adversarial Review](./docs/05-adversarial-review.md) · [Layer 3 · Risk Scalpel](./docs/06-risk-scalpel.md)
 
 <p align="center">
   <img src="./assets/flow-card.png" alt="Falsify: Agent A drafts → Agent B audits → conflict → first-hand sources arbitrate → Git evidence trail → ship" width="820">
@@ -98,15 +98,16 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 
 ---
 
-## Two layers
+## Three layers
 
 - **[Layer 1 · Peer Review](./docs/03-collaboration.md)** — catches **wrong numbers** (cheap, default): tag every paragraph, don't overwrite the other agent, conflicts go to first-hand sources.
 - **[Layer 2 · Adversarial Review](./docs/05-adversarial-review.md)** — catches **wrong conclusions** (high-stakes): verdict ladder (`PROCEED/HOLD-N/ARCHIVE`) + multi-round + G1–G4 gates + cross-model independence.
+- **[Layer 3 · Risk Scalpel](./docs/06-risk-scalpel.md)** — catches **review aftermath failure**: not every finding is P0, and “minimal” must not delete real risks. It classifies findings into Must Fix / Known Debt / Delete.
 
-| | Layer 1 | Layer 2 |
-|---|---|---|
-| Catches | wrong facts | right facts + wrong conclusion |
-| In one line | "is this number right?" | "what makes this conclusion hold?" |
+| | Layer 1 | Layer 2 | Layer 3 |
+|---|---|---|---|
+| Catches | wrong facts | right facts + wrong conclusion | wrong reaction to valid findings |
+| In one line | "is this number right?" | "what makes this conclusion hold?" | "what must change now?" |
 
 ---
 
@@ -117,7 +118,7 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 - [`demo-vault/`](./demo-vault/) — forkable empty workspace; edit `00-brief.md` and go
 - [`examples/comparison-case-study/`](./examples/comparison-case-study/) — sanitized end-to-end sample + one real run
 - [`examples/cases/`](./examples/cases/) — cross-industry case library (tech selection / market research / …), each proving "without Falsify, this error ships"
-- [`docs/`](./docs/) — [architecture](./docs/01-architecture.md) · [setup](./docs/02-setup.md) · [Layer 1](./docs/03-collaboration.md) · [Layer 2](./docs/05-adversarial-review.md) · [troubleshooting](./docs/04-troubleshooting.md)
+- [`docs/`](./docs/) — [architecture](./docs/01-architecture.md) · [setup](./docs/02-setup.md) · [Layer 1](./docs/03-collaboration.md) · [Layer 2](./docs/05-adversarial-review.md) · [Layer 3](./docs/06-risk-scalpel.md) · [troubleshooting](./docs/04-troubleshooting.md)
 
 ---
 
