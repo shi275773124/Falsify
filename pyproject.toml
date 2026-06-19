@@ -26,6 +26,9 @@ classifiers = [
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [project.urls]
 Homepage = "https://github.com/shi275773124/Falsify"
 

@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![English](https://img.shields.io/badge/lang-English-blue.svg)](./README.md)
 
-[English](./README.md) · [部署](./docs/02-setup.zh-CN.md) · [第 1 层 · 互审](./docs/03-collaboration.zh-CN.md) · [第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md)
+[English](./README.md) · [部署](./docs/02-setup.zh-CN.md) · [第 1 层 · 互审](./docs/03-collaboration.zh-CN.md) · [第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md) · [第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)
 
 <p align="center">
   <img src="./assets/flow-card.png" alt="Falsify 证伪：Agent A 起稿 → Agent B 审计 → 分歧 → 一手资料仲裁 → Git 留证据链 → Ship" width="820">
@@ -100,15 +100,16 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 
 ---
 
-## 两层审查
+## 三层审查
 
 - **[第 1 层 · 互审](./docs/03-collaboration.zh-CN.md)** —— 抓**数字错**(便宜、默认):每段标作者、不覆盖对方、冲突走一手资料。
 - **[第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md)** —— 抓**结论错**(高风险时):verdict ladder(`PROCEED/HOLD-N/ARCHIVE`)+ 多轮 + G1–G4 闸门 + 跨模型独立性。
+- **[第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)** —— 抓**审计之后的错误反应**：不是每个 finding 都是 P0，“极简”也不能删真实风险。把 findings 裁成 Must Fix / Known Debt / Delete。
 
-| | 第 1 层 · 互审 | 第 2 层 · 对抗审议 |
-|---|---|---|
-| 抓什么 | 错的事实 | 对的事实 + 错的结论 |
-| 一句话 | "这个数字对不对?" | "这个结论凭什么成立?" |
+| | 第 1 层 · 互审 | 第 2 层 · 对抗审议 | 第 3 层 · 风险裁刀 |
+|---|---|---|---|
+| 抓什么 | 错的事实 | 对的事实 + 错的结论 | 对有效 finding 的错误反应 |
+| 一句话 | "这个数字对不对?" | "这个结论凭什么成立?" | "现在必须改什么?" |
 
 ---
 
@@ -119,7 +120,7 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 - [`demo-vault/`](./demo-vault/) —— 可直接 fork 的空壳工作区,改 `00-brief.md` 就能跑
 - [`examples/comparison-case-study/`](./examples/comparison-case-study/) —— 脱敏端到端样例(draft→audit→冲突→仲裁→上线 + 一次真实运行)
 - [`examples/cases/`](./examples/cases/) —— 跨行业案例库(技术选型 / 市场调研…),每个证明"没 Falsify 这个错会 ship"
-- [`docs/`](./docs/) —— [架构](./docs/01-architecture.zh-CN.md) · [部署](./docs/02-setup.zh-CN.md) · [协作](./docs/03-collaboration.zh-CN.md) · [对抗审议](./docs/05-adversarial-review.zh-CN.md) · [故障排查](./docs/04-troubleshooting.zh-CN.md)
+- [`docs/`](./docs/) —— [架构](./docs/01-architecture.zh-CN.md) · [部署](./docs/02-setup.zh-CN.md) · [协作](./docs/03-collaboration.zh-CN.md) · [对抗审议](./docs/05-adversarial-review.zh-CN.md) · [风险裁刀](./docs/06-risk-scalpel.zh-CN.md) · [故障排查](./docs/04-troubleshooting.zh-CN.md)
 
 ---
 
