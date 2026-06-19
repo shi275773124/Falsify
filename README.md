@@ -1,7 +1,7 @@
 # Falsify
 
-> **Your unfair advantage: two top AIs from different vendors cross-examine your work — you keep only what survives.**
-> **No API key.** Point the AI subscriptions you already pay for (Claude, ChatGPT/Codex, Gemini) at one shared folder and let them audit each other. Falsify is the neutral referee — it reviews the *judgment*, not just the diff, and the referee isn't owned by either contestant.
+> **Your unfair advantage: stop drowning in "you might want to improve…".** Falsify ends with **Risk Scalpel** — every finding gets a verdict: `Must Fix` (now), `Known Debt` (logged, with an upgrade trigger), or `Delete` — an actionable list, not another endless TODO. **Risk facts stay; current scope gets cut.**
+> **The engine underneath — no API key.** To have findings worth cutting, two top AIs from different vendors cross-examine the work first: point the subscriptions you already pay for (Claude, ChatGPT/Codex, Gemini) at one shared folder, and wrong numbers and unsupported conclusions surface before the scalpel cuts. Falsify is the neutral referee — it reviews the *judgment*, not just the diff, and the referee isn't owned by either contestant.
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -114,10 +114,11 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 ## What else is in here
 
 - [`web/`](./web/) — browser paste-and-go POC: one box, one button → Verdict + top risks (`python web/serve.py`)
-- [`templates/`](./templates/) — ready to use: `AGENTS.md`, three prompts, kickoff/retro, conflict/resolution logs, CI template
+- [`templates/`](./templates/) — ready to use: `AGENTS.md`, three prompts, kickoff/retro, conflict/resolution logs, [Risk Scalpel decision](./templates/risk-scalpel-decision.md), CI template
 - [`demo-vault/`](./demo-vault/) — forkable empty workspace; edit `00-brief.md` and go
 - [`examples/comparison-case-study/`](./examples/comparison-case-study/) — sanitized end-to-end sample + one real run
 - [`examples/cases/`](./examples/cases/) — cross-industry case library (tech selection / market research / …), each proving "without Falsify, this error ships"
+- [`examples/risk-scalpel-overfit-strategy.md`](./examples/risk-scalpel-overfit-strategy.md) — Layer 3 worked example: a high-Sharpe strategy cut into Must Fix / Known Debt / Delete → BLOCK
 - [`docs/`](./docs/) — [architecture](./docs/01-architecture.md) · [setup](./docs/02-setup.md) · [Layer 1](./docs/03-collaboration.md) · [Layer 2](./docs/05-adversarial-review.md) · [Layer 3](./docs/06-risk-scalpel.md) · [troubleshooting](./docs/04-troubleshooting.md)
 
 ---
@@ -130,6 +131,7 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 - [x] GitHub Action: block a PR that doesn't pass the verdict ([template](./templates/github-action-falsify.yml))
 - [x] Forkable demo vault · sanitized case · flow card · real-run GIF
 - [x] Cross-industry case library, started ([`examples/cases/`](./examples/cases/)): tech selection / market research
+- [x] Layer 3 · Risk Scalpel: post-review decision layer — cuts findings into Must Fix / Known Debt / Delete
 - [ ] Hosted web: 3 free runs, no key (paste-and-go, zero install)
 - [ ] Chrome extension: one-click Falsify on ChatGPT / Claude / Gemini
 - [ ] More industry cases: legal / medical / product / academic

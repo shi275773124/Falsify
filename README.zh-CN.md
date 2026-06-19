@@ -1,7 +1,7 @@
 # Falsify · 证伪
 
-> **你的 unfair advantage:让两个不同厂商的顶尖 AI 互相审查，你只取站得住脚的结论。**
-> **不用 API key。** 把你已经付费的 AI 订阅(Claude、ChatGPT/Codex、Gemini)指向同一个文件夹,让它们互相审。Falsify 是中立裁判——审的是*判断*,不只是 diff,而且裁判不归任何一方选手所有。
+> **你的 unfair advantage:别再被一串"建议优化"淹没。** Falsify 的终点是**风险裁刀(Risk Scalpel)**——审完把每条发现裁成 `Must Fix`(现在修)/ `Known Debt`(记成债,带升级触发条件)/ `Delete`(直接删),给你一份能动手的清单,而不是又一份无穷 TODO。**风险事实不删,当前动作要裁。**
+> **底下的引擎,不用 API key。** 要有值得裁的发现,先让两个不同厂商的顶尖 AI 互相审:把你已付费的订阅(Claude、ChatGPT/Codex、Gemini)指向同一个文件夹,错数字、站不住的结论先被逼出来。Falsify 是中立裁判——审的是*判断*,不只是 diff,而且裁判不归任何一方选手所有。
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -116,10 +116,11 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 ## 仓库里还有什么
 
 - [`web/`](./web/) —— 浏览器粘贴即审 POC:一个框一个按钮 → Verdict + top 风险(`python web/serve.py`)
-- [`templates/`](./templates/) —— 即拿即用:`AGENTS.md`、三个 prompt、kickoff/retro、conflict/resolution log、CI 模板
+- [`templates/`](./templates/) —— 即拿即用:`AGENTS.md`、三个 prompt、kickoff/retro、conflict/resolution log、[风险裁刀裁决表](./templates/risk-scalpel-decision.md)、CI 模板
 - [`demo-vault/`](./demo-vault/) —— 可直接 fork 的空壳工作区,改 `00-brief.md` 就能跑
 - [`examples/comparison-case-study/`](./examples/comparison-case-study/) —— 脱敏端到端样例(draft→audit→冲突→仲裁→上线 + 一次真实运行)
 - [`examples/cases/`](./examples/cases/) —— 跨行业案例库(技术选型 / 市场调研…),每个证明"没 Falsify 这个错会 ship"
+- [`examples/risk-scalpel-overfit-strategy.md`](./examples/risk-scalpel-overfit-strategy.md) —— 第 3 层实战样例:一个高 Sharpe 策略被裁成 Must Fix / Known Debt / Delete → BLOCK
 - [`docs/`](./docs/) —— [架构](./docs/01-architecture.zh-CN.md) · [部署](./docs/02-setup.zh-CN.md) · [协作](./docs/03-collaboration.zh-CN.md) · [对抗审议](./docs/05-adversarial-review.zh-CN.md) · [风险裁刀](./docs/06-risk-scalpel.zh-CN.md) · [故障排查](./docs/04-troubleshooting.zh-CN.md)
 
 ---
@@ -132,6 +133,7 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 - [x] GitHub Action:PR 没过 verdict 就 block([模板](./templates/github-action-falsify.yml))
 - [x] 可 fork 的 demo vault · 脱敏案例 · 流程图 · 真实运行 GIF
 - [x] 跨行业案例库起步（[`examples/cases/`](./examples/cases/)):技术选型 / 市场调研
+- [x] 第 3 层 · 风险裁刀(Risk Scalpel):审查后的裁决层,把 findings 裁成 Must Fix / Known Debt / Delete
 - [ ] 托管 web:免 key 试 3 次(粘贴即审、零安装)
 - [ ] Chrome 插件:在 ChatGPT / Claude / Gemini 页面一键 Falsify
 - [ ] 补更多行业案例:法律 / 医疗 / 产品 / 学术

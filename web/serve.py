@@ -78,7 +78,12 @@ PAGE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 body{margin:0;font:16px/1.5 -apple-system,"Segoe UI",Roboto,"Microsoft YaHei",sans-serif;
   background:radial-gradient(900px 500px at 20% -10%,#1b2747 0%,rgba(27,39,71,0) 60%),#0b1020;color:#e6edf3}
 .wrap{max-width:760px;margin:0 auto;padding:48px 20px 80px}
-h1{font-size:34px;margin:0 0 6px}.sub{color:#8b96a8;margin:0 0 28px}
+h1{font-size:34px;margin:0 0 6px}.sub{color:#8b96a8;margin:0 0 20px}
+.layers{display:flex;gap:10px;margin:0 0 28px;flex-wrap:wrap}
+.layer{flex:1;min-width:200px;background:#0f1729;border:1px solid #28324e;border-radius:10px;padding:12px 14px}
+.layer b{display:block;font-size:14px;margin-bottom:4px}
+.layer span{color:#8b96a8;font-size:13px}
+.layer.scalpel{border-color:#8a5a14}.layer.scalpel b{color:#f0a93e}
 textarea{width:100%;min-height:240px;padding:14px;border-radius:12px;border:1px solid #28324e;
   background:#0f1729;color:#e6edf3;font:14px/1.5 ui-monospace,Consolas,monospace;resize:vertical}
 .row{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap}
@@ -98,7 +103,12 @@ pre{white-space:pre-wrap;background:#0f1729;border:1px solid #28324e;border-radi
 .err{color:#f85149}
 </style></head><body><div class="wrap">
 <h1>Falsify</h1>
-<p class="sub">Find what's wrong before you ship. Paste your AI output; a skeptic model takes it apart.</p>
+<p class="sub">Paste your AI output; a skeptic model takes it apart — then Risk Scalpel cuts the findings into Must Fix / Known Debt / Delete. The decision, not another TODO list.</p>
+<div class="layers">
+  <div class="layer"><b>Layer 1 · Peer Review</b><span>wrong facts / numbers</span></div>
+  <div class="layer"><b>Layer 2 · Adversarial Review</b><span>facts look right, conclusion wrong</span></div>
+  <div class="layer scalpel"><b>Layer 3 · Risk Scalpel</b><span>after review, don't pile up TODOs — cut findings into Must Fix / Known Debt / Delete. Risk facts stay; current scope gets cut.</span></div>
+</div>
 <textarea id="t" placeholder="Paste the AI-written report / plan / answer here…"></textarea>
 <div class="row">
   <select id="s">
