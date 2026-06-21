@@ -259,9 +259,9 @@ python web/serve.py</div>
   </div>
 </div></section>
 
-<section><div class="wrap section-head"><h2>Follow the work</h2><p class="lead">Falsify is evolving with real AI-agent, code review, and production-risk workflows. If you are working on similar problems, feel free to follow along or reach out.<br><br><a href="https://github.com/shi275773124/Falsify">GitHub</a> · <a href="https://x.com/YOUR_HANDLE">X / Twitter</a> · <a href="mailto:YOUR_EMAIL@example.com">Email</a></p></div></section>
+<section><div class="wrap section-head"><h2>Follow the work</h2><p class="lead">Falsify is evolving with real AI-agent, code review, and production-risk workflows. If you are working on similar problems, feel free to follow along or reach out.<br><br><a href="https://github.com/shi275773124/Falsify">GitHub</a> · <a href="https://x.com/aishikejian">X / Twitter</a> · <a href="mailto:chrisshi168@icloud.com">Email</a></p></div></section>
 </main>
-<footer><div class="wrap"><div>Falsify</div><div><a href="https://github.com/shi275773124/Falsify">GitHub</a> · <a href="https://x.com/YOUR_HANDLE">X / Twitter</a> · <a href="mailto:YOUR_EMAIL@example.com">Email</a> · <a href="../LICENSE">License</a></div></div></footer>
+<footer><div class="wrap"><div>Falsify</div><div><a href="https://github.com/shi275773124/Falsify">GitHub</a> · <a href="https://x.com/aishikejian">X / Twitter</a> · <a href="mailto:chrisshi168@icloud.com">Email</a> · <a href="../LICENSE">License</a></div></div></footer>
 <script>
 async function go(){
   const t=document.getElementById('t').value.trim();
