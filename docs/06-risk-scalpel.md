@@ -85,6 +85,31 @@ No upgrade trigger means it is not valid debt. Make it Must Fix or Delete.
 
 ---
 
+
+## GLOSSOPETRAE / audit-channel findings
+
+Classify these like any other finding — do not let the new vocabulary create patch bloat.
+
+**Must Fix** when the current decision would rely on:
+
+- AI summary instead of raw artifact / readable diff / fixture / command output;
+- a semantic verdict nudge that changes the decision without evidence;
+- an LLM probe scored without raw verdict, parse status, HTTP status, finish reason, or usage;
+- a claim that there is "no hidden channel" without a reproducer/probe.
+
+**Known Debt** when:
+
+- Layer-2 / semantic-channel risk is real but the current phase is read-only and does not authorize action;
+- no reproducer has been run, but the report does not claim the channel is absent;
+- the known-pattern library is incomplete, with a trigger such as "becomes Must Fix when this report gates CI, production, money, account authority, or public release."
+
+**Delete** when:
+
+- the concern is only a theoretical channel with no concrete current failure mode;
+- a proposed sanitizer is for a model/path that has not been shown to strip or preserve the relevant carrier;
+- the finding says "same vendor" or "different vendor" is inherently safe/unsafe without evidence.
+
+---
 ## Output template
 
 ```markdown

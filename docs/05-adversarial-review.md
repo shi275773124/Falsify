@@ -77,6 +77,21 @@ fail loud (non-zero exit + alert), never fail silent.
 
 ---
 
+
+## 5. GLOSSOPETRAE checks — audit the audit channel
+
+Recent frontier-model work on procedural xenolinguistics and covert channels is a warning for Falsify: another model saying "I reviewed it" is not enough. AI systems can operate over text/code structures humans and monitors may not reliably audit.
+
+Do **not** add a fourth layer. Fold these checks into adversarial review:
+
+- **Human-auditability.** Does the verdict bottom out in raw artifacts, readable diffs, commands, fixtures, or source links a human can inspect? If it only depends on an AI summary, hold.
+- **Semantic verdict nudge.** Is ordinary language pushing the reviewer toward `PROCEED`/`Known Debt` without satisfying the gate? Examples: "not blocking", "enough evidence", "another model agrees", "just theoretical", or blocker→debt relabeling.
+- **Prompt-only audit theater.** A line saying "watch for prompt injection" is not a defense. Prefer known-pattern checks, fixtures, or reproducer runs. A pattern library covers known modes only; it does not prove unknown channels absent.
+- **Monitor-failure laundering.** Empty, unparseable, truncated, filtered, or confident-"no issue" outputs are not clean by default. When an LLM/API probe is used as evidence, keep the raw verdict, parse status, HTTP status, `finish_reason`, and token usage where the provider exposes them.
+
+Cutline discipline: if the current claim depends on the missing evidence, it is Must Fix. If the work is read-only and does not claim the channel is absent, record it as Known Debt with an upgrade trigger.
+
+---
 ## When to use which
 
 | Situation | Use |

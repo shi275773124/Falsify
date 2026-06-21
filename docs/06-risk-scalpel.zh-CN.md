@@ -85,6 +85,31 @@ Upgrade trigger: becomes Must Fix when <specific event/scale/use-case happens>
 
 ---
 
+
+## GLOSSOPETRAE / 审计通道 findings
+
+像处理其他 finding 一样裁剪这些问题——不要让新词变成补丁膨胀。
+
+**Must Fix**：当前决策依赖以下情况时：
+
+- 用 AI summary 代替 raw artifact / 可读 diff / fixture / 命令输出；
+- 语义 verdict 诱导在没有证据的情况下改变决策；
+- LLM probe 没有 raw verdict、parse status、HTTP status、finish reason 或 usage 却被打分；
+- 没有 reproducer/probe 就声称“没有 hidden channel”。
+
+**Known Debt**：
+
+- Layer-2 / semantic-channel 风险真实存在，但当前阶段只是 read-only，不授权 action；
+- 没跑 reproducer，但报告也没有声称 channel 不存在；
+- known-pattern library 不完整，升级触发条件可以写成：“当本报告开始 gate CI、生产、资金、账号权力或公开发布时，升级为 Must Fix”。
+
+**Delete**：
+
+- 只是理论 channel，没有当前具体失败模式；
+- 给未证明会 strip/preserve 相关 carrier 的模型/路径加 sanitizer；
+- 没有证据就说“same vendor”或“different vendor”天然安全/不安全。
+
+---
 ## 输出模板
 
 ```markdown

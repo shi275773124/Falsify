@@ -101,8 +101,8 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 ## Three layers
 
 - **[Layer 1 · Peer Review](./docs/03-collaboration.md)** — catches **wrong numbers** (cheap, default): tag every paragraph, don't overwrite the other agent, conflicts go to first-hand sources.
-- **[Layer 2 · Adversarial Review](./docs/05-adversarial-review.md)** — catches **wrong conclusions** (high-stakes): verdict ladder (`PROCEED/HOLD-N/ARCHIVE`) + multi-round + G1–G4 gates + cross-model independence.
-- **[Layer 3 · Risk Scalpel](./docs/06-risk-scalpel.md)** — catches **review aftermath failure**: not every finding is P0, and “minimal” must not delete real risks. It classifies findings into Must Fix / Known Debt / Delete.
+- **[Layer 2 · Adversarial Review](./docs/05-adversarial-review.md)** — catches **wrong conclusions** (high-stakes): verdict ladder (`PROCEED/HOLD-N/ARCHIVE`) + multi-round + G1–G4 gates + cross-model independence + audit-channel checks (human-auditability, semantic verdict nudges, monitor-failure laundering).
+- **[Layer 3 · Risk Scalpel](./docs/06-risk-scalpel.md)** — catches **review aftermath failure**: not every finding is P0, and “minimal” must not delete real risks. It classifies findings into Must Fix / Known Debt / Delete, including GLOSSOPETRAE-style audit-channel findings without adding a fourth layer.
 
 | | Layer 1 | Layer 2 | Layer 3 |
 |---|---|---|---|

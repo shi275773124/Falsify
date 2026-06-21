@@ -58,6 +58,21 @@ G4 的完整案例:[`examples/wrong-tool-right-data.md`](../examples/wrong-tool-
 
 ---
 
+
+## 5. GLOSSOPETRAE 检查 — 审计审计通道本身
+
+前沿模型的程序化外语 / covert channel 研究给 Falsify 的提醒是：另一个模型说“我审过了”还不够。AI 可能在一层人类和 monitor 都不可靠审计的文本/代码结构里工作。
+
+不要新增第四层。把这些检查并入对抗审：
+
+- **人类可审计性。** verdict 是否落到 raw artifact、可读 diff、命令、fixture、源链接等人能检查的证据？如果只依赖 AI summary，HOLD。
+- **语义 verdict 诱导。** 普通语言是否在没有满足 gate 的情况下推动 reviewer 判 `PROCEED` / `Known Debt`？例如“not blocking / 证据已足够 / 另一个模型同意 / 只是理论风险 / blocker 改名 debt”。
+- **Prompt-only audit theater。** 只写一句“注意 prompt injection”不是防线。优先使用已知 pattern 检查、fixture 或 reproducer。pattern library 只覆盖已知模式，不能证明 unknown channel 不存在。
+- **Monitor-failure laundering。** 空响应、不可解析、截断、content-filtered、confident-"no issue" 默认都不是 clean。LLM/API probe 作为证据时，保留 raw verdict、parse status、HTTP status、`finish_reason`、token usage（如果 provider 暴露）。
+
+Cutline 纪律：如果当前 claim 依赖缺失的证据，这是 Must Fix。如果只是 read-only 且没有声称 channel 不存在，记 Known Debt，并写升级触发条件。
+
+---
 ## 什么时候用哪个
 
 | 场景 | 用 |

@@ -103,8 +103,8 @@ falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABL
 ## 三层审查
 
 - **[第 1 层 · 互审](./docs/03-collaboration.zh-CN.md)** —— 抓**数字错**(便宜、默认):每段标作者、不覆盖对方、冲突走一手资料。
-- **[第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md)** —— 抓**结论错**(高风险时):verdict ladder(`PROCEED/HOLD-N/ARCHIVE`)+ 多轮 + G1–G4 闸门 + 跨模型独立性。
-- **[第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)** —— 抓**审计之后的错误反应**：不是每个 finding 都是 P0，“极简”也不能删真实风险。把 findings 裁成 Must Fix / Known Debt / Delete。
+- **[第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md)** —— 抓**结论错**(高风险时):verdict ladder(`PROCEED/HOLD-N/ARCHIVE`)+ 多轮 + G1–G4 闸门 + 跨模型独立性 + 审计通道检查（人类可审计性、语义 verdict 诱导、monitor failure laundering）。
+- **[第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)** —— 抓**审计之后的错误反应**：不是每个 finding 都是 P0，“极简”也不能删真实风险。把 findings 裁成 Must Fix / Known Debt / Delete，并吸收 GLOSSOPETRAE 式审计通道 findings，但不新增第四层。
 
 | | 第 1 层 · 互审 | 第 2 层 · 对抗审议 | 第 3 层 · 风险裁刀 |
 |---|---|---|---|
