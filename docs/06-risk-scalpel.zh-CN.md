@@ -114,7 +114,7 @@ Upgrade trigger: becomes Must Fix when <specific event/scale/use-case happens>
 
 ```markdown
 ## Verdict
-PASS / PASS_WITH_CONDITIONS / BLOCK
+PASS / PASS_WITH_DEBT / BLOCK
 
 ## Cut-line table
 | Finding | Failure mode if unfixed | Class | Minimal action | Upgrade trigger |

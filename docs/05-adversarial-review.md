@@ -1,5 +1,7 @@
 # 05. Adversarial Review (Layer 2)
 
+Current public verdicts are `PASS`, `PASS_WITH_DEBT`, and `BLOCK`. Older examples in this repository may use `PROCEED`, `HOLD`, or `ARCHIVE`; the CLI maps legacy reviewer output into the current vocabulary.
+
 [中文](./05-adversarial-review.zh-CN.md) · [Back to README](../README.md)
 
 **This is Layer 2.** [Layer 1 — peer review](./03-collaboration.md) catches
@@ -21,18 +23,18 @@ wrong *conclusion* (not just a wrong number) is expensive.
 
 A review doesn't output "looks good-ish." It outputs one of:
 
-- **PROCEED** — passes, move to the next step
-- **HOLD-N** — rejected on round N; lists the exact items that must be fixed; loop
-- **ARCHIVE** — architecturally dead; no parameter tweak revives it
+- **PASS** — evidence holds; move to the next step
+- **PASS_WITH_DEBT** — no current blocker remains; Known Debt has an upgrade trigger
+- **BLOCK** — rejected; lists the exact Must Fix items or missing evidence
 
-`HOLD-N` is numbered because review is **multi-round**:
+`BLOCK` can repeat because review is **multi-round**:
 
 ```
-Round 1: HOLD   (2 kill-items + 5 fix-items)
+Round 1: BLOCK  (2 kill-items + 5 fix-items)
   → author commits a fix version
-Round 2: HOLD-2 (fix-1 self-defeating, fix-3 cosmetic, fix-5 conflicts with fix-1)
+Round 2: BLOCK  (fix-1 self-defeating, fix-3 cosmetic, fix-5 conflicts with fix-1)
   → author commits another fix version
-Round 3: PROCEED
+Round 3: PASS
 ```
 
 Rule: between rounds you don't append a counter-argument — you commit the fixed
@@ -85,7 +87,7 @@ Recent frontier-model work on procedural xenolinguistics and covert channels is 
 Do **not** add a fourth layer. Fold these checks into adversarial review:
 
 - **Human-auditability.** Does the verdict bottom out in raw artifacts, readable diffs, commands, fixtures, or source links a human can inspect? If it only depends on an AI summary, hold.
-- **Semantic verdict nudge.** Is ordinary language pushing the reviewer toward `PROCEED`/`Known Debt` without satisfying the gate? Examples: "not blocking", "enough evidence", "another model agrees", "just theoretical", or blocker→debt relabeling.
+- **Semantic verdict nudge.** Is ordinary language pushing the reviewer toward `PASS`/`PASS_WITH_DEBT`/`Known Debt` without satisfying the gate? Examples: "not blocking", "enough evidence", "another model agrees", "just theoretical", or blocker→debt relabeling.
 - **Prompt-only audit theater.** A line saying "watch for prompt injection" is not a defense. Prefer known-pattern checks, fixtures, or reproducer runs. A pattern library covers known modes only; it does not prove unknown channels absent.
 - **Monitor-failure laundering.** Empty, unparseable, truncated, filtered, or confident-"no issue" outputs are not clean by default. When an LLM/API probe is used as evidence, keep the raw verdict, parse status, HTTP status, `finish_reason`, and token usage where the provider exposes them.
 

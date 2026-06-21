@@ -1,5 +1,7 @@
 # 06. Risk Scalpel (Layer 3)
 
+Current public verdicts are `PASS`, `PASS_WITH_DEBT`, and `BLOCK`. Risk Scalpel classifications remain `Must Fix`, `Known Debt`, and `Delete`.
+
 [中文](./06-risk-scalpel.zh-CN.md) · [Back to README](../README.md)
 
 **This is Layer 3.** [Layer 1 — peer review](./03-collaboration.md) catches wrong facts. [Layer 2 — adversarial review](./05-adversarial-review.md) catches wrong conclusions. **Risk Scalpel catches the failure after a good review: turning every finding into a P0, or deleting real risks in the name of simplicity.**
@@ -114,7 +116,7 @@ Classify these like any other finding — do not let the new vocabulary create p
 
 ```markdown
 ## Verdict
-PASS / PASS_WITH_CONDITIONS / BLOCK
+PASS / PASS_WITH_DEBT / BLOCK
 
 ## Cut-line table
 | Finding | Failure mode if unfixed | Class | Minimal action | Upgrade trigger |

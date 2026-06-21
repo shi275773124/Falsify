@@ -14,18 +14,18 @@
 
 一次审议不输出"差不多还行",只输出三选一:
 
-- **PROCEED** — 通过,进下一步
-- **HOLD-N** — 第 N 轮拒绝,列出必须修的项,循环
-- **ARCHIVE** — 架构性死亡,参数怎么调都救不活
+- **PASS** — 证据成立，进入下一步
+- **PASS_WITH_DEBT** — 没有当前阻塞项，Known Debt 有升级触发条件
+- **BLOCK** — 当前被阻塞，列出 Must Fix 或缺失证据
 
-`HOLD-N` 带编号,因为审议是**多轮**的:
+`BLOCK` 可以多轮出现，因为审议是**多轮**的:
 
 ```
-Round 1: HOLD   (2 个 kill 项 + 5 个 fix 项)
+Round 1: BLOCK  (2 个 kill 项 + 5 个 fix 项)
   → 作者 commit 一个修复版
-Round 2: HOLD-2 (fix-1 自杀 / fix-3 表面糊弄 / fix-5 与 fix-1 互锁)
+Round 2: BLOCK  (fix-1 自杀 / fix-3 表面糊弄 / fix-5 与 fix-1 互锁)
   → 作者再 commit 一个修复版
-Round 3: PROCEED
+Round 3: PASS
 ```
 
 规则:轮与轮之间不要追加辩论,而是 commit 修复版,让 reviewer **独立重新判定**。"我已经认错了"不能软化下一轮的 verdict。修复只有扛过一次全新攻击才算数。
@@ -65,8 +65,8 @@ G4 的完整案例:[`examples/wrong-tool-right-data.md`](../examples/wrong-tool-
 
 不要新增第四层。把这些检查并入对抗审：
 
-- **人类可审计性。** verdict 是否落到 raw artifact、可读 diff、命令、fixture、源链接等人能检查的证据？如果只依赖 AI summary，HOLD。
-- **语义 verdict 诱导。** 普通语言是否在没有满足 gate 的情况下推动 reviewer 判 `PROCEED` / `Known Debt`？例如“not blocking / 证据已足够 / 另一个模型同意 / 只是理论风险 / blocker 改名 debt”。
+- **人类可审计性。** verdict 是否落到 raw artifact、可读 diff、命令、fixture、源链接等人能检查的证据？如果只依赖 AI summary，BLOCK。
+- **语义 verdict 诱导。** 普通语言是否在没有满足 gate 的情况下推动 reviewer 判 `PASS` / `PASS_WITH_DEBT` / `Known Debt`？例如“not blocking / 证据已足够 / 另一个模型同意 / 只是理论风险 / blocker 改名 debt”。
 - **Prompt-only audit theater。** 只写一句“注意 prompt injection”不是防线。优先使用已知 pattern 检查、fixture 或 reproducer。pattern library 只覆盖已知模式，不能证明 unknown channel 不存在。
 - **Monitor-failure laundering。** 空响应、不可解析、截断、content-filtered、confident-"no issue" 默认都不是 clean。LLM/API probe 作为证据时，保留 raw verdict、parse status、HTTP status、`finish_reason`、token usage（如果 provider 暴露）。
 

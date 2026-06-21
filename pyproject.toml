@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "falsify"
 dynamic = ["version"]
-description = "证伪 — give AI output a verdict before you trust it. An Agent Review Kit CLI."
+description = "Adversarial review framework for AI-generated code, research, and production decisions."
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "shi275773124" }]
 keywords = ["ai", "agents", "review", "hallucination", "llm", "ci", "audit"]
 classifiers = [
@@ -19,7 +19,6 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "License :: OSI Approved :: MIT License",
   "Environment :: Console",
 ]
 
