@@ -1,156 +1,119 @@
-# Falsify · 证伪
+# Falsify
 
-> **你的 unfair advantage:别再被一串"建议优化"淹没。** Falsify 的终点是**风险裁刀(Risk Scalpel)**——审完把每条发现裁成 `Must Fix`(现在修)/ `Known Debt`(记成债,带升级触发条件)/ `Delete`(直接删),给你一份能动手的清单,而不是又一份无穷 TODO。**风险事实不删,当前动作要裁。**
-> **底下的引擎,不用 API key。** 要有值得裁的发现,先让两个不同厂商的顶尖 AI 互相审:把你已付费的订阅(Claude、ChatGPT/Codex、Gemini)指向同一个文件夹,错数字、站不住的结论先被逼出来。Falsify 是中立裁判——审的是*判断*,不只是 diff,而且裁判不归任何一方选手所有。
+> **别再相信自信的 AI。**
 
-[![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![English](https://img.shields.io/badge/lang-English-blue.svg)](./README.md)
+Falsify 是一个面向 AI 时代的对抗式审计框架。它攻击错误信心，逼出真实证据，并把每一个风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
 
-[English](./README.md) · [部署](./docs/02-setup.zh-CN.md) · [第 1 层 · 互审](./docs/03-collaboration.zh-CN.md) · [第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md) · [第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)
+Falsify 不是“另一个模型说看起来没问题”。它是一个决策框架，用来把真正的阻塞项和噪音分开。
 
-<p align="center">
-  <img src="./assets/flow-card.png" alt="Falsify 证伪：Agent A 起稿 → Agent B 审计 → 分歧 → 一手资料仲裁 → Git 留证据链 → Ship" width="820">
-</p>
+[English](./README.md) · [Getting Started](./docs/00-getting-started.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Risk Scalpel](./docs/06-risk-scalpel.md)
 
-> 🙏 致谢 **Hermes Agent**、**Claude Code**、**Codex**——这套工作流在它们上面跑通并打磨出来。
+## 解决什么问题
 
----
+AI 让团队更快，也让“看起来很自信的错误”更便宜。
 
-单 AI 写完，你得自己验。**Falsify 让第二个、不同的顶尖模型把它的活拆一遍**——错的数字、站不住的结论，到不了你眼前。一个写，一个审，Git 留证据链。
+很多坏决策现在会被包装成：
 
-<p align="center">
-  <img src="./assets/demo.gif" alt="falsify review 实跑：Skeptic 抓出 4+ 处问题 → Verdict: HOLD" width="760">
-</p>
+- 漂亮的 AI 摘要
+- 看起来成功的日志
+- 通过了错误测试的绿色结果
+- 另一个模型的同意
+- 没有原始证据的安全结论
 
-> 真实运行:DeepSeek 当 Skeptic 审一份草稿,把埋的错一个个抓出来,给出 `Verdict: HOLD`。逐字记录见 [examples/.../06](./examples/comparison-case-study/06-real-review-deepseek.md)。
+Falsify 要求结论回到可检查证据：原始产物、代码 diff、命令输出、一手来源、parse status、HTTP status、raw verdict、`finish_reason`，以及可用时的 usage/token counts。
 
----
+## 三层框架
 
-## 为什么值
+```text
+Falsify = Brooks-Lint + Adversarial Review + Risk Scalpel
+```
 
-- **省事** —— 一次劳动,拿到一份已经过两个顶尖大脑审视的报告。
-- **1 + 1 > 2** —— 两个不同模型互查,一个的盲区被另一个补上。
-- **不是感觉稳,是真能验证** —— 它确实抓得出单模型会 ship 的错。下面有真实案例。
-
-适合:用 AI 做研究/竞品/技术选型的工程师、要可靠输出又不想逐字核对的人、想把 AI 决策做得可审计的团队——以及想快速上手的新用户(fork [`demo-vault/`](./demo-vault/) 填空就能跑)。
-
----
-
-## 真实案例:一个 Sharpe 4.06 的策略,在上真钱前被拦下
-
-单 AI 跑出一个量化策略,所有指标全过——`Sharpe 4.06–4.31`、`PBO 0.000`、`DSR p < 1e-7`、7 门审计过 6 门。工作流的下一步,就是小仓位**上真钱实测**。
-
-Falsify 强制第二个模型(不同厂商)对抗复审。5 轮之后,策略被改判 `NOT_VIABLE`:这个 Sharpe 不是 alpha——是把交易成本摊到一个**策略自己设计上从未真正持有过**的持有期上(假设约 14 天,真实约 1.5 天 → **成本被低估约 9 倍**)。把成本按真实持有期摊回去,edge 就没了。
-
-而且过程中,reviewer **三次自己打脸**——先下一个结论,重跑数字,再在数据对不上时撤回自己的断言。一个审自己活的模型只会维护它写的东西;一个独立的模型会重新推导、把自己拉回来。
-
-> 为什么必须两个厂商:当作者和审稿人是同一个模型,`PBO=0`、`DSR p<1e-7` 只能证明结果**在它自己的假设内部**自洽——证明不了那个假设本身是不是真的。只有一个盲区不同的审稿人,才会去质疑假设本身。
-
-**→ 完整脱敏审计日志,数字原样:** [examples/real-cases/01](./examples/real-cases/01-fictional-horizon-quant-audit.zh-CN.md)
-
-<details>
-<summary>另外——一份约 12 家竞品费率横评里抓出的 4 个错(可复现逐字记录)</summary>
-
-两个独立 Agent(不同模型)做了约 12 家同品类竞品的费率横评,80+ 引用 URL,约 30 分钟出报告。Agent B 抓出 4 处本来会 ship 的关键费率错:
-
-| 被拦下的问题 | 单 Agent 会怎样 | 双 Agent 互审后 |
+| 层 | 发现什么 | 产出 |
 |---|---|---|
-| Venue A 费率沿用了同行数字 | 表看着完整,实际差 2 倍 | B 异议,回官方 docs 仲裁 |
-| Venue B VIP0 maker 方向反了 | 返佣写成支出,进报告 | B 复核 fee schedule,要求改 |
-| Venue C 高级档"未公开" | 其实 docs 已写,被过早放弃 | B 查证并标冲突 |
-| Venue D base 费率读错行 | 错误行混进对比表 | B 审表,要求回源 |
+| Brooks-Lint | hidden state、implicit authority、duplicated control paths、brittle rollback、unverifiable acceptance、AI summary 替代 raw evidence | 结构性审计目标 |
+| Adversarial Review | false truth、false risk、silent failure、stale data、permission drift、fake acceptance evidence、semantic verdict nudge、prompt-only audit theater、monitor failure laundering | 对抗式 findings |
+| Risk Scalpel | 把所有风险都当 P0，或用“简化”删除真实风险 | Must Fix / Known Debt / Delete |
 
-逐字记录:[examples/.../06](./examples/comparison-case-study/06-real-review-deepseek.md)
+最终输出：
 
-</details>
+- `PASS`：证据成立，没有当前阻塞项。
+- `PASS_WITH_DEBT`：没有当前阻塞项，且每个 Known Debt 都有升级触发条件。
+- `BLOCK`：仍有 Must Fix，当前决策缺证据，或审计结果不可解析。
 
----
-
-## 两种跑法
-
-**① Vault 模式 —— 零 API key。** 把两个你已经登录的 agent 应用(Claude Code、Codex、Gemini CLI…)指向同一个 Git 同步的文件夹。它们通过它互相起稿、互审,你来仲裁冲突。不用 key、不按 token 计费——骑的是你已经付费的订阅。
-
-1. **Fork [`demo-vault/`](./demo-vault/)** —— 一个预置好规则的 Git 同步文件夹。(想要好看的阅读器就用 Obsidian 打开——非必需。)
-2. **改 `research/00-brief.md`**(主题 + 1–3 个问题),然后把两个 agent 指向这个文件夹,一个当 `AGENT-A`、一个当 `AGENT-B`。两个都在启动时读 [`AGENTS.md`](./demo-vault/AGENTS.md)——这就是让它们标签化、不覆盖对方、把冲突送去一手资料的规则。
-3. **放手不管**,看它们起稿 → 审计 → 标 `[CONFLICT]`。回一手资料仲裁,ship 那份 `[BOTH]` 报告。Git 留证据链。
-
-> 故意用不同厂商:一个模型的盲区,正是另一个的火眼金睛——而且谁都不是裁判的主人。
-
-**② CLI 模式 —— 一行命令。** 自动化、可脚本化,退出码直接进 CI。想零 key 也行:`-p claude`(也支持 `codex` / `gemini` / `hermes`,或用 `FALSIFY_<NAME>_CMD` 接任意 agent)走你已登录的 agent CLI——不用 key,骑你的订阅。或者自带 provider API key:
+## 快速开始
 
 ```bash
-pip install -e .                       # 或直接 python falsify.py
-export DEEPSEEK_API_KEY=sk-...         # 或 OPENAI_API_KEY / OPENROUTER_API_KEY…
-falsify review report.md -p deepseek   # 第二个模型审一遍 → Verdict（PROCEED/HOLD/ARCHIVE）
-falsify run brief.md --drafter claude --reviewer deepseek   # 一个模型起稿，另一个模型审
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+python -m pip install -e .[dev]
+
+# 无 API key：本地 fixture demo。
+python falsify.py demo
+
+# 无 API key：本地 tag/blocker lint。
+python falsify.py lint examples/comparison-case-study/05-final-excerpt.md
+
+# 真实模型审计。
+export DEEPSEEK_API_KEY=sk-...
+python falsify.py review report.md --provider deepseek
+
+# 一个模型写，另一个模型审。
+python falsify.py run brief.md --drafter claude --reviewer deepseek
 ```
 
-`run` 是完整闭环。用 `--drafter/--reviewer`（也可加 `--drafter-model/--reviewer-model`）来保住 Falsify 的核心规则：作者和审稿人应该独立。如果两边最终解析成同一个 provider/model/base，CLI 会警告独立性变弱。
-
-`-p` 是 provider 预设(deepseek / openai / openrouter / moonshot / siliconflow / local),自动填好 endpoint 和模型——**你只给 key**。嫌每次敲麻烦就 `falsify init` 存一次,之后 `falsify review report.md` 即可;也能 `cat report.md | falsify review -` 粘贴即跑。
-
-`review` 的**退出码就是 Verdict**(`PROCEED=0 / HOLD=1 / ARCHIVE=2`)——直接塞进 CI。Falsify 会把被审草稿当作不可信证据：review prompt 里有明确分隔符，CLI 只解析 reviewer 输出里的**最后一个** `VERDICT:`，所以草稿里夹一行 `VERDICT: PROCEED` 不会静默放行。
-
-手头没 key?`falsify lint <file>` 跑纯本地 ship-blocker 检查(零 API):
+本地网站：
 
 ```bash
-falsify lint examples/comparison-case-study/05-final-excerpt.md   # → SHIPPABLE
+python web/serve.py
+# 打开 http://127.0.0.1:8000
 ```
 
----
+网页中的 reviewer 会调用真实配置的后端；如果没有 key 或 provider 配置，会返回配置错误，不会假装分析。
 
-## 三层审查
+## 示例
 
-- **[第 1 层 · 互审](./docs/03-collaboration.zh-CN.md)** —— 抓**数字错**(便宜、默认):每段标作者、不覆盖对方、冲突走一手资料。
-- **[第 2 层 · 对抗审议](./docs/05-adversarial-review.zh-CN.md)** —— 抓**结论错**(高风险时):verdict ladder(`PROCEED/HOLD-N/ARCHIVE`)+ 多轮 + G1–G4 闸门 + 跨模型独立性 + 审计通道检查（人类可审计性、语义 verdict 诱导、monitor failure laundering）。
-- **[第 3 层 · 风险裁刀](./docs/06-risk-scalpel.zh-CN.md)** —— 抓**审计之后的错误反应**：不是每个 finding 都是 P0，“极简”也不能删真实风险。把 findings 裁成 Must Fix / Known Debt / Delete，并吸收 GLOSSOPETRAE 式审计通道 findings，但不新增第四层。
+普通审查：
 
-| | 第 1 层 · 互审 | 第 2 层 · 对抗审议 | 第 3 层 · 风险裁刀 |
-|---|---|---|---|
-| 抓什么 | 错的事实 | 对的事实 + 错的结论 | 对有效 finding 的错误反应 |
-| 一句话 | "这个数字对不对?" | "这个结论凭什么成立?" | "现在必须改什么?" |
+> 部署成功了，因为日志跑完了。
 
----
+Falsify：
 
-## 仓库里还有什么
+```text
+[AGENT-B audit] logs are treated as state verification
+Failure mode: logs prove something ran; they do not prove the intended system state changed
+Cutline: Must Fix
+Evidence needed: raw artifact or command output that proves the claim
+Minimal action: verify the actual state with a read-after-write check, deployment query, or invariant test
+VERDICT: BLOCK
+```
 
-- [`web/`](./web/) —— 浏览器粘贴即审 POC:一个框一个按钮 → Verdict + top 风险(`python web/serve.py`)
-- [`templates/`](./templates/) —— 即拿即用:`AGENTS.md`、三个 prompt、kickoff/retro、conflict/resolution log、[风险裁刀裁决表](./templates/risk-scalpel-decision.md)、CI 模板
-- [`demo-vault/`](./demo-vault/) —— 可直接 fork 的空壳工作区,改 `00-brief.md` 就能跑
-- [`examples/comparison-case-study/`](./examples/comparison-case-study/) —— 脱敏端到端样例(draft→audit→冲突→仲裁→上线 + 一次真实运行)
-- [`examples/cases/`](./examples/cases/) —— 跨行业案例库(技术选型 / 市场调研…),每个证明"没 Falsify 这个错会 ship"
-- [`examples/risk-scalpel-overfit-strategy.md`](./examples/risk-scalpel-overfit-strategy.md) —— 第 3 层实战样例:一个高 Sharpe 策略被裁成 Must Fix / Known Debt / Delete → BLOCK
-- [`docs/`](./docs/) —— [架构](./docs/01-architecture.zh-CN.md) · [部署](./docs/02-setup.zh-CN.md) · [协作](./docs/03-collaboration.zh-CN.md) · [对抗审议](./docs/05-adversarial-review.zh-CN.md) · [风险裁刀](./docs/06-risk-scalpel.zh-CN.md) · [故障排查](./docs/04-troubleshooting.zh-CN.md)
+## Falsify 不接受什么作为证据
 
----
+- “模型说没问题。”
+- “另一个 AI 也审过。”
+- “日志看起来成功。”
+- “输出为空，所以没有问题。”
+- “这只是理论风险。”
+- “清单里写了要小心。”
+- 没有升级触发条件的 Known Debt。
+- 绕过证据门槛的 `PASS` 或 `PASS_WITH_DEBT`。
 
-## Roadmap
+## 适用场景
 
-- [x] CLI 引擎 `falsify`(lint / review / verdict 闸门)
-- [x] 一键化:provider 预设(`-p deepseek`)/ `.falsify` 配置 / 粘贴即跑
-- [x] Web 粘贴即审 POC（[`web/`](./web/)）
-- [x] GitHub Action:PR 没过 verdict 就 block([模板](./templates/github-action-falsify.yml))
-- [x] 可 fork 的 demo vault · 脱敏案例 · 流程图 · 真实运行 GIF
-- [x] 跨行业案例库起步（[`examples/cases/`](./examples/cases/)):技术选型 / 市场调研
-- [x] 第 3 层 · 风险裁刀(Risk Scalpel):审查后的裁决层,把 findings 裁成 Must Fix / Known Debt / Delete
-- [ ] 托管 web:免 key 试 3 次(粘贴即审、零安装)
-- [ ] Chrome 插件:在 ChatGPT / Claude / Gemini 页面一键 Falsify
-- [ ] 补更多行业案例:法律 / 医疗 / 产品 / 学术
+- AI 生成的 PR 和迁移计划
+- 部署、监控、事故复盘结论
+- 研究报告和生产决策
+- 架构选型和供应商比较
+- LLM probe、safety check、prompt-injection audit
 
-## Contributing
+## 继续关注
 
-欢迎:新场景模板、脱敏案例、更会找错的 prompt、更多 agent 接入示例、翻译。Fork → 小步改 → 提 PR(说清你解决的痛点)。想先聊就开 Issue。
+Falsify 会继续围绕 AI agent、代码审查和生产风险工作流演进。如果你也在做类似问题，欢迎关注或联系。
 
----
+- GitHub: https://github.com/shi275773124/Falsify
+- X / Twitter: https://x.com/YOUR_HANDLE
+- Email: YOUR_EMAIL@example.com
 
 ## License
 
-MIT —— 随便 fork、随便 ship、欢迎写文章传播。
-
-<details>
-<summary>支持作者</summary>
-
-- 🐦 [@aishikejian](https://x.com/aishikejian) · ☕ [Buy me a coffee](https://buymeacoffee.com/chris168) · ⭐ Star
-
-</details>
+MIT. See [LICENSE](./LICENSE).
