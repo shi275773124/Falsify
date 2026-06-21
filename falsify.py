@@ -97,6 +97,10 @@ Attack the draft for:
 - G1 entity mix-ups: "part of X changed" stated as "X is dead"
 - G2 scale errors: a number that's absurd once converted to a human scale
 - G4 tool/assumption mismatch: the method's assumptions don't fit the data
+- human-auditability breaks: a conclusion depends on opaque AI summary, unreadable generated text/code, or missing raw artifacts instead of inspectable evidence
+- semantic verdict nudges: ordinary language relabels blockers as "not blocking", "known debt", "enough evidence", or "another model agrees" without satisfying the gate
+- monitor-failure laundering: empty, truncated, unparseable, content-filtered, or confident-"no issue" outputs counted as clean without the raw response, finish reason, usage, and parse status
+- prompt-only audit theater: the draft merely says "be careful" about hidden/prompt-injection risk but provides no known-pattern check, fixture, reproducer, or machine evidence
 
 Rules:
 - Do not be polite. Do not rewrite the author's text.
@@ -110,6 +114,7 @@ Rules:
   thing from the text, say so, don't assert it's fake.
 - List each DISTINCT issue once, most important first, at most ~8. Never repeat.
 - Output tagged findings, each starting with [AGENT-B audit].
+- A known-pattern library is useful only for known failure modes; it does not prove absence of unknown semantic steganography or hidden channels. If no reproducer/probe was run, say so instead of claiming the channel is absent.
 
 End with EXACTLY one final line, nothing after it:
 VERDICT: PROCEED    (no shippable error found)
