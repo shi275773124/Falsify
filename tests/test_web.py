@@ -109,6 +109,26 @@ def test_homepage_quote_attribution_and_avatar():
     assert "applyLang();" in serve.PAGE
 
 
+def test_homepage_hero_layers_section():
+    assert 'class="hero-layers"' in serve.PAGE
+    assert 'id="layers"' in serve.PAGE
+    assert serve.PAGE.index('class="quote"') < serve.PAGE.index('class="hero-layers"')
+    assert serve.PAGE.index('class="hero-layers"') < serve.PAGE.index('class="evidence"')
+    assert 'data-i18n="hero_layers_hook"' in serve.PAGE
+    assert 'data-i18n="hero_layers_l1_tag"' in serve.PAGE
+    assert 'data-i18n="hero_layers_l3_body"' in serve.PAGE
+    assert "AI made fake proof cheap." in serve.PAGE
+    assert "AI 让假证明变便宜了。" in serve.PAGE
+    assert "hidden state, authority drift, missing rollback." in serve.PAGE
+    assert "隐式状态、越权路径、回滚缺失。" in serve.PAGE
+    assert "false facts, fake acceptance, audit theater." in serve.PAGE
+    assert "假事实、假验收、审计作秀。" in serve.PAGE
+    assert "Three verdicts only." in serve.PAGE
+    assert "走完，只落三档裁决。" in serve.PAGE
+    assert "「日志绿了，不等于证据成立。我们不再假装它算数。」" in serve.PAGE
+    assert '"Green logs aren\'t proof. We stopped pretending they were."' in serve.PAGE
+
+
 def test_homepage_workbench_partial_scope_copy():
     assert 'data-i18n="workbench_scope"' in serve.PAGE
     assert "not machine-enforced Frame Audit" in serve.PAGE
