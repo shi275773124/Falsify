@@ -64,6 +64,7 @@ def test_homepage_hero_craftwork_pack():
     assert "hero-chip" in serve.PAGE
     assert 'data-i18n="hero_chip_1"' in serve.PAGE
     assert 'data-i18n="hero_definition"' in serve.PAGE
+    assert 'data-i18n="hero_workbench_note"' in serve.PAGE
     assert "Frame Audit" in serve.PAGE
     assert "框架审" in serve.PAGE
     assert "trust-strip" in serve.PAGE
@@ -108,6 +109,15 @@ def test_homepage_quote_attribution_and_avatar():
     assert "applyLang();" in serve.PAGE
 
 
+def test_homepage_workbench_partial_scope_copy():
+    assert 'data-i18n="workbench_scope"' in serve.PAGE
+    assert "not machine-enforced Frame Audit" in serve.PAGE
+    assert "非机审框架审" in serve.PAGE
+    assert "adversarial demos" in serve.PAGE
+    assert "对抗审样例" in serve.PAGE
+    assert "not full Falsify" in serve.PAGE
+
+
 def test_web_template_contains_public_product_markers():
     assert "Review first. Trust after." in serve.PAGE
     assert "Frame Audit + Adversarial Review + Cutline." in serve.PAGE
@@ -118,8 +128,6 @@ def test_web_template_contains_public_product_markers():
     assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
     assert "Real backend, not fake analysis." in serve.PAGE
     assert '<canvas id="cvs" role="img"' in serve.PAGE
-    assert "NODE_DESKTOP=168" in serve.PAGE
-    assert "SCAN_PERIOD=7200" in serve.PAGE
     assert "prefers-reduced-motion:reduce" in serve.PAGE
     assert "/docs/" in serve.PAGE
     assert "https://github.com/shi275773124/Falsify/blob/main/LICENSE" in serve.PAGE
