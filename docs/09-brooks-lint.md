@@ -32,7 +32,7 @@ Evidence needed:
 Current decision affected:
 ```
 
-If the current decision relies on the missing evidence, pass the item to Risk Scalpel as `Must Fix`.
+If the current decision relies on the missing evidence, pass the item to Cutline / 风险裁刀 as `Must Fix`.
 
 If the issue is real but not blocking the current phase, classify it as `Known Debt` with an upgrade trigger.
 

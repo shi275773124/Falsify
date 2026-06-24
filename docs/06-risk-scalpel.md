@@ -1,12 +1,12 @@
-# 06. Risk Scalpel (Layer 3)
+# 06. Cutline / 风险裁刀 (Layer 3)
 
-Current public verdicts are `PASS`, `PASS_WITH_DEBT`, and `BLOCK`. Risk Scalpel classifications remain `Must Fix`, `Known Debt`, and `Delete`.
+Current public verdicts are `PASS`, `PASS_WITH_DEBT`, and `BLOCK`. Cutline / 风险裁刀 classifications remain `Must Fix`, `Known Debt`, and `Delete`.
 
 [中文](./06-risk-scalpel.zh-CN.md) · [Back to README](../README.md)
 
-**This is Layer 3.** [Layer 1 — peer review](./03-collaboration.md) catches wrong facts. [Layer 2 — adversarial review](./05-adversarial-review.md) catches wrong conclusions. **Risk Scalpel catches the failure after a good review: turning every finding into a P0, or deleting real risks in the name of simplicity.**
+**This is Layer 3.** [Layer 1 — peer review](./03-collaboration.md) catches wrong facts. [Layer 2 — adversarial review](./05-adversarial-review.md) catches wrong conclusions. **Cutline / 风险裁刀 catches the failure after a good review: turning every finding into a P0, or deleting real risks in the name of simplicity.**
 
-Falsify finds what can go wrong. Risk Scalpel decides what must change now.
+Falsify finds what can go wrong. Cutline / 风险裁刀 decides what must change now.
 
 ---
 
@@ -17,7 +17,7 @@ A strong adversarial review can produce ten good findings. Two bad things then h
 1. **Patch bloat** — every finding becomes urgent, the first version never ships.
 2. **False simplicity** — the team says “cut scope” and quietly deletes real risks.
 
-Risk Scalpel is the decision layer between review findings and implementation work.
+Cutline / 风险裁刀 is the decision layer between review findings and implementation work.
 
 It does not erase risk facts. It only decides whether a risk blocks the current deliverable.
 
@@ -27,7 +27,7 @@ It does not erase risk facts. It only decides whether a risk blocks the current 
 
 ```text
 Adversarial review produces failure modes.
-Risk Scalpel cuts scope, not risk facts.
+Cutline / 风险裁刀 cuts scope, not risk facts.
 ```
 
 Every finding is rewritten as:
@@ -145,7 +145,7 @@ Adversarial review finds:
 The proposed system has no full JSON schema.
 ```
 
-Risk Scalpel rewrites it:
+Cutline / 风险裁刀 rewrites it:
 
 ```text
 Finding: no full JSON schema.
@@ -176,7 +176,7 @@ Minimal action: define field names, units, signs, missing-data policy, and schem
 - **Reviewer owns the roadmap** — adversarial findings are attack surface, not automatic requirements.
 - **“Minimal” deletes risk facts** — cut implementation scope, not the record of what can go wrong.
 - **Debt without trigger** — this is just a hidden backlog.
-- **Project-management creep** — Risk Scalpel is one table and one verdict, not a planning system.
+- **Project-management creep** — Cutline / 风险裁刀 is one table and one verdict, not a planning system.
 - **Action leakage** — an evidence layer should not quietly become an action recommendation layer.
 
 ---
@@ -186,7 +186,7 @@ Minimal action: define field names, units, signs, missing-data policy, and schem
 ```text
 Layer 1 · Peer Review        → wrong facts / wrong numbers
 Layer 2 · Adversarial Review → right facts, wrong conclusion
-Layer 3 · Risk Scalpel       → review aftermath: Must Fix / Known Debt / Delete
+Layer 3 · Cutline / 风险裁刀       → review aftermath: Must Fix / Known Debt / Delete
 ```
 
 Use Layer 3 after Layer 2, after a code-decay review, or after any serious audit that returns more findings than can safely become immediate work.

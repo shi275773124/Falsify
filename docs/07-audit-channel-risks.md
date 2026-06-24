@@ -1,6 +1,6 @@
 # Audit-Channel Risks
 
-Audit-channel risks are failures in the review path itself. Falsify treats them as normal findings and cuts them through Risk Scalpel. They do not create a fourth layer.
+Audit-channel risks are failures in the review path itself. Falsify treats them as normal findings and cuts them through Cutline / 风险裁刀. They do not create a fourth layer.
 
 ## Human-auditability breaks
 

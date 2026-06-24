@@ -1,9 +1,9 @@
-<!-- Illustrative Risk Scalpel decision. Sanitized, generic — no real entity.
+<!-- Illustrative Cutline / 风险裁刀 decision. Sanitized, generic — no real entity.
      Shows how Layer 3 cuts existing review findings into Must Fix / Known Debt /
      Delete and issues a Final Cut. The findings are assumed to come from Layer 1 /
-     Layer 2 (or any review); Risk Scalpel does not generate them, it decides. -->
+     Layer 2 (or any review); Cutline / 风险裁刀 does not generate them, it decides. -->
 
-# Risk Scalpel example: high Sharpe, low trust
+# Cutline / 风险裁刀 example: high Sharpe, low trust
 
 A research write-up claims a trading strategy with a backtested **Sharpe ≈ 4.0** —
 on paper, strong enough to promote. Peer Review (Layer 1) and Adversarial Review
@@ -11,7 +11,7 @@ on paper, strong enough to promote. Peer Review (Layer 1) and Adversarial Review
 treat every finding as a TODO and start "fixing" — building dashboards, wiring up
 automation, planning a paper-trading rollout.
 
-That is exactly the scope explosion Risk Scalpel exists to stop. The job here is not
+That is exactly the scope explosion Cutline / 风险裁刀 exists to stop. The job here is not
 to find more — it is to **decide**: of what was found, what must be fixed now, what is
 real-but-not-blocking debt, and what should simply be deleted from the current scope.
 
@@ -33,7 +33,7 @@ real-but-not-blocking debt, and what should simply be deleted from the current s
 
 ---
 
-# Risk Scalpel Decision
+# Cutline / 风险裁刀 Decision
 
 ## Object
 
@@ -86,9 +86,9 @@ The strategy is **not deleted as an idea** — the *risk facts* (a high in-sampl
 worth investigating) stay on the books. What gets cut is the *current action*: it is
 allowed to continue **only as research-only follow-up**, behind the three Must Fix
 gates. If, and only if, N_eff is defined, robustness holds, and an out-of-sample run
-survives, this becomes **PASS_WITH_CONDITIONS** for a small, reversible next step —
+survives, this becomes **PASS_WITH_DEBT** for a small, reversible next step —
 never a straight PASS off the back of the in-sample number.
 
 > The single-model failure here is not "missing a bug." It is treating a stack of
-> findings as a to-do list and engineering around an unvalidated edge. Risk Scalpel's
+> findings as a to-do list and engineering around an unvalidated edge. Cutline / 风险裁刀's
 > only move is the cut: **fix the validity, hold the debt, delete the theater.**
