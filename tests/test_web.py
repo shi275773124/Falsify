@@ -201,3 +201,37 @@ def test_static_traversal_is_rejected():
     handler = make_handler("/docs/../LICENSE")
     handler.do_GET()
     assert handler.status_code == 404
+
+
+def test_head_root_returns_200():
+    handler = make_handler("/")
+    handler.command = "HEAD"
+    handler.do_HEAD()
+    assert handler.status_code == 200
+
+
+def test_head_docs_markdown_returns_200():
+    handler = make_handler("/docs/00-getting-started.md")
+    handler.command = "HEAD"
+    handler.do_HEAD()
+    assert handler.status_code == 200
+
+
+def test_homepage_open_core_licensing_section():
+    assert 'id="licensing"' in serve.PAGE
+    assert 'data-i18n="licensing_tag"' in serve.PAGE
+    assert 'data-i18n="licensing_p"' in serve.PAGE
+    assert "/docs/12-open-core-boundary.md" in serve.PAGE
+    assert "MIT (core)" in serve.PAGE
+    assert "MIT（核心）" in serve.PAGE
+    assert "Self-hosted · unlimited repos" in serve.PAGE
+    assert "自托管 · 仓库不限" in serve.PAGE
+    assert "Hosted org policy" in serve.PAGE
+    assert "托管组织 policy" in serve.PAGE
+    assert "Shared review templates" not in serve.PAGE
+
+
+def test_render_verdict_shows_upgrade_trigger():
+    assert "upgrade_trigger" in serve.PAGE
+    assert "Upgrade trigger:" in serve.PAGE
+    assert "升级触发：" in serve.PAGE

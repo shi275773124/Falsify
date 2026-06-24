@@ -2,6 +2,8 @@
 
 > **先审，再信。**
 
+> **Open core：** 协议、CLI、模板与 JSON schema 为 [MIT](./LICENSE)。Team 版覆盖托管治理、报告留存与企业集成 — 不包含协议本身。详见 [Open Core 边界](./docs/12-open-core-boundary.md)。
+
 Falsify 是面向 AI 时代工作的**决策闸门（decision gate）**：用于代码、研究与生产决策的对抗式审查。
 
 它强制让决策回到底层证据，并将风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
@@ -125,6 +127,21 @@ VERDICT: BLOCK
 - 研究报告和生产决策
 - 架构选型和供应商比较
 - LLM probe、safety check、prompt-injection audit
+
+## OSS PR gate（自托管）
+
+**快速路径：** [5 分钟安装 GitHub Action](./docs/14-github-action-install.md)
+
+自托管 PR 闸门 — 将 MIT 工作流模板复制到你的仓库：
+
+- 复制 `templates/github-action-pr-review-prototype.yml`
+- 粘贴为 `.github/workflows/falsify-pr-review.yml`
+- （可选）从 `templates/falsify-policy.yml` 添加 `.falsify/policy.yml`
+- 设置可选 secrets 以启用真模型审查：`FALSIFY_API_BASE`、`FALSIFY_API_KEY`、`FALSIFY_MODEL`
+
+无 secrets 时仍运行 lint 并发布评论（咨询模式；真审查显式跳过，不会伪装成 PASS_WITH_DEBT）。
+
+**边界：** 托管 Team 功能（组织 policy UI、留存存储、托管 GitHub App）与本 OSS 模板分离。详见 [Open Core 边界](./docs/12-open-core-boundary.md)。
 
 ## 继续关注
 
