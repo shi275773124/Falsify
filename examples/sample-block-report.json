@@ -1,0 +1,31 @@
+{
+  "schema_version": "falsify.review.v1",
+  "verdict": "BLOCK",
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "severity": "high",
+      "issue": "Logs are treated as state verification — no read-after-write probe attached.",
+      "minimal_action": "Add post-deploy probe output and rollback command to the report.",
+      "upgrade_trigger": ""
+    },
+    {
+      "cutline": "Delete",
+      "severity": "low",
+      "issue": "Another AI reviewed it — not evidence.",
+      "minimal_action": "Remove from acceptance chain.",
+      "upgrade_trigger": ""
+    }
+  ],
+  "meta": {
+    "provider": "example",
+    "model": "sample",
+    "target": "reports/deploy.md",
+    "reviewed_at": "2026-06-24T00:00:00Z",
+    "strict_known_debt_trigger": false,
+    "validation": {
+      "ok": true,
+      "errors": []
+    }
+  }
+}
