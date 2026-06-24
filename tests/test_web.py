@@ -63,14 +63,34 @@ def test_homepage_hero_craftwork_pack():
     assert "hero-chips" in serve.PAGE
     assert "hero-chip" in serve.PAGE
     assert 'data-i18n="hero_chip_1"' in serve.PAGE
+    assert 'data-i18n="hero_definition"' in serve.PAGE
+    assert "Frame Audit" in serve.PAGE
+    assert "框架审" in serve.PAGE
     assert "trust-strip" in serve.PAGE
     assert 'data-i18n="trust_github"' in serve.PAGE
     assert 'data-i18n="trust_schema"' in serve.PAGE
+    assert 'data-i18n="trust_byok"' in serve.PAGE
     assert 'href="#demo"' in serve.PAGE
     assert 'data-i18n="btn_run_sample_hero"' in serve.PAGE
     assert "preview-must-fix" in serve.PAGE
     assert "evidence-tag" in serve.PAGE
     assert "falsify.review.v1" in serve.PAGE
+
+
+def test_homepage_antipattern_section():
+    assert 'id="not-falsify"' in serve.PAGE
+    assert 'data-i18n="antipattern_h2"' in serve.PAGE
+    assert 'data-i18n="ap_1"' in serve.PAGE
+    assert 'data-i18n="ap_2"' in serve.PAGE
+    assert 'data-i18n="ap_3"' in serve.PAGE
+    assert "Cutline-only ≠ full Falsify" in serve.PAGE
+    assert "只有 Cutline ≠ 完整 Falsify" in serve.PAGE
+
+
+def test_homepage_cutline_philosophy():
+    assert 'data-i18n="rs_lead"' in serve.PAGE
+    assert "Decides what blocks now" in serve.PAGE
+    assert "决定当下什么阻塞" in serve.PAGE
 
 
 def test_homepage_quote_attribution_and_avatar():
@@ -91,6 +111,8 @@ def test_homepage_quote_attribution_and_avatar():
 def test_web_template_contains_public_product_markers():
     assert "Review first. Trust after." in serve.PAGE
     assert "Frame Audit + Adversarial Review + Cutline." in serve.PAGE
+    assert "Full Falsify = Frame Audit + Adversarial Review + Cutline." in serve.PAGE
+    assert "完整 Falsify = 框架审 + 对抗审 + Cutline" in serve.PAGE
     for phrase in REQUIRED_PUBLIC_COPY:
         assert phrase in serve.PAGE
     assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
