@@ -1,4 +1,4 @@
-# Risk Scalpel Decision
+# Cutline / 风险裁刀 Decision
 
 > The post-review **decision** step. It does not generate more findings — it takes
 > the findings you already have and cuts each one into **Must Fix / Known Debt /
@@ -12,7 +12,7 @@
 
 ## Findings Source
 
-<!-- Where the findings came from. Risk Scalpel is source-agnostic. -->
+<!-- Where the findings came from. Cutline / 风险裁刀 is source-agnostic. -->
 
 - [ ] Peer Review (Layer 1)
 - [ ] Adversarial Review (Layer 2)
@@ -53,10 +53,10 @@
 
 <!-- Can the current phase proceed? -->
 
-**Verdict:** <!-- PASS | PASS_WITH_CONDITIONS | BLOCK -->
+**Verdict:** <!-- PASS | PASS_WITH_DEBT | BLOCK -->
 
 - **PASS** — no Must Fix open.
-- **PASS_WITH_CONDITIONS** — proceeds only with the listed Must Fix done / Known Debt accepted.
+- **PASS_WITH_DEBT** — proceeds only with the listed Must Fix done / Known Debt accepted.
 - **BLOCK** — at least one Must Fix is open and unmitigated.
 
 Conditions / notes:
