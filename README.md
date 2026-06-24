@@ -1,10 +1,10 @@
 # Falsify
 
-> **Stop trusting confident AI.**
+> **Review first. Trust after.**
 
-Falsify is a **decision gate for AI-era work** across code, research, and production decisions.
+Falsify is the **decision gate for AI-era work**: adversarial review for code, research, and production decisions.
 
-It attacks false confidence, forces evidence, and cuts every risk into **Must Fix**, **Known Debt**, or **Delete**.
+It forces decisions to bottom out in evidence and cuts risk into **Must Fix**, **Known Debt**, or **Delete**.
 
 Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise.
 
