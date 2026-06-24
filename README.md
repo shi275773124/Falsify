@@ -2,6 +2,8 @@
 
 > **Review first. Trust after.**
 
+> **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md).
+
 Falsify is the **decision gate for AI-era work**: adversarial review for code, research, and production decisions.
 
 It forces decisions to bottom out in evidence and cuts risk into **Must Fix**, **Known Debt**, or **Delete**.
@@ -137,11 +139,11 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 - [Open Core boundary](./docs/12-open-core-boundary.md)
 - [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
 
-## Team rollout prototype
+## OSS PR gate (self-hosted)
 
 **Fast path:** [Install GitHub Action in 5 minutes](./docs/14-github-action-install.md)
 
-Use the PR workflow prototype to get verdict comments on changed decision docs:
+Self-hosted PR gate — copy the MIT workflow template into your repo:
 
 - Copy `templates/github-action-pr-review-prototype.yml`
 - Paste as `.github/workflows/falsify-pr-review.yml` in your target repo
@@ -151,9 +153,11 @@ Use the PR workflow prototype to get verdict comments on changed decision docs:
   - `FALSIFY_API_KEY`
   - `FALSIFY_MODEL`
 
-Without secrets, lint still runs and comments are posted (advisory mode).
+Without secrets, lint still runs and comments are posted (advisory mode; live review is explicitly skipped, not faked as PASS_WITH_DEBT).
 The workflow defaults to strict debt hygiene in JSON mode:
 `FALSIFY_STRICT_KNOWN_DEBT_TRIGGER=1` (Known Debt without trigger becomes BLOCK).
+
+**Boundary:** Hosted Team features (org policy UI, retention store, managed GitHub App) are separate from this OSS template. See [Open Core boundary](./docs/12-open-core-boundary.md).
 
 ## Follow the work
 

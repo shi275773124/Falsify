@@ -76,7 +76,7 @@ Re-run the PR workflow. Live `falsify review --json` will run when the key exist
 
 ## Step 4 — (Optional) Add policy file (1 min)
 
-Add team policy contract:
+Add repo policy file (OSS):
 
 ```text
 .falsify/policy.yml
