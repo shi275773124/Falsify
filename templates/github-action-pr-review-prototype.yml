@@ -1,0 +1,217 @@
+name: falsify-pr-review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  falsify:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_GLOBS: "reports/**/*.md research/**/*.md"
+      FALSIFY_API_BASE: ${{ secrets.FALSIFY_API_BASE }}
+      FALSIFY_API_KEY: ${{ secrets.FALSIFY_API_KEY }}
+      FALSIFY_MODEL: ${{ secrets.FALSIFY_MODEL }}
+      FALSIFY_STRICT_KNOWN_DEBT_TRIGGER: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install Falsify
+        run: |
+          python -m pip install --upgrade pip
+          pip install "git+https://github.com/shi275773124/Falsify.git"
+
+      - name: Collect changed markdown targets
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${{ github.event.pull_request.base.sha }}"
+          if [[ -z "${base:-}" ]]; then
+            base="$(git rev-parse HEAD~1)"
+          fi
+          files="$(git diff --name-only "$base"...HEAD -- $TARGET_GLOBS | grep -E '\.md$' || true)"
+          {
+            echo "files<<EOF"
+            echo "$files"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build falsify-report artifacts
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          files="${{ steps.changed.outputs.files }}"
+          printf '%s\n' "$files" > changed_files.txt
+
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          from pathlib import Path
+
+          files = [x.strip() for x in Path("changed_files.txt").read_text(encoding="utf-8").splitlines() if x.strip()]
+          report = {
+              "schema_version": "falsify.report.v0.1",
+              "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+              "overall": {"verdict": "PASS", "blocked_items": 0},
+              "files": [],
+          }
+
+          for f in files:
+              lint = subprocess.run(["falsify", "lint", f], text=True, capture_output=True)
+              lint_ok = lint.returncode == 0
+
+              if os.environ.get("FALSIFY_API_KEY"):
+                  cmd = ["falsify", "review", f, "--json"]
+                  if os.environ.get("FALSIFY_STRICT_KNOWN_DEBT_TRIGGER", "1") == "1":
+                      cmd.append("--strict-known-debt-trigger")
+                  review = subprocess.run(cmd, text=True, capture_output=True)
+                  review_raw = review.stdout.strip() or "{}"
+                  try:
+                      review_obj = json.loads(review_raw)
+                  except json.JSONDecodeError:
+                      review_obj = {
+                          "schema_version": "falsify.review.v1",
+                          "verdict": "BLOCK",
+                          "findings": [],
+                          "raw_review": review_raw or review.stderr[:2000],
+                          "meta": {"provider": "", "model": "", "target": f, "reviewed_at": ""},
+                      }
+                  review_ok = review.returncode == 0
+              else:
+                  review_obj = {
+                      "schema_version": "falsify.review.v1",
+                      "verdict": "PASS_WITH_DEBT",
+                      "findings": [],
+                      "raw_review": "live review skipped: missing API key",
+                      "meta": {"provider": "", "model": "", "target": f, "reviewed_at": ""},
+                  }
+                  review_ok = True
+
+              verdict = review_obj.get("verdict", "BLOCK")
+              report["files"].append({
+                  "path": f,
+                  "lint_ok": lint_ok,
+                  "review": review_obj,
+              })
+
+              if (not lint_ok) or (verdict == "BLOCK") or (not review_ok):
+                  report["overall"]["verdict"] = "BLOCK"
+                  report["overall"]["blocked_items"] += 1
+              elif report["overall"]["verdict"] != "BLOCK" and verdict == "PASS_WITH_DEBT":
+                  report["overall"]["verdict"] = "PASS_WITH_DEBT"
+
+          if not files:
+              report["overall"]["verdict"] = "PASS"
+
+          Path("falsify-report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
+          lines = [f"## Falsify Verdict: {report['overall']['verdict']}", ""]
+          if not files:
+              lines.append("_No target files changed._")
+          for item in report["files"]:
+              lines.append(f"### `{item['path']}`")
+              lines.append(f"- lint: {'✅' if item['lint_ok'] else '❌'}")
+              rv = item["review"].get("verdict", "BLOCK")
+              lines.append(f"- review: `{rv}`")
+              findings = item["review"].get("findings", [])
+              if findings:
+                  grouped = {"Must Fix": [], "Known Debt": [], "Delete": []}
+                  for x in findings:
+                      grouped.setdefault(x.get("cutline", "Known Debt"), []).append(x)
+                  for cut in ("Must Fix", "Known Debt", "Delete"):
+                      if not grouped.get(cut):
+                          continue
+                      lines.append("")
+                      lines.append(f"#### {cut}")
+                      for x in grouped[cut]:
+                          lines.append(f"- {x.get('issue', '')}")
+                          if x.get("evidence_gap"):
+                              lines.append(f"  - Evidence needed: {x.get('evidence_gap')}")
+                          if x.get("minimal_action"):
+                              lines.append(f"  - Minimal action: {x.get('minimal_action')}")
+                          if x.get("upgrade_trigger"):
+                              lines.append(f"  - Upgrade trigger: {x.get('upgrade_trigger')}")
+              lines.append("")
+
+          lines.append("### Final")
+          v = report["overall"]["verdict"]
+          if v == "BLOCK":
+              lines.append("Merge blocked until Must Fix items are resolved.")
+          elif v == "PASS_WITH_DEBT":
+              lines.append("Gate passed with debt. Track upgrade triggers.")
+          else:
+              lines.append("Gate passed.")
+          Path("falsify-report.md").write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
+
+          print(f"VERDICT={v}")
+          PY
+
+          verdict="$(python -c "import json; print(json.load(open('falsify-report.json',encoding='utf-8'))['overall']['verdict'])")"
+          echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<EOF"
+            cat falsify-report.md
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload report artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: falsify-report
+          path: |
+            falsify-report.json
+            falsify-report.md
+
+      - name: Comment summary on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${{ toJSON(steps.report.outputs.summary) }}`;
+            const marker = "<!-- falsify-pr-summary -->";
+            const finalBody = `${marker}\n${body}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100
+            });
+            const prev = comments.find(c => c.body && c.body.includes(marker));
+            if (prev) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: prev.id,
+                body: finalBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: finalBody
+              });
+            }
+
+      - name: Fail job on BLOCK
+        if: ${{ steps.report.outputs.verdict == 'BLOCK' }}
+        run: |
+          echo "Falsify gate blocked this PR."
+          exit 1
+
