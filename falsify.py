@@ -1,8 +1,8 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """falsify: adversarial review for AI-era work.
 
 Point it at an AI-written draft; a skeptic reviewer attacks confident claims,
-forces evidence, classifies each finding through Risk Scalpel, and returns:
+forces evidence, classifies each finding through Cutline / 风险裁刀, and returns:
 
     PASS             evidence holds; no blocker
     PASS_WITH_DEBT   no blocker, but Known Debt has an upgrade trigger
@@ -42,6 +42,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -358,6 +359,84 @@ def parse_verdict(text):
     return LEGACY_VERDICTS.get(v, v)
 
 
+def severity_for_cutline(cutline):
+    if cutline == "Must Fix":
+        return "high"
+    if cutline == "Known Debt":
+        return "medium"
+    return "low"
+
+
+def parse_findings(text):
+    """Best-effort parser for tagged audit findings.
+
+    Expected finding block shape:
+      [AGENT-B audit] <issue>
+      Cutline: Must Fix|Known Debt|Delete
+      Evidence needed: ...
+      Minimal action: ...
+      Upgrade trigger: ...   (optional / required for Known Debt)
+    """
+    findings = []
+    blocks = [b.strip() for b in re.split(r"\n\s*\n", text) if "[AGENT-B" in b]
+    for b in blocks:
+        m_issue = re.search(r"\[AGENT-B[^\]]*\]\s*(.+)", b)
+        m_cut = re.search(r"Cutline:\s*(Must Fix|Known Debt|Delete)", b)
+        m_gap = re.search(r"Evidence needed:\s*(.+)", b)
+        m_min = re.search(r"Minimal action:\s*(.+)", b)
+        m_upg = re.search(r"Upgrade trigger:\s*(.+)", b)
+        if not (m_issue and m_cut):
+            continue
+        cutline = m_cut.group(1).strip()
+        findings.append({
+            "severity": severity_for_cutline(cutline),
+            "cutline": cutline,
+            "issue": m_issue.group(1).strip(),
+            "evidence_gap": (m_gap.group(1).strip() if m_gap else ""),
+            "minimal_action": (m_min.group(1).strip() if m_min else ""),
+            "upgrade_trigger": (m_upg.group(1).strip() if m_upg else ""),
+        })
+    return findings
+
+
+def review_json_payload(audit, verdict, args):
+    provider = getattr(args, "provider", None) or setting("FALSIFY_PROVIDER") or ""
+    model = getattr(args, "model", None) or setting("FALSIFY_MODEL") or ""
+    findings = parse_findings(audit)
+    validation_errors = []
+    for i, f in enumerate(findings):
+        if f.get("cutline") == "Known Debt" and not f.get("upgrade_trigger", "").strip():
+            validation_errors.append({
+                "type": "known_debt_missing_upgrade_trigger",
+                "message": "Known Debt item must include upgrade_trigger.",
+                "finding_index": i,
+                "issue": f.get("issue", ""),
+            })
+
+    strict = bool(getattr(args, "strict_known_debt_trigger", False))
+    effective_verdict = verdict
+    if strict and validation_errors:
+        effective_verdict = "BLOCK"
+
+    return {
+        "schema_version": "falsify.review.v1",
+        "verdict": effective_verdict,
+        "findings": findings,
+        "raw_review": audit,
+        "meta": {
+            "provider": provider,
+            "model": model,
+            "target": getattr(args, "file", ""),
+            "reviewed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "strict_known_debt_trigger": strict,
+            "validation": {
+                "ok": len(validation_errors) == 0,
+                "errors": validation_errors,
+            },
+        },
+    }
+
+
 def review_prompt(*blocks, instructions="Audit this draft. Find what would ship wrong."):
     """Fence draft text in delimiters the draft itself cannot forge: the tag
     carries a per-call random suffix, so a literal <<<END FALSIFY_DRAFT>>>
@@ -579,6 +658,11 @@ def cmd_review(args):
     if args.out:
         Path(args.out).write_text(out, encoding="utf-8")
         print(f"[audit written to {args.out}]", file=sys.stderr)
+    if getattr(args, "json", False):
+        verdict = parse_verdict(out) or "BLOCK"
+        payload = review_json_payload(out, verdict, args)
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        sys.exit(EXIT[payload["verdict"]])
     finish(out)
 
 
@@ -648,6 +732,10 @@ def main():
     pr = sub.add_parser("review", help="skeptic reviewer attacks a draft -> Verdict")
     pr.add_argument("file", help="file path, or - for stdin")
     pr.add_argument("-o", "--out", help="write the audit to a file")
+    pr.add_argument("--json", action="store_true",
+                    help="emit stable JSON payload (schema: falsify.review.v1)")
+    pr.add_argument("--strict-known-debt-trigger", action="store_true",
+                    help="when used with --json, downgrade to BLOCK if any Known Debt lacks upgrade_trigger")
     pr.add_argument("--against", metavar="GIT_REF",
                     help="also flag unexplained reversals vs this earlier version (e.g. HEAD~1)")
     pr.add_argument("--dry-run", action="store_true")
