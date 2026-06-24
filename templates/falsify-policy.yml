@@ -1,0 +1,47 @@
+# Falsify policy (Team MVP)
+#
+# This file is meant to live in the target repo (the repo you want to gate):
+#   .falsify/policy.yml
+#
+# The GitHub Action reads it to decide:
+# - which files to scan
+# - whether to run live model-backed review
+# - limits to avoid token blowups
+
+version: falsify-policy-v0.1
+
+targets:
+  # What files count as "decisions" worth gating?
+  #
+  # Keep this tight. Do NOT point at your whole repo.
+  globs:
+    - "reports/**/*.md"
+    - "research/**/*.md"
+
+limits:
+  # Hard cap to prevent PRs from pasting huge text and blowing tokens.
+  max_file_bytes: 120000   # ~120 KB per file
+  max_files_per_pr: 12
+
+gates:
+  # Always run lint gate (no API needed).
+  lint: true
+
+  # Live review gate requires BYOK secrets. Default should be safe:
+  # - if key is missing: skip live review (advisory mode)
+  # - if key exists: run review and enforce verdict
+  live_review:
+    enabled_when_api_key_present: true
+    enforce_verdict: true   # if true, BLOCK fails the check
+
+output:
+  # What to publish for audit trail.
+  artifacts:
+    json: true
+    markdown: true
+
+  # PR comment mode: update the same comment each run.
+  pr_comment:
+    enabled: true
+    marker: "<!-- falsify-pr-summary -->"
+
