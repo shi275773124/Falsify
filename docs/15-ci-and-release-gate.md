@@ -8,6 +8,8 @@ This repo treats **green tests** as a hard gate for merge and release.
 
 Enable branch protection on `main` and require:
 
+> **Status (2026-06-24):** `main` branch protection is live via GitHub API — merges require green **`falsify / test-suite`**.
+
 | Check name | Workflow | Job |
 |---|---|---|
 | `falsify / test-suite` | `.github/workflows/falsify.yml` | `test-suite` |
@@ -20,7 +22,7 @@ python -m pip install -e '.[dev]'
 python -m pytest tests -q
 ```
 
-Expected: all tests pass (currently 26).
+Expected: all tests pass (currently 27).
 
 ## Release procedure
 
