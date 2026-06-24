@@ -1,8 +1,10 @@
 # Falsify
 
-> **别再相信自信的 AI。**
+> **先审，再信。**
 
-Falsify 是一个面向 AI 时代工作的**决策闸门（decision gate）**，覆盖代码、研究与生产决策。它攻击错误信心，逼出真实证据，并把每一个风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
+Falsify 是面向 AI 时代工作的**决策闸门（decision gate）**：用于代码、研究与生产决策的对抗式审查。
+
+它强制让决策回到底层证据，并将风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
 
 Falsify 不是“另一个模型说看起来没问题”。它是一套协议，用来把可辩护的决策与自信噪音分开。
 
