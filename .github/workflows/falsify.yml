@@ -1,8 +1,8 @@
 name: falsify
 
-# Smoke test for this repo: prove the `falsify` gate behaves on every push —
-# a shippable doc passes, a draft with open issues is blocked. No API key needed.
-# (The drop-in PR gate for *your own* repo is templates/github-action-falsify.yml.)
+# Canonical CI gate for this repo. Require this check on main before merge/tag.
+# Smoke test: shippable doc passes, draft with open issues is blocked. No API key needed.
+# (Drop-in PR gate for your own repo: templates/github-action-pr-review-prototype.yml)
 
 on:
   push:
@@ -10,8 +10,15 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: falsify-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  self-test:
+  test-suite:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
