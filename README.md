@@ -2,15 +2,18 @@
 
 > **Stop trusting confident AI.**
 
-Falsify is an adversarial review framework for AI-generated code, research, and production decisions.
+Falsify is a **decision gate for AI-era work** across code, research, and production decisions.
 
 It attacks false confidence, forces evidence, and cuts every risk into **Must Fix**, **Known Debt**, or **Delete**.
 
-Falsify is not another model saying "looks good." It is a decision framework for separating real blockers from noise.
+Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise.
+
+Code review asks: **"Does the diff look right?"**  
+Falsify asks: **"Is this decision defensible?"**
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[Chinese](./README.zh-CN.md) · [Getting started](./docs/00-getting-started.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Risk Scalpel](./docs/06-risk-scalpel.md)
+[Chinese](./README.zh-CN.md) · [Getting started](./docs/00-getting-started.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
 ## What problem it solves
 
@@ -23,14 +26,14 @@ Falsify forces the review to bottom out in raw artifacts: code, diffs, command o
 ## The framework
 
 ```text
-Falsify = Brooks-Lint + Adversarial Review + Risk Scalpel
+Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
 ```
 
 | Layer | What it catches | Output |
 |---|---|---|
 | Brooks-Lint | structural decay: hidden state, implicit authority, duplicated control paths, brittle rollback, unverifiable acceptance, AI summaries replacing raw evidence | concrete review targets |
 | Adversarial Review | false truth, false risk, silent failure, stale data, permission drift, fake acceptance evidence, semantic nudges, prompt-only audit theater, monitor failure laundering | tagged findings |
-| Risk Scalpel | review aftermath failure: every risk becomes urgent, or real risk gets deleted as "simplicity" | Must Fix / Known Debt / Delete |
+| Cutline / 风险裁刀 | review aftermath failure: every risk becomes urgent, or real risk gets deleted as "simplicity" | Must Fix / Known Debt / Delete |
 
 Final decision:
 
@@ -124,9 +127,29 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 - [Getting Started](./docs/00-getting-started.md)
 - [Brooks-Lint](./docs/09-brooks-lint.md)
 - [Adversarial Review](./docs/05-adversarial-review.md)
-- [Risk Scalpel / Cutline](./docs/06-risk-scalpel.md)
+- [Cutline / 风险裁刀 / Cutline](./docs/06-risk-scalpel.md)
 - [Examples](./docs/08-examples.md)
 - [Audit-channel risks](./docs/07-audit-channel-risks.md)
+- [Team delivery & business model blueprint](./docs/10-team-delivery-and-business-model.md)
+- [BYOK + Policy (Team MVP)](./docs/11-byok-and-policy.md)
+- [Open Core boundary](./docs/12-open-core-boundary.md)
+- [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
+
+## Team rollout prototype
+
+Use the PR workflow prototype to get verdict comments on changed decision docs:
+
+- Copy `templates/github-action-pr-review-prototype.yml`
+- Paste as `.github/workflows/falsify-pr-review.yml` in your target repo
+- (Optional) add `.falsify/policy.yml` starting from `templates/falsify-policy.yml`
+- Set optional secrets for live model-backed review:
+  - `FALSIFY_API_BASE`
+  - `FALSIFY_API_KEY`
+  - `FALSIFY_MODEL`
+
+Without secrets, lint still runs and comments are posted (advisory mode).
+The workflow defaults to strict debt hygiene in JSON mode:
+`FALSIFY_STRICT_KNOWN_DEBT_TRIGGER=1` (Known Debt without trigger becomes BLOCK).
 
 ## Follow the work
 

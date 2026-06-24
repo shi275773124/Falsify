@@ -2,11 +2,27 @@
 
 > **别再相信自信的 AI。**
 
-Falsify 是一个面向 AI 时代的对抗式审计框架。它攻击错误信心，逼出真实证据，并把每一个风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
+Falsify 是一个面向 AI 时代工作的**决策闸门（decision gate）**，覆盖代码、研究与生产决策。它攻击错误信心，逼出真实证据，并把每一个风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
 
-Falsify 不是“另一个模型说看起来没问题”。它是一个决策框架，用来把真正的阻塞项和噪音分开。
+Falsify 不是“另一个模型说看起来没问题”。它是一套协议，用来把可辩护的决策与自信噪音分开。
 
-[English](./README.md) · [Getting Started](./docs/00-getting-started.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Risk Scalpel](./docs/06-risk-scalpel.md)
+传统 code review 在问：**“这个 diff 看起来对不对？”**  
+Falsify 在问：**“这个决策是否可辩护？”**
+
+[English](./README.md) · [Getting Started](./docs/00-getting-started.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+
+## 文档
+
+- [Getting Started](./docs/00-getting-started.md)
+- [Brooks-Lint](./docs/09-brooks-lint.md)
+- [Adversarial Review](./docs/05-adversarial-review.md)
+- [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+- [Examples](./docs/08-examples.md)
+- [Audit-channel risks](./docs/07-audit-channel-risks.md)
+- [Team delivery & business model blueprint](./docs/10-team-delivery-and-business-model.md)
+- [BYOK + Policy (Team MVP)](./docs/11-byok-and-policy.md)
+- [Open Core boundary](./docs/12-open-core-boundary.md)
+- [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
 
 ## 解决什么问题
 
@@ -25,14 +41,14 @@ Falsify 要求结论回到可检查证据：原始产物、代码 diff、命令�
 ## 三层框架
 
 ```text
-Falsify = Brooks-Lint + Adversarial Review + Risk Scalpel
+Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
 ```
 
 | 层 | 发现什么 | 产出 |
 |---|---|---|
 | Brooks-Lint | hidden state、implicit authority、duplicated control paths、brittle rollback、unverifiable acceptance、AI summary 替代 raw evidence | 结构性审计目标 |
 | Adversarial Review | false truth、false risk、silent failure、stale data、permission drift、fake acceptance evidence、semantic verdict nudge、prompt-only audit theater、monitor failure laundering | 对抗式 findings |
-| Risk Scalpel | 把所有风险都当 P0，或用“简化”删除真实风险 | Must Fix / Known Debt / Delete |
+| Cutline / 风险裁刀 | 把所有风险都当 P0，或用“简化”删除真实风险 | Must Fix / Known Debt / Delete |
 
 最终输出：
 
