@@ -104,27 +104,225 @@ def safe_repo_path(url_path):
     return target
 
 
-def render_markdown(text, title="Falsify docs"):
-    body = []
-    for line in text.splitlines():
+def html_escape(text):
+    return (
+        str(text)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def inline_md(text):
+    out = html_escape(text)
+    out = re.sub(r"`([^`]+)`", r"<code>\1</code>", out)
+    out = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', out)
+    return out
+
+
+DOCS_CSS = """
+:root{color-scheme:dark;--bg:#090909;--bg-elevated:#111;--bg-panel:#161616;--fg:#f4f4f4;--muted:#8c8c8c;--border:#2a2a2a;--accent:#b8ff3c;--radius:10px;--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;--max:1120px;--pad:clamp(20px,4vw,40px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 var(--font)}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.docs-nav{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}.docs-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}.brand{font:800 18px/1 var(--font);color:var(--fg)}.brand:hover{text-decoration:none}.nav-links{display:flex;gap:18px;font-size:14px;color:var(--muted)}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--fg);text-decoration:none}
+.docs-layout{display:grid;grid-template-columns:280px 1fr;gap:32px;padding:40px 0 80px}.docs-sidebar{position:sticky;top:88px;align-self:start;max-height:calc(100vh - 104px);overflow:auto;padding-right:8px}.docs-sidebar h2{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}.docs-sidebar section+section{margin-top:24px}.docs-sidebar ul{list-style:none;margin:0;padding:0}.docs-sidebar li+li{margin-top:4px}.docs-sidebar a{display:block;padding:8px 10px;border-radius:8px;color:var(--muted);font-size:14px;line-height:1.35}.docs-sidebar a:hover,.docs-sidebar a.active{background:var(--bg-panel);color:var(--fg);text-decoration:none}
+.docs-main{min-width:0}.docs-main>section{margin-top:32px}.docs-main>section>h2{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.docs-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}.docs-hero h1{margin:0 0 8px;font-size:clamp(32px,4vw,44px);line-height:1.05;letter-spacing:-.02em}.docs-hero p{margin:0;color:var(--muted);max-width:60ch}
+.docs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.doc-card{display:block;padding:18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-panel);color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}.doc-card:hover{border-color:rgba(184,255,60,.35);transform:translateY(-1px);text-decoration:none}.doc-card .num{font:600 11px var(--mono);color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}.doc-card h3{margin:0 0 6px;font-size:17px;color:var(--fg)}.doc-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.doc-body h1,.doc-body h2,.doc-body h3,.doc-body h4{line-height:1.2;letter-spacing:-.02em}.doc-body h1{font-size:36px;margin:0 0 16px}.doc-body h2{font-size:24px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--border)}.doc-body h3{font-size:18px;margin:24px 0 8px}.doc-body p,.doc-body li{color:#d6d6d6}.doc-body p{margin:0 0 14px}.doc-body ul,.doc-body ol{margin:0 0 16px;padding-left:22px}.doc-body li+li{margin-top:6px}.doc-body code{font:13px/1.4 var(--mono);background:#0d0d0d;border:1px solid var(--border);border-radius:6px;padding:2px 6px}.doc-body pre{margin:0 0 18px;padding:16px;border:1px solid var(--border);border-radius:12px;background:#0d0d0d;overflow:auto}.doc-body pre code{display:block;padding:0;border:none;background:transparent;font:13px/1.6 var(--mono);color:#d7dde7;white-space:pre-wrap}.doc-body table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:14px}.doc-body th,.doc-body td{border:1px solid var(--border);padding:10px 12px;text-align:left}.doc-body th{background:var(--bg-panel);color:var(--fg)}.doc-body td{color:#d6d6d6}
+.wrap{width:min(var(--max),calc(100% - var(--pad)*2));margin:0 auto}
+@media(max-width:900px){.docs-layout{grid-template-columns:1fr}.docs-sidebar{position:static;max-height:none}.docs-grid{grid-template-columns:1fr}}
+"""
+
+
+DOC_SECTIONS = [
+    ("Start", ["00-getting-started", "14-github-action-install", "02-setup", "04-troubleshooting"]),
+    ("Framework", ["01-architecture", "05-adversarial-review", "06-risk-scalpel", "07-audit-channel-risks", "08-examples", "09-brooks-lint"]),
+    ("Product", ["10-team-delivery-and-business-model", "11-byok-and-policy", "12-open-core-boundary", "13-team-edition-spec"]),
+    ("Ops", ["15-ci-and-release-gate", "03-collaboration"]),
+]
+
+DOC_FEATURED = ["14-github-action-install", "00-getting-started", "12-open-core-boundary"]
+
+
+def doc_files():
+    paths = sorted((ROOT / "docs").glob("*.md"))
+    stems = {}
+    for p in paths:
+        if p.stem.endswith(".zh-CN"):
+            continue
+        if p.stem == "15-ci-and-release-gates" and (ROOT / "docs" / "15-ci-and-release-gate.md").is_file():
+            continue
+        stems[p.stem] = p
+    return stems
+
+
+def doc_title(stem):
+    path = ROOT / "docs" / f"{stem}.md"
+    if not path.is_file():
+        return stem.replace("-", " ").title()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("# "):
+            title = line[2:].strip()
+            return re.sub(r"^\d+\.\s*", "", title)
+    return stem.replace("-", " ").title()
+
+
+def docs_nav_html(current=None):
+    files = doc_files()
+    blocks = []
+    for section, stems in DOC_SECTIONS:
+        items = []
+        for stem in stems:
+            if stem not in files:
+                continue
+            cls = "active" if current == f"{stem}.md" else ""
+            items.append(
+                f'<li><a{" class=\"active\"" if cls else ""} href="/docs/{stem}.md">{html_escape(doc_title(stem))}</a></li>'
+            )
+        if items:
+            blocks.append(f"<section><h2>{html_escape(section)}</h2><ul>{''.join(items)}</ul></section>")
+    return "".join(blocks)
+
+
+def docs_shell(title, body_html, current_path=None):
+    current = current_path.split("/")[-1] if current_path else None
+    nav = docs_nav_html(current)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{html_escape(title)} — Falsify docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>{DOCS_CSS}</style>
+</head>
+<body>
+<nav class="docs-nav"><div class="wrap"><a class="brand" href="/">Falsify</a><div class="nav-links"><a href="/docs/">Docs</a><a href="/">Home</a><a href="https://github.com/shi275773124/Falsify">GitHub</a></div></div></nav>
+<div class="wrap docs-layout">
+<aside class="docs-sidebar">{nav}</aside>
+<main class="docs-main">{body_html}</main>
+</div>
+</body>
+</html>"""
+
+
+def render_markdown(text, title="Falsify docs", current_path=None):
+    body = ['<article class="doc-body">']
+    in_code = False
+    code_lang = ""
+    code_lines = []
+    list_open = None
+
+    def close_list():
+        nonlocal list_open
+        if list_open:
+            body.append(f"</{list_open}>")
+            list_open = None
+
+    for raw in text.splitlines():
+        line = raw.rstrip()
+        if line.strip().startswith("```"):
+            if not in_code:
+                close_list()
+                in_code = True
+                code_lang = line.strip()[3:].strip()
+                code_lines = []
+            else:
+                lang_cls = f' class="language-{html_escape(code_lang)}"' if code_lang else ""
+                body.append(f"<pre><code{lang_cls}>{html_escape(chr(10).join(code_lines))}</code></pre>")
+                in_code = False
+                code_lang = ""
+                code_lines = []
+            continue
+        if in_code:
+            code_lines.append(line)
+            continue
+
         stripped = line.strip()
         if not stripped:
+            close_list()
             continue
         if stripped.startswith("# "):
-            body.append(f"<h1>{stripped[2:]}</h1>")
+            close_list()
+            body.append(f"<h1>{inline_md(stripped[2:])}</h1>")
         elif stripped.startswith("## "):
-            body.append(f"<h2>{stripped[3:]}</h2>")
+            close_list()
+            body.append(f"<h2>{inline_md(stripped[3:])}</h2>")
+        elif stripped.startswith("### "):
+            close_list()
+            body.append(f"<h3>{inline_md(stripped[4:])}</h3>")
+        elif stripped.startswith("#### "):
+            close_list()
+            body.append(f"<h4>{inline_md(stripped[5:])}</h4>")
         elif stripped.startswith("- "):
-            body.append(f"<p>{stripped}</p>")
+            if list_open != "ul":
+                close_list()
+                body.append("<ul>")
+                list_open = "ul"
+            body.append(f"<li>{inline_md(stripped[2:])}</li>")
+        elif re.match(r"^\d+\.\s", stripped):
+            if list_open != "ol":
+                close_list()
+                body.append("<ol>")
+                list_open = "ol"
+            body.append(f"<li>{inline_md(re.sub(r'^\\d+\\.\\s*', '', stripped))}</li>")
         else:
-            body.append(f"<p>{stripped}</p>")
-    return f"""<!doctype html><html><head><meta charset="utf-8"><title>{title}</title></head><body>{"".join(body)}</body></html>"""
+            close_list()
+            body.append(f"<p>{inline_md(stripped)}</p>")
+
+    close_list()
+    if in_code and code_lines:
+        body.append(f"<pre><code>{html_escape(chr(10).join(code_lines))}</code></pre>")
+    body.append("</article>")
+    return docs_shell(title, "".join(body), current_path)
 
 
 def docs_index():
-    docs = sorted((ROOT / "docs").glob("*.md"))
-    items = "".join(f'<li><a href="/docs/{p.name}">{p.stem}</a></li>' for p in docs)
-    return f"""<!doctype html><html><head><meta charset="utf-8"><title>Falsify docs</title></head><body><h1>Docs</h1><ul>{items}</ul></body></html>"""
+    files = doc_files()
+    featured_cards = []
+    for stem in DOC_FEATURED:
+        if stem not in files:
+            continue
+        title = doc_title(stem)
+        featured_cards.append(
+            f'<a class="doc-card" href="/docs/{stem}.md">'
+            f'<div class="num">Featured</div><h3>{html_escape(title)}</h3>'
+            f'<p>Open guide</p></a>'
+        )
+
+    sections = []
+    for section, stems in DOC_SECTIONS:
+        cards = []
+        for stem in stems:
+            if stem in DOC_FEATURED or stem not in files:
+                continue
+            title = doc_title(stem)
+            num = stem.split("-", 1)[0] if stem[:2].isdigit() else section
+            cards.append(
+                f'<a class="doc-card" href="/docs/{stem}.md">'
+                f'<div class="num">{html_escape(num)}</div>'
+                f'<h3>{html_escape(title)}</h3>'
+                f'<p>{html_escape(stem.replace("-", " "))}</p></a>'
+            )
+        if cards:
+            sections.append(
+                f'<section><h2>{html_escape(section)}</h2>'
+                f'<div class="docs-grid">{"".join(cards)}</div></section>'
+            )
+
+    body = f"""
+<div class="docs-hero">
+  <h1>Documentation</h1>
+  <p>Install the PR gate, learn the framework, and ship decision artifacts your team can defend.</p>
+</div>
+<section><h2>Featured</h2><div class="docs-grid">{"".join(featured_cards)}</div></section>
+{"".join(sections)}
+"""
+    return docs_shell("Documentation", body)
 
 
 PAGE = r"""<!doctype html>
@@ -142,7 +340,7 @@ PAGE = r"""<!doctype html>
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--font)}a{color:inherit;text-decoration:none}img{max-width:100%}.wrap{width:min(var(--max),calc(100% - var(--pad)*2));margin:0 auto}
 .nav{position:sticky;top:0;z-index:30;background:rgba(9,9,9,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}.brand{font:800 18px/1 var(--font);letter-spacing:-.02em}.links{display:flex;align-items:center;gap:20px;color:var(--muted);font-size:14px;font-weight:500}.links a:hover{color:var(--fg)}.lang-btn{background:transparent;border:1px solid var(--border);border-radius:999px;color:var(--muted);cursor:pointer;font:600 12px var(--mono);padding:6px 12px}.lang-btn:hover{border-color:var(--fg);color:var(--fg)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;font:700 14px var(--font);cursor:pointer;border:1px solid transparent;transition:transform .15s,opacity .15s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--accent);color:var(--accent-fg)}.btn.ghost{background:transparent;border-color:var(--border);color:var(--fg)}.btn.ghost:hover{border-color:var(--fg)}
-.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--border)}.hero-inner{display:grid;grid-template-columns:1.1fr .9fr;min-height:min(88vh,760px)}.hero-copy{padding:clamp(88px,12vw,140px) var(--pad) 64px;max-width:640px;margin-left:max(0px,calc((100vw - var(--max))/2))}.hero-visual{position:relative;background:linear-gradient(135deg,#f4f4f4 0%,#d8d8d8 55%,#bdbdbd 100%);clip-path:polygon(18% 0,100% 0,100% 100%,0 100%)}.hero-visual-inner{position:absolute;inset:24px 24px 24px 12%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;color:#111}.preview-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.12)}.preview-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.preview-label{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#666}.eyebrow{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}h1{margin:0 0 20px;font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.03em;font-weight:800}.sub{margin:0 0 28px;color:#c8c8c8;font-size:clamp(17px,2.2vw,20px);line-height:1.5;max-width:52ch}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}.hero-meta{display:flex;flex-wrap:wrap;gap:10px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font:600 12px var(--mono)}
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--border)}.hero-inner{display:grid;grid-template-columns:1.1fr .9fr;min-height:min(88vh,760px)}.hero-copy{padding:clamp(88px,12vw,140px) var(--pad) 64px;max-width:640px;margin-left:max(0px,calc((100vw - var(--max))/2))}.hero-visual{position:relative;background:linear-gradient(135deg,#f4f4f4 0%,#d8d8d8 55%,#bdbdbd 100%);clip-path:polygon(18% 0,100% 0,100% 100%,0 100%)}.hero-visual-inner{position:absolute;inset:24px 24px 24px 12%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;color:#111}.preview-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.12)}.preview-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.preview-label{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#666}.eyebrow{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}h1{margin:0 0 20px;font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.03em;font-weight:800}.sub{margin:0 0 28px;color:#c8c8c8;font-size:clamp(17px,2.2vw,20px);line-height:1.5;max-width:52ch}.hero-sub-note{font-size:14px;color:var(--muted);margin:-12px 0 28px;max-width:52ch}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}.hero-meta{display:flex;flex-wrap:wrap;gap:10px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font:600 12px var(--mono)}
 .badge{display:inline-block;border-radius:999px;padding:6px 10px;font:700 11px var(--mono);letter-spacing:.04em;text-transform:uppercase}.badge.PASS{background:rgba(61,214,140,.14);color:var(--pass)}.badge.PASS_WITH_DEBT{background:rgba(240,180,41,.14);color:var(--debt)}.badge.BLOCK{background:rgba(255,92,92,.14);color:var(--block)}
 .quote{padding:56px 0;border-bottom:1px solid var(--border);background:var(--bg-elevated)}.quote-card{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;padding:24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-panel)}.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#333,#666);object-fit:cover}.quote p{margin:0;color:#ddd;font-size:18px;line-height:1.55}.quote cite{display:block;margin-top:12px;color:var(--muted);font:600 13px var(--mono);font-style:normal}
 .evidence{padding:40px 0;border-bottom:1px solid var(--border);background:var(--bg)}.evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.evidence-card{padding:20px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-panel)}.evidence-val{font:800 28px/1 var(--font);letter-spacing:-.02em;margin-bottom:6px}.evidence-lbl{color:var(--muted);font-size:14px;line-height:1.45}
@@ -165,7 +363,7 @@ footer{padding:40px 0;color:var(--muted);font-size:14px}footer .wrap{display:fle
 <div style="display:none" aria-hidden="true">
   <canvas id="cvs" role="img" aria-label="Falsify scan canvas"></canvas>
 </div>
-<header class="hero"><div class="hero-inner"><div class="hero-copy"><div class="eyebrow" data-i18n="eyebrow">Audit × Cut</div><h1 data-i18n="h1">Your AI output looks fine.<br>Show me the evidence.</h1><p class="sub" data-i18n="hero_sub">Falsify is an adversarial review layer for code, deployments, and AI-generated decisions. It does not argue — it forces raw artifacts and cuts risks into Must Fix, Known Debt, or Delete.</p><div class="actions"><a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install in 5 min</a><a class="btn ghost" href="#deliverables" data-i18n="btn_sample_report">View sample report</a></div><div class="hero-meta"><span class="pill" data-i18n="pill_verdicts">PASS / PASS_WITH_DEBT / BLOCK</span><span class="pill" data-i18n="pill_stack">Frame · Review · Cut</span><span class="pill">MIT</span></div></div><div class="hero-visual" aria-hidden="true"><div class="hero-visual-inner"><div class="preview-card"><div class="preview-top"><span class="preview-label">Review output</span><span class="badge BLOCK">BLOCK</span></div><div style="font:600 14px/1.4 var(--font);margin-bottom:10px">Deployment succeeded because logs completed.</div><div style="font:12px/1.5 var(--mono);color:#555"><div><strong style="color:#c0392b">Must Fix</strong> — Logs are not state verification.</div><div style="margin-top:8px"><strong style="color:#b07d00">Known Debt</strong> — No rollback artifact attached.</div></div></div></div></div></div></header>
+<header class="hero"><div class="hero-inner"><div class="hero-copy"><h1 data-i18n="h1">Looks right is not enough.</h1><p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p><p class="hero-sub-note" data-i18n="hero_sub_note">For PRs, deployment claims, research memos, and AI-generated decisions.</p><div class="actions"><a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a><a class="btn ghost" href="#deliverables" data-i18n="btn_sample_report">View real cases</a></div><div class="hero-meta"><span class="pill" data-i18n="pill_verdicts">PASS / PASS_WITH_DEBT / BLOCK</span><span class="pill" data-i18n="pill_stack">backed by raw evidence</span><span class="pill">MIT</span></div></div><div class="hero-visual" aria-hidden="true"><div class="hero-visual-inner"><div class="preview-card"><div class="preview-top"><span class="preview-label">Review output</span><span class="badge BLOCK">BLOCK</span></div><div style="font:600 14px/1.4 var(--font);margin-bottom:10px">Deployment succeeded because logs completed.</div><div style="font:12px/1.5 var(--mono);color:#555"><div><strong style="color:#c0392b">Must Fix</strong> — Logs are not state verification.</div><div style="margin-top:8px"><strong style="color:#b07d00">Known Debt</strong> — No rollback artifact attached.</div></div></div></div></div></div></header>
 <section class="quote"><div class="wrap"><div class="quote-card"><img class="avatar" src="https://github.com/shi275773124.png" alt="Chris Shi" width="48" height="48"><div><p data-i18n="quote_p">"We stopped shipping 'green logs' as proof. Falsify turned review from vibes into a decision artifact the team can actually defend."</p><cite data-i18n="quote_cite">Chris Shi · Founder, Falsify</cite></div></div></div></section>
 <section class="evidence"><div class="wrap"><div class="evidence-grid"><div class="evidence-card"><div class="evidence-val" data-i18n="ev1_val">&lt; 1 day</div><div class="evidence-lbl" data-i18n="ev1_lbl">Time to first useful BLOCK</div></div><div class="evidence-card"><div class="evidence-val" data-i18n="ev2_val">3 verdicts</div><div class="evidence-lbl" data-i18n="ev2_lbl">PASS / PASS_WITH_DEBT / BLOCK only</div></div><div class="evidence-card"><div class="evidence-val" data-i18n="ev3_val">100%</div><div class="evidence-lbl" data-i18n="ev3_lbl">Known Debt requires upgrade trigger (strict mode)</div></div></div></div></section>
 <section class="s"><div class="wrap"><div class="section-head"><div class="tag" data-i18n="problem_tag">Problem</div><h2 data-i18n="problem_h2">Confidence got cheap.</h2><p class="lead" data-i18n="problem_lead">AI made teams faster. It also made polished wrongness easier to ship.</p></div><div class="problems"><div class="problem" data-i18n="p1">Green logs that do not prove state</div><div class="problem" data-i18n="p2">Second-model agreement treated as proof</div><div class="problem" data-i18n="p3">Safety checks that live only in prompts</div></div></div></section>
@@ -215,10 +413,10 @@ const PUBLIC_COPY=[
   "SCAN_PERIOD=7200"
 ];
 const SAMPLES={general:{verdict:"BLOCK",risks:[{cutline:"Must Fix",issue:"Claim reads confident but cites no raw artifact.",minimal_action:"Attach source output, command log, or reproducible check."},{cutline:"Known Debt",issue:"Secondary review mentioned but not independently verified.",minimal_action:"Re-run with explicit failure-mode checklist.",upgrade_trigger:"Before any customer-facing decision."}]},code:{verdict:"PASS_WITH_DEBT",risks:[{cutline:"Known Debt",issue:"Tests pass but do not assert the risky default path.",minimal_action:"Add one negative test for the default branch.",upgrade_trigger:"Before merge to main."}]},research:{verdict:"BLOCK",risks:[{cutline:"Must Fix",issue:"Conclusion cites summary tables without primary source excerpt.",minimal_action:"Attach table screenshot or raw CSV hash."}]},production:{verdict:"BLOCK",risks:[{cutline:"Must Fix",issue:"Logs completed, but no read-after-write or invariant check proves intended state.",minimal_action:"Attach post-deploy probe output and rollback command."},{cutline:"Delete",issue:"Another AI reviewed it — not evidence.",minimal_action:"Remove from acceptance chain."}]}};
-const T={en:{"nav_system":"System","nav_demo":"Demo","nav_pricing":"Pricing","nav_docs":"Docs","eyebrow":"Audit × Cut","h1":"Your AI output looks fine.\nShow me the evidence.","hero_sub":"Falsify is an adversarial review layer for code, deployments, and AI-generated decisions. It does not argue — it forces raw artifacts and cuts risks into Must Fix, Known Debt, or Delete.","btn_install":"Install in 5 min","btn_sample_report":"View sample report","btn_demo":"Try demo","btn_audit":"Book audit","pill_verdicts":"PASS / PASS_WITH_DEBT / BLOCK","pill_stack":"Frame · Review · Cut","quote_p":"\"We stopped shipping 'green logs' as proof. Falsify turned review from vibes into a decision artifact the team can actually defend.\"","quote_cite":"Chris Shi · Founder, Falsify","ev1_val":"< 1 day","ev1_lbl":"Time to first useful BLOCK","ev2_val":"3 verdicts","ev2_lbl":"PASS / PASS_WITH_DEBT / BLOCK only","ev3_val":"100%","ev3_lbl":"Known Debt requires upgrade trigger (strict mode)","deliver_tag":"Deliverables","deliver_h2":"What you actually ship.","deliver_lead":"Not another chat reply — a PR check, a JSON report, and a markdown summary your team can defend.","deliver_pr_label":"PR comment","deliver_pr_title":"Falsify review — BLOCK","deliver_pr_line":"Must Fix: deployment claim cites logs only. Attach post-deploy state proof.","problem_tag":"Problem","problem_h2":"Confidence got cheap.","problem_lead":"AI made teams faster. It also made polished wrongness easier to ship.","p1":"Green logs that do not prove state","p2":"Second-model agreement treated as proof","p3":"Safety checks that live only in prompts","system_tag":"System","system_h2":"Three layers. One decision.","system_lead":"Frame Audit, Adversarial Review, and Cutline — built for teams that cannot afford fake PASS.","bl_label":"Layer 01","ar_label":"Layer 02","rs_label":"Layer 03","bl_h3":"Frame Audit","ar_h3":"Adversarial Review","rs_h3":"Cutline","bl_1":"hidden state / implicit authority","bl_2":"owner / lock / lifecycle","bl_4":"rollback / verification path","ar_1":"false truth / false risk","ar_5":"prompt-only audit theater","ar_6":"monitor-failure laundering","rs_1":"Must Fix","rs_2":"Known Debt","rs_3":"Delete","compare_tag":"Fake proof","compare_h2":"Fake proof is not proof.","cmp_l1":"\"The model said it is fine.\"","cmp_r1":"Where is the raw artifact.","cmp_l2":"\"Another AI reviewed it.\"","cmp_r2":"Did it check the failure mode, or just agree.","cmp_l3":"\"The logs look successful.\"","cmp_r3":"Did the actual state change.","try_tag":"Workbench","try_h2":"See a verdict in seconds.","try_lead":"Run a free sample instantly. Live review uses your configured API key — not billed through this public demo.","input_h3":"Claim","input_p":"Paste a deployment claim, PR summary, or AI-generated report.","output_h3":"Verdict","output_p":"Hit Run sample to preview the decision artifact.","demo_note":"Samples are canned and cost zero tokens. Live review only works when you configure a provider key locally.","scenario_general":"General","scenario_code":"Code / PR","scenario_research":"Research","scenario_production":"Production","btn_sample":"Run sample","btn_review":"Live review","pricing_tag":"Pricing","pricing_h2":"Start free. Scale with your team.","pricing_lead":"Tool-first delivery: local CLI for builders, team workflows for leads, audit coaching for high-stakes launches.","price_free_limit":"1 repo · BYOK · OSS CLI + Action template","price_free_1":"CLI + MIT core","price_free_2":"Local review with your API key","price_free_3":"Sample templates","price_team_limit":"Up to 10 repos · shared policy · 90-day report retention","price_team_1":"Shared review templates","price_team_2":"Exportable decision reports","price_team_3":"Team rule packs","btn_waitlist":"Join waitlist","price_ent_label":"Custom","price_ent_limit":"SSO/RBAC · private deploy · SLA + audit coaching","price_ent_1":"Private deploy","price_ent_2":"Workflow integration","price_ent_3":"Audit coaching","start_tag":"Start","start_h2":"Run it locally in 60 seconds.","docs_install":"Install GitHub Action (5 min) →","boundary_tag":"Boundary","boundary_h2":"Falsify classifies risk. It does not authorize action.","boundary_p":"Live money, production config, cron, gateway, and external send still require independent final judgment. Self-review is not independent review.","btn_github":"GitHub"},
-zh:{"nav_system":"系统","nav_demo":"演示","nav_pricing":"定价","nav_docs":"文档","eyebrow":"审 × 裁","h1":"你的 AI 产出看起来没问题。\n证据在哪？","hero_sub":"Falsify 是面向代码、部署与 AI 决策的对抗式审查层。它不争辩 — 只逼出原始证据，并把风险切成 Must Fix、Known Debt、Delete。","btn_install":"5 分钟安装","btn_sample_report":"查看样例报告","btn_demo":"试用演示","btn_audit":"预约审计","pill_verdicts":"PASS / PASS_WITH_DEBT / BLOCK","pill_stack":"框架 · 审查 · 裁剪","quote_p":"「我们不再把『日志绿了』当证明。Falsify 把审查从『感觉』变成了团队能站得住的决策产物。」","quote_cite":"史可鉴 · Falsify 创始人","ev1_val":"< 1 天","ev1_lbl":"首次有效 BLOCK 耗时","ev2_val":"3 种裁决","ev2_lbl":"仅 PASS / PASS_WITH_DEBT / BLOCK","ev3_val":"100%","ev3_lbl":"Known Debt 必须带升级触发（严格模式）","deliver_tag":"交付物","deliver_h2":"你真正交付的是什么","deliver_lead":"不是又一条聊天回复 — 而是 PR Check、JSON 报告、可辩护的 Markdown 摘要。","deliver_pr_label":"PR 评论","deliver_pr_title":"Falsify 审查 — BLOCK","deliver_pr_line":"Must Fix：部署声明只引用日志。请附上部署后状态证明。","problem_tag":"问题","problem_h2":"自信变便宜了。","problem_lead":"AI 让交付变快，也让漂亮的错误更容易上线。","p1":"日志绿了，不代表状态对了","p2":"第二个模型点头，不代表证据成立","p3":"安全检查只写在提示词里","system_tag":"系统","system_h2":"三层结构，一个决策。","system_lead":"框架审、对抗审、Cutline — 给不能承受假 PASS 的团队。","bl_label":"第一层","ar_label":"第二层","rs_label":"第三层","bl_h3":"框架审","ar_h3":"对抗审","rs_h3":"Cutline","bl_1":"隐藏状态与隐式权威","bl_2":"归属、锁与生命周期","bl_4":"回滚与验证路径","ar_1":"虚假事实与虚假风险","ar_5":"提示词作秀","ar_6":"监控洗白","rs_1":"Must Fix","rs_2":"Known Debt","rs_3":"Delete","compare_tag":"假证明","compare_h2":"假证明不是证明。","cmp_l1":"\"模型说没问题。\"","cmp_r1":"原始输出在哪。","cmp_l2":"\"另一个 AI 审过了。\"","cmp_r2":"它查了失败模式，还是只是附和。","cmp_l3":"\"日志看起来成功。\"","cmp_r3":"实际状态变了吗。","try_tag":"工作台","try_h2":"几秒内看到裁决。","try_lead":"样例即时免费。真审查走你本地配置的 API key — 公网 demo 不替你付 token。","input_h3":"断言","input_p":"粘贴部署声明、PR 摘要或 AI 生成报告。","output_h3":"裁决","output_p":"点「运行样例」预览决策产物。","demo_note":"样例是固定的，零 token。真审查需本地配置 provider key。","scenario_general":"通用","scenario_code":"代码 / PR","scenario_research":"研究","scenario_production":"生产","btn_sample":"运行样例","btn_review":"真审查","pricing_tag":"定价","pricing_h2":"免费起步，随团队扩展。","pricing_lead":"工具先行：开发者用 CLI，负责人用团队流，关键上线用审计陪跑。","price_free_limit":"1 仓库 · BYOK · OSS CLI + Action 模板","price_free_1":"CLI + MIT 核心","price_free_2":"本地审查，自带 API key","price_free_3":"样例模板","price_team_limit":"最多 10 仓库 · 共享 policy · 90 天报告留存","price_team_1":"共享审查模板","price_team_2":"可导出决策报告","price_team_3":"团队规则包","btn_waitlist":"加入候补","price_ent_label":"定制","price_ent_limit":"SSO/RBAC · 私有化部署 · SLA + 审计陪跑","price_ent_1":"私有化部署","price_ent_2":"流程集成","price_ent_3":"审计陪跑","start_tag":"开始","start_h2":"60 秒本地跑起来。","docs_install":"5 分钟安装 GitHub Action →","boundary_tag":"边界","boundary_h2":"Falsify 只做风险分类，不做执行授权。","boundary_p":"真实资金、生产配置、cron、网关与外部发送仍需独立终审。自己审自己不算独立判断。","btn_github":"GitHub"}};
+const T={en:{"nav_system":"System","nav_demo":"Demo","nav_pricing":"Pricing","nav_docs":"Docs","h1":"Looks right is not enough.","hero_sub":"Falsify turns confident AI output into a shipping decision:\nPASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.","hero_sub_note":"For PRs, deployment claims, research memos, and AI-generated decisions.","btn_install":"Install GitHub Action","btn_sample_report":"View real cases","btn_demo":"Try demo","btn_audit":"Book audit","pill_verdicts":"PASS / PASS_WITH_DEBT / BLOCK","pill_stack":"backed by raw evidence","quote_p":"\"We stopped shipping 'green logs' as proof. Falsify turned review from vibes into a decision artifact the team can actually defend.\"","quote_cite":"Chris Shi · Founder, Falsify","ev1_val":"< 1 day","ev1_lbl":"Time to first useful BLOCK","ev2_val":"3 verdicts","ev2_lbl":"PASS / PASS_WITH_DEBT / BLOCK only","ev3_val":"100%","ev3_lbl":"Known Debt requires upgrade trigger (strict mode)","deliver_tag":"Deliverables","deliver_h2":"What you actually ship.","deliver_lead":"Not another chat reply — a PR check, a JSON report, and a markdown summary your team can defend.","deliver_pr_label":"PR comment","deliver_pr_title":"Falsify review — BLOCK","deliver_pr_line":"Must Fix: deployment claim cites logs only. Attach post-deploy state proof.","problem_tag":"Problem","problem_h2":"Confidence got cheap.","problem_lead":"AI made teams faster. It also made polished wrongness easier to ship.","p1":"Green logs that do not prove state","p2":"Second-model agreement treated as proof","p3":"Safety checks that live only in prompts","system_tag":"System","system_h2":"Three layers. One decision.","system_lead":"Frame Audit, Adversarial Review, and Cutline — built for teams that cannot afford fake PASS.","bl_label":"Layer 01","ar_label":"Layer 02","rs_label":"Layer 03","bl_h3":"Frame Audit","ar_h3":"Adversarial Review","rs_h3":"Cutline","bl_1":"hidden state / implicit authority","bl_2":"owner / lock / lifecycle","bl_4":"rollback / verification path","ar_1":"false truth / false risk","ar_5":"prompt-only audit theater","ar_6":"monitor-failure laundering","rs_1":"Must Fix","rs_2":"Known Debt","rs_3":"Delete","compare_tag":"Fake proof","compare_h2":"Fake proof is not proof.","cmp_l1":"\"The model said it is fine.\"","cmp_r1":"Where is the raw artifact.","cmp_l2":"\"Another AI reviewed it.\"","cmp_r2":"Did it check the failure mode, or just agree.","cmp_l3":"\"The logs look successful.\"","cmp_r3":"Did the actual state change.","try_tag":"Workbench","try_h2":"See a verdict in seconds.","try_lead":"Run a free sample instantly. Live review uses your configured API key — not billed through this public demo.","input_h3":"Claim","input_p":"Paste a deployment claim, PR summary, or AI-generated report.","output_h3":"Verdict","output_p":"Hit Run sample to preview the decision artifact.","demo_note":"Samples are canned and cost zero tokens. Live review only works when you configure a provider key locally.","scenario_general":"General","scenario_code":"Code / PR","scenario_research":"Research","scenario_production":"Production","btn_sample":"Run sample","btn_review":"Live review","pricing_tag":"Pricing","pricing_h2":"Start free. Scale with your team.","pricing_lead":"Tool-first delivery: local CLI for builders, team workflows for leads, audit coaching for high-stakes launches.","price_free_limit":"1 repo · BYOK · OSS CLI + Action template","price_free_1":"CLI + MIT core","price_free_2":"Local review with your API key","price_free_3":"Sample templates","price_team_limit":"Up to 10 repos · shared policy · 90-day report retention","price_team_1":"Shared review templates","price_team_2":"Exportable decision reports","price_team_3":"Team rule packs","btn_waitlist":"Join waitlist","price_ent_label":"Custom","price_ent_limit":"SSO/RBAC · private deploy · SLA + audit coaching","price_ent_1":"Private deploy","price_ent_2":"Workflow integration","price_ent_3":"Audit coaching","start_tag":"Start","start_h2":"Run it locally in 60 seconds.","docs_install":"Install GitHub Action (5 min) →","boundary_tag":"Boundary","boundary_h2":"Falsify classifies risk. It does not authorize action.","boundary_p":"Live money, production config, cron, gateway, and external send still require independent final judgment. Self-review is not independent review.","btn_github":"GitHub"},
+zh:{"nav_system":"系统","nav_demo":"演示","nav_pricing":"定价","nav_docs":"文档","h1":"看起来对，不够。","hero_sub":"Falsify 把自信的 AI 输出变成上线决策：\nPASS、PASS_WITH_DEBT、BLOCK — 以原始证据为底。","hero_sub_note":"覆盖 PR、部署声明、研究备忘录、AI 生成决策。","btn_install":"安装 GitHub Action","btn_sample_report":"查看真实案例","btn_demo":"试用演示","btn_audit":"预约审计","pill_verdicts":"PASS / PASS_WITH_DEBT / BLOCK","pill_stack":"以原始证据为底","quote_p":"「我们不再把『日志绿了』当证明。Falsify 把审查从『感觉』变成了团队能站得住的决策产物。」","quote_cite":"史可鉴 · Falsify 创始人","ev1_val":"< 1 天","ev1_lbl":"首次有效 BLOCK 耗时","ev2_val":"3 种裁决","ev2_lbl":"仅 PASS / PASS_WITH_DEBT / BLOCK","ev3_val":"100%","ev3_lbl":"Known Debt 必须带升级触发（严格模式）","deliver_tag":"交付物","deliver_h2":"你真正交付的是什么","deliver_lead":"不是又一条聊天回复 — 而是 PR Check、JSON 报告、可辩护的 Markdown 摘要。","deliver_pr_label":"PR 评论","deliver_pr_title":"Falsify 审查 — BLOCK","deliver_pr_line":"Must Fix：部署声明只引用日志。请附上部署后状态证明。","problem_tag":"问题","problem_h2":"自信变便宜了。","problem_lead":"AI 让交付变快，也让漂亮的错误更容易上线。","p1":"日志绿了，不代表状态对了","p2":"第二个模型点头，不代表证据成立","p3":"安全检查只写在提示词里","system_tag":"系统","system_h2":"三层结构，一个决策。","system_lead":"框架审、对抗审、Cutline — 给不能承受假 PASS 的团队。","bl_label":"第一层","ar_label":"第二层","rs_label":"第三层","bl_h3":"框架审","ar_h3":"对抗审","rs_h3":"Cutline","bl_1":"隐藏状态与隐式权威","bl_2":"归属、锁与生命周期","bl_4":"回滚与验证路径","ar_1":"虚假事实与虚假风险","ar_5":"提示词作秀","ar_6":"监控洗白","rs_1":"Must Fix","rs_2":"Known Debt","rs_3":"Delete","compare_tag":"假证明","compare_h2":"假证明不是证明。","cmp_l1":"\"模型说没问题。\"","cmp_r1":"原始输出在哪。","cmp_l2":"\"另一个 AI 审过了。\"","cmp_r2":"它查了失败模式，还是只是附和。","cmp_l3":"\"日志看起来成功。\"","cmp_r3":"实际状态变了吗。","try_tag":"工作台","try_h2":"几秒内看到裁决。","try_lead":"样例即时免费。真审查走你本地配置的 API key — 公网 demo 不替你付 token。","input_h3":"断言","input_p":"粘贴部署声明、PR 摘要或 AI 生成报告。","output_h3":"裁决","output_p":"点「运行样例」预览决策产物。","demo_note":"样例是固定的，零 token。真审查需本地配置 provider key。","scenario_general":"通用","scenario_code":"代码 / PR","scenario_research":"研究","scenario_production":"生产","btn_sample":"运行样例","btn_review":"真审查","pricing_tag":"定价","pricing_h2":"免费起步，随团队扩展。","pricing_lead":"工具先行：开发者用 CLI，负责人用团队流，关键上线用审计陪跑。","price_free_limit":"1 仓库 · BYOK · OSS CLI + Action 模板","price_free_1":"CLI + MIT 核心","price_free_2":"本地审查，自带 API key","price_free_3":"样例模板","price_team_limit":"最多 10 仓库 · 共享 policy · 90 天报告留存","price_team_1":"共享审查模板","price_team_2":"可导出决策报告","price_team_3":"团队规则包","btn_waitlist":"加入候补","price_ent_label":"定制","price_ent_limit":"SSO/RBAC · 私有化部署 · SLA + 审计陪跑","price_ent_1":"私有化部署","price_ent_2":"流程集成","price_ent_3":"审计陪跑","start_tag":"开始","start_h2":"60 秒本地跑起来。","docs_install":"5 分钟安装 GitHub Action →","boundary_tag":"边界","boundary_h2":"Falsify 只做风险分类，不做执行授权。","boundary_p":"真实资金、生产配置、cron、网关与外部发送仍需独立终审。自己审自己不算独立判断。","btn_github":"GitHub"}};
 let lang='en';
-function applyLang(){document.documentElement.lang=lang==='zh'?'zh-CN':'en';document.getElementById('lang-btn').textContent=lang==='en'?'中文':'EN';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(T[lang][k]===undefined)return;const v=T[lang][k];if(k==='h1')el.innerHTML=v.replace(/\n/g,'<br>');else el.textContent=v;});}
+function applyLang(){document.documentElement.lang=lang==='zh'?'zh-CN':'en';document.getElementById('lang-btn').textContent=lang==='en'?'中文':'EN';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(T[lang][k]===undefined)return;const v=T[lang][k];if(k==='hero_sub')el.innerHTML=v.replace(/\n/g,'<br>');else el.textContent=v;});}
 function toggleLang(){lang=lang==='en'?'zh':'en';applyLang();}
 function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 function renderVerdict(d){let h='<span class="badge '+d.verdict+'">'+d.verdict+'</span>';for(const x of d.risks||[]){h+='<div class="risk"><small>'+esc(x.cutline||x.severity||'Finding')+'</small>'+esc(x.issue||'')+'<br><em>'+esc(x.minimal_action||'')+'</em></div>'}return h}
@@ -247,7 +445,13 @@ class H(BaseHTTPRequestHandler):
             return self._send(404, json.dumps({"error": "not found"}))
         suffix = target.suffix.lower()
         if suffix == ".md":
-            return self._send(200, render_markdown(target.read_text(encoding="utf-8"), target.stem), "text/html")
+            title = doc_title(target.stem)
+            html = render_markdown(
+                target.read_text(encoding="utf-8"),
+                title,
+                current_path=parsed.path,
+            )
+            return self._send(200, html, "text/html")
         ctype = {".svg": "image/svg+xml", ".png": "image/png", ".gif": "image/gif", ".css": "text/css"}[suffix]
         return self._send(200, target.read_bytes(), ctype)
 

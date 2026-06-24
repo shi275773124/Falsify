@@ -116,7 +116,11 @@ def test_docs_index_route_returns_200():
     handler.do_GET()
 
     assert handler.status_code == 200
-    assert b"Docs" in handler.wfile.getvalue()
+    body = handler.wfile.getvalue()
+    assert b"Docs" in body
+    assert b"Documentation" in body
+    assert b"docs-sidebar" in body
+    assert b"doc-card" in body
 
 
 def test_docs_markdown_route_returns_200():
@@ -124,7 +128,11 @@ def test_docs_markdown_route_returns_200():
     handler.do_GET()
 
     assert handler.status_code == 200
-    assert b"Getting Started" in handler.wfile.getvalue()
+    body = handler.wfile.getvalue()
+    assert b"Getting Started" in body
+    assert b"docs-sidebar" in body
+    assert b'class="active"' in body
+    assert b"doc-body" in body
 
 
 def test_static_traversal_is_rejected():
