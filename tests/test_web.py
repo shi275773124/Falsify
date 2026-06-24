@@ -59,6 +59,16 @@ def test_web_prompt_contains_audit_channel_checks():
     assert "Cutline" in serve.RISK_SYSTEM
 
 
+def test_homepage_quote_attribution_and_avatar():
+    assert "Chris Shi · Founder, Falsify" in serve.PAGE
+    assert "史可鉴 · Falsify 创始人" in serve.PAGE
+    assert 'src="https://github.com/shi275773124.png"' in serve.PAGE
+    assert 'data-i18n="quote_cite">Chris Shi · Founder, Falsify</cite>' in serve.PAGE
+    assert "CTO · AI-native product team" not in serve.PAGE
+    assert "CTO · AI 原生产品团队" not in serve.PAGE
+    assert "applyLang();" in serve.PAGE
+
+
 def test_web_template_contains_public_product_markers():
     assert "Review first. Trust after." in serve.PAGE
     assert "Frame Audit + Adversarial Review + Cutline." in serve.PAGE
