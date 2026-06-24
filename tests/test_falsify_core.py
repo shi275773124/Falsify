@@ -219,7 +219,8 @@ def test_public_docs_and_readme_include_required_markers():
     text = "\n".join(path.read_text(encoding="utf-8") for path in paths)
 
     for marker in (
-        "Stop trusting confident AI.",
+        "Review first. Trust after.",
+        "decision gate",
         "PASS_WITH_DEBT",
         "Must Fix",
         "Known Debt",
