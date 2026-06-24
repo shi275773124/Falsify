@@ -23,6 +23,7 @@ Falsify 在问：**“这个决策是否可辩护？”**
 - [Audit-channel risks](./docs/07-audit-channel-risks.md)
 - [Team delivery & business model blueprint](./docs/10-team-delivery-and-business-model.md)
 - [BYOK + Policy (Team MVP)](./docs/11-byok-and-policy.md)
+- [Install GitHub Action (5 min)](./docs/14-github-action-install.md)
 - [Open Core boundary](./docs/12-open-core-boundary.md)
 - [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
 
