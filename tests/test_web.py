@@ -59,6 +59,20 @@ def test_web_prompt_contains_audit_channel_checks():
     assert "Cutline" in serve.RISK_SYSTEM
 
 
+def test_homepage_hero_craftwork_pack():
+    assert "hero-chips" in serve.PAGE
+    assert "hero-chip" in serve.PAGE
+    assert 'data-i18n="hero_chip_1"' in serve.PAGE
+    assert "trust-strip" in serve.PAGE
+    assert 'data-i18n="trust_github"' in serve.PAGE
+    assert 'data-i18n="trust_schema"' in serve.PAGE
+    assert 'href="#demo"' in serve.PAGE
+    assert 'data-i18n="btn_run_sample_hero"' in serve.PAGE
+    assert "preview-must-fix" in serve.PAGE
+    assert "evidence-tag" in serve.PAGE
+    assert "falsify.review.v1" in serve.PAGE
+
+
 def test_homepage_quote_attribution_and_avatar():
     assert "Chris Shi" in serve.PAGE
     assert "史可鉴" in serve.PAGE
