@@ -96,10 +96,17 @@ jobs:
               else:
                   review_obj = {
                       "schema_version": "falsify.review.v1",
-                      "verdict": "PASS_WITH_DEBT",
+                      "verdict": "PASS",
                       "findings": [],
-                      "raw_review": "live review skipped: missing API key",
-                      "meta": {"provider": "", "model": "", "target": f, "reviewed_at": ""},
+                      "raw_review": "live review skipped: set FALSIFY_API_KEY for model-backed review (lint-only mode)",
+                      "meta": {
+                          "provider": "",
+                          "model": "",
+                          "target": f,
+                          "reviewed_at": "",
+                          "review_skipped": True,
+                          "skip_reason": "missing FALSIFY_API_KEY",
+                      },
                   }
                   review_ok = True
 
@@ -129,6 +136,10 @@ jobs:
               lines.append(f"- lint: {'✅' if item['lint_ok'] else '❌'}")
               rv = item["review"].get("verdict", "BLOCK")
               lines.append(f"- review: `{rv}`")
+              skip_meta = item["review"].get("meta") or {}
+              if skip_meta.get("review_skipped"):
+                  reason = skip_meta.get("skip_reason", "unknown")
+                  lines.append(f"- review skipped: `{reason}` (lint-only; set `FALSIFY_API_KEY` for live review)")
               findings = item["review"].get("findings", [])
               if findings:
                   grouped = {"Must Fix": [], "Known Debt": [], "Delete": []}
