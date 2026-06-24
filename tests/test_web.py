@@ -59,22 +59,23 @@ def test_web_prompt_contains_audit_channel_checks():
     assert "Cutline" in serve.RISK_SYSTEM
 
 
-def test_homepage_hero_minimal_pack():
+def test_homepage_hero_craftwork_pack():
     assert "hero-chips" in serve.PAGE
     assert "hero-chip" in serve.PAGE
-    assert 'data-i18n="hero_chip_unified"' in serve.PAGE
+    assert 'data-i18n="hero_chip_1"' in serve.PAGE
     assert 'data-i18n="hero_definition"' in serve.PAGE
     assert 'data-i18n="hero_workbench_note"' in serve.PAGE
-    assert "pipeline" in serve.PAGE
-    assert 'data-i18n="pipe_frame"' in serve.PAGE
+    assert "Frame Audit" in serve.PAGE
     assert "框架审" in serve.PAGE
-    assert 'href="#sample-report"' in serve.PAGE
-    assert 'data-i18n="btn_sample_report_hero"' in serve.PAGE
-    assert "preview-must-fix" not in serve.PAGE
-    assert "trust-strip" not in serve.PAGE
-    assert 'data-i18n="footer_trust"' in serve.PAGE
+    assert "trust-strip" in serve.PAGE
+    assert 'data-i18n="trust_github"' in serve.PAGE
+    assert 'data-i18n="trust_schema"' in serve.PAGE
+    assert 'data-i18n="trust_byok"' in serve.PAGE
+    assert 'href="#demo"' in serve.PAGE
+    assert 'data-i18n="btn_run_sample_hero"' in serve.PAGE
+    assert "preview-must-fix" in serve.PAGE
+    assert "evidence-tag" in serve.PAGE
     assert "falsify.review.v1" in serve.PAGE
-    assert "nav-mobile" in serve.PAGE
 
 
 def test_homepage_antipattern_section():
@@ -112,7 +113,7 @@ def test_homepage_hero_layers_section():
     assert 'class="hero-layers"' in serve.PAGE
     assert 'id="layers"' in serve.PAGE
     assert serve.PAGE.index('class="quote"') < serve.PAGE.index('class="hero-layers"')
-    assert serve.PAGE.index('class="hero-layers"') < serve.PAGE.index('id="sample-report"')
+    assert serve.PAGE.index('class="hero-layers"') < serve.PAGE.index('class="evidence"')
     assert 'data-i18n="hero_layers_hook"' in serve.PAGE
     assert 'data-i18n="hero_layers_l1_tag"' in serve.PAGE
     assert 'data-i18n="hero_layers_l3_body"' in serve.PAGE
@@ -237,38 +238,17 @@ def test_head_docs_markdown_returns_200():
 
 
 def test_homepage_open_core_licensing_section():
-    assert 'id="licensing"' not in serve.PAGE
-    assert 'data-i18n="pricing_honest_oss"' in serve.PAGE
-    assert 'data-i18n="footer_open_core"' in serve.PAGE
+    assert 'id="licensing"' in serve.PAGE
+    assert 'data-i18n="licensing_tag"' in serve.PAGE
+    assert 'data-i18n="licensing_p"' in serve.PAGE
     assert "/docs/12-open-core-boundary.md" in serve.PAGE
-    assert "MIT core" in serve.PAGE
-    assert "MIT 核心" in serve.PAGE
-    assert "self-hosted unlimited" in serve.PAGE
-    assert "自托管" in serve.PAGE
-    assert "waitlist" in serve.PAGE
-    assert "候补" in serve.PAGE
-    assert "$99" not in serve.PAGE
+    assert "MIT (core)" in serve.PAGE
+    assert "MIT（核心）" in serve.PAGE
+    assert "Self-hosted · unlimited repos" in serve.PAGE
+    assert "自托管 · 仓库不限" in serve.PAGE
+    assert "Hosted org policy" in serve.PAGE
+    assert "托管组织 policy" in serve.PAGE
     assert "Shared review templates" not in serve.PAGE
-
-
-def test_homepage_sample_artifact_section():
-    assert 'id="sample-report"' in serve.PAGE
-    assert "/examples/sample-block-report.json" in serve.PAGE
-    assert 'data-i18n="sample_download"' in serve.PAGE
-    assert "gh-check" not in serve.PAGE
-    assert 'id="not-falsify"' in serve.PAGE
-    assert 'data-i18n="compare_h2"' not in serve.PAGE
-    assert ".evidence-grid" not in serve.PAGE or 'class="evidence"' in serve.PAGE
-
-
-def test_examples_json_route_returns_200():
-    handler = make_handler("/examples/sample-block-report.json")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = json.loads(handler.wfile.getvalue())
-    assert body["schema_version"] == "falsify.review.v1"
-    assert body["verdict"] == "BLOCK"
 
 
 def test_render_verdict_shows_upgrade_trigger():
