@@ -1,0 +1,29 @@
+name: release-gate
+
+# Run the full test suite on version tags before treating a release as valid.
+# Pair with branch protection on main requiring the falsify / test-suite check.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install test dependencies
+        run: python -m pip install -e '.[dev]'
+
+      - name: Run unit tests
+        run: python -m pytest tests -q
