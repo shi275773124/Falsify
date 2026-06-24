@@ -132,10 +132,13 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 - [Audit-channel risks](./docs/07-audit-channel-risks.md)
 - [Team delivery & business model blueprint](./docs/10-team-delivery-and-business-model.md)
 - [BYOK + Policy (Team MVP)](./docs/11-byok-and-policy.md)
+- [Install GitHub Action (5 min)](./docs/14-github-action-install.md)
 - [Open Core boundary](./docs/12-open-core-boundary.md)
 - [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
 
 ## Team rollout prototype
+
+**Fast path:** [Install GitHub Action in 5 minutes](./docs/14-github-action-install.md)
 
 Use the PR workflow prototype to get verdict comments on changed decision docs:
 
