@@ -69,11 +69,11 @@ def test_homepage_hero_redesign():
     assert 'data-i18n-alt="hero_img_alt"' in serve.PAGE
     assert "proof-strip" in serve.PAGE
     assert 'data-i18n="hero_definition"' in serve.PAGE
-    assert 'data-i18n="hero_workbench_note"' in serve.PAGE
+    assert "gate-map" in serve.PAGE
     assert "Frame Audit" in serve.PAGE
     assert "框架审" in serve.PAGE
-    assert "trust-strip" in serve.PAGE
-    assert 'data-i18n="trust_github"' in serve.PAGE
+    assert "trust-band" in serve.PAGE
+    assert 'data-i18n="trust_band_github"' in serve.PAGE
     assert 'data-i18n="trust_schema"' in serve.PAGE
     assert 'data-i18n="trust_byok"' in serve.PAGE
     assert 'href="#demo"' in serve.PAGE
@@ -83,22 +83,31 @@ def test_homepage_hero_redesign():
     assert "id=\"pricing\"" not in serve.PAGE
     assert "deliverables" not in serve.PAGE
     assert "evidence-grid" not in serve.PAGE
+    assert "trust-strip" not in serve.PAGE
+    assert 'id="not-falsify"' not in serve.PAGE
 
 
-def test_homepage_antipattern_section():
-    assert 'id="not-falsify"' in serve.PAGE
-    assert 'data-i18n="antipattern_h2"' in serve.PAGE
+def test_homepage_limits_section():
+    assert 'id="limits"' in serve.PAGE
+    assert 'data-i18n="limits_tag"' in serve.PAGE
     assert 'data-i18n="ap_1"' in serve.PAGE
     assert 'data-i18n="ap_2"' in serve.PAGE
     assert 'data-i18n="ap_3"' in serve.PAGE
+    assert 'data-i18n="boundary_h2"' in serve.PAGE
+    assert 'data-i18n="boundary_p"' in serve.PAGE
     assert "Cutline-only ≠ full Falsify" in serve.PAGE
     assert "只有 Cutline ≠ 完整 Falsify" in serve.PAGE
+    assert "limits-grid" in serve.PAGE
 
 
-def test_homepage_cutline_philosophy():
-    assert 'data-i18n="rs_lead"' in serve.PAGE
-    assert "Decides what blocks now" in serve.PAGE
-    assert "决定当下什么阻塞" in serve.PAGE
+def test_homepage_layers_strip():
+    assert 'class="layers-strip"' in serve.PAGE
+    assert 'data-i18n="hero_layers_l1_tag"' in serve.PAGE
+    assert 'data-i18n="hero_layers_l3_tag"' in serve.PAGE
+    assert 'data-i18n="hero_layers_verdicts"' in serve.PAGE
+    assert 'class="layer-body"' not in serve.PAGE
+    assert 'data-i18n="hero_layers_hook"' not in serve.PAGE
+    assert 'data-i18n="hero_layers_intro"' not in serve.PAGE
 
 
 def test_homepage_quote_attribution_and_avatar():
@@ -120,30 +129,20 @@ def test_homepage_quote_attribution_and_avatar():
 def test_homepage_hero_layers_section():
     assert 'class="hero-layers"' in serve.PAGE
     assert 'id="layers"' in serve.PAGE
+    assert serve.PAGE.index('class="trust-band"') < serve.PAGE.index('class="quote"')
     assert serve.PAGE.index('class="quote"') < serve.PAGE.index('class="hero-layers"')
     assert serve.PAGE.index('class="hero-layers"') < serve.PAGE.index('id="artifact"')
-    assert 'data-i18n="hero_layers_hook"' in serve.PAGE
-    assert 'data-i18n="hero_layers_l1_tag"' in serve.PAGE
-    assert 'data-i18n="hero_layers_l3_body"' in serve.PAGE
-    assert "AI made fake proof cheap." in serve.PAGE
-    assert "AI 让假证明变便宜了。" in serve.PAGE
-    assert "hidden state, authority drift, missing rollback." in serve.PAGE
-    assert "隐式状态、越权路径、回滚缺失。" in serve.PAGE
-    assert "false facts, fake acceptance, audit theater." in serve.PAGE
-    assert "假事实、假验收、审计作秀。" in serve.PAGE
-    assert "Three verdicts only." in serve.PAGE
-    assert "走完，只落三档裁决。" in serve.PAGE
+    assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
     assert "「日志绿了，不等于证据成立。我们不再假装它算数。」" in serve.PAGE
     assert '"Green logs aren\'t proof. We stopped pretending they were."' in serve.PAGE
 
 
 def test_homepage_workbench_partial_scope_copy():
     assert 'data-i18n="workbench_scope"' in serve.PAGE
-    assert "not machine-enforced Frame Audit" in serve.PAGE
-    assert "非机审框架审" in serve.PAGE
-    assert "adversarial demos" in serve.PAGE
-    assert "对抗审样例" in serve.PAGE
     assert "not full Falsify" in serve.PAGE
+    assert "非完整 Falsify" in serve.PAGE
+    assert 'data-i18n="try_lead"' not in serve.PAGE
+    assert 'data-i18n="demo_note"' not in serve.PAGE
 
 
 def test_web_template_contains_public_product_markers():
@@ -348,6 +347,7 @@ def test_homepage_open_core_licensing_footer():
     assert "hosted policy enforcement" in serve.PAGE
     assert "托管 policy" in serve.PAGE
     assert "Shared review templates" not in serve.PAGE
+    assert 'class="boundary-block"' not in serve.PAGE
 
 
 def test_homepage_social_and_favicon_meta():
