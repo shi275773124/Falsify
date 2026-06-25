@@ -4,13 +4,13 @@
 
 ## 问题
 
-单 agent 写研究稿会无声出错。Agent 笃定地写出费率表、配置片段、API 合约——30% 概率某个具体数字错了。没有第二双眼睛，这种错就 ship 出去。
+单 agent 写研究稿会静默出错。Agent 笃定地写出费率表、配置片段、API 合约——30% 概率某个具体数字错了。没有第二双眼睛，这种错就发出去了。
 
-人工 review 能 catch 一部分，但人没耐心逐段追每一条引用 URL。
+人工 review 能抓到一部分，但人没耐心逐段追每一条引用 URL。
 
 第二个 agent 有。
 
-## 这套 pattern
+## 这套模式
 
 跑两个 agent，**提示词不同，模型不同（最好），上下文独立**，但指向**同一个可写知识库**。轮流来：
 
@@ -25,13 +25,13 @@
 - 本地优先（不绑云）
 - 给人类读的桌面 app 免费
 
-同步底座选 **git**：
+同步层选 **git**：
 - 开发者都会
 - 每 commit 有作者身份（审计轨迹）
 - 想分支就分支
 - GitHub 私有 repo 免费
 
-笔记本自动同步用 **Obsidian Git 插件**（社区版，免费），定时 poll 自动 pull/push。
+本地 Obsidian 自动同步用 **Obsidian Git 插件**（社区版，免费），定时 poll 自动 pull/push。
 
 ## 拓扑
 
@@ -46,14 +46,14 @@
        push   │   push   │   （自动 pull/push）
               │          │           │
        ┌──────┴──┐  ┌────┴────┐  ┌───┴────────┐
-       │ Agent A │  │ Agent B │  │ 你笔记本    │
-       │ (VPS 1) │  │ (VPS 2) │  │ Obsidian    │
+       │ Agent A │  │ Agent B │  │ 本地 Obsidian│
+       │ (VPS 1) │  │ (VPS 2) │  │             │
        └─────────┘  └─────────┘  └─────────────┘
 ```
 
-三个写者，一份真相。每个写者有自己的 git author，`git log` 就是完整 provenance。
+三个写入者，一份真相。每个写入者有自己的 git author，`git log` 就是完整 provenance。
 
-## 为什么打 Obsidian Sync / Notion / Google Docs
+## 为什么胜过 Obsidian Sync / Notion / Google Docs
 
 | 关注点 | 本方案 | Obsidian Sync | Notion | Google Docs |
 |---|---|---|---|---|
@@ -66,23 +66,23 @@
 
 杀手锏是 **段级可 diff 作者历史**。出问题时，`git blame` + `[AGENT-X]` 标签直接告诉你谁、什么时候写的。
 
-## 为什么这套 work（无聊的原因）
+## 为什么这套有效（无聊的原因）
 
-两个 agent 对一个事实分歧 → 形成 **结构化冲突**，好仲裁。仲裁规则（一手 docs）把 "agent 嘴硬" 变成 "官方文档怎么写"。
+两个 agent 对一个事实分歧 → 形成 **结构化冲突**，便于仲裁。仲裁规则（一手 docs）把 "agent 嘴硬" 变成 "官方文档怎么写"。
 
-单 agent 没这种 forcing function。它会用笃定的语气抹平自己的不确定。
+单 agent 没这种强制机制。它会用笃定的语气抹平自己的不确定。
 
-## 这套能 catch 的错误
+## 这套能抓到的错误
 
-- **编造的费率档** → 另一 agent 读同一来源 catch 出
-- **过期缓存** → 另一 agent 实抓 catch 出
-- **单位错乱**（bps vs %，日 vs 年化）→ 段级审计 catch 出
-- **过时的 API endpoint** → 另一 agent 真去 hit catch 出
+- **编造的费率档** → 另一 agent 读同一来源抓到
+- **过期缓存** → 另一 agent 实抓抓到
+- **单位错乱**（bps vs %，日 vs 年化）→ 段级审计抓到
+- **过时的 API 端点** → 另一 agent 真去请求抓到
 
-## 这套 catch 不到的
+## 这套抓不到的
 
 - 两个 agent 共享同一个错误前提（罕见但可能——比如训练数据都过时）
-- 两个 agent 都跳过一手核查（这个靠规则约束，不靠 pattern）
+- 两个 agent 都跳过一手核查（这个靠规则约束，不靠模式）
 - 共享知识库本身被污染（git 历史可救）
 
 第一个加第三 agent 或人工抽查。第二个要在 prompt 层强制——见 [03-collaboration.zh-CN.md](./03-collaboration.zh-CN.md)。
