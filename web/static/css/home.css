@@ -1472,3 +1472,17 @@ html.lang-zh footer {
   font-family: var(--font-zh);
   line-height: 1.7;
 }
+
+.layers-manifesto {
+  max-width: 720px;
+  margin: 24px auto 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.layers-manifesto-kicker {
+  margin-top: 12px;
+  color: var(--fg);
+  font-weight: 500;
+}

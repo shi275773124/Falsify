@@ -46,7 +46,7 @@
   <div class="hero-inner">
     <div class="hero-copy">
       <h1 data-i18n="h1">Looks right is not enough.</h1>
-      <p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p>
+      <p class="sub" data-i18n="hero_sub">A conclusion is not trusted — unless it survives an independent adversarial attack.</p>
       <p class="hero-sub-note"><span data-i18n="hero_definition">Frame Audit · Adversarial Review · Cutline → one protocol verdict.</span> <a class="hero-docs-link" href="/docs/05-adversarial-review.md" data-i18n="hero_docs_link">Full layers in docs →</a></p>
       <div class="actions">
         <a class="btn primary" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
@@ -79,7 +79,7 @@
               <span class="gate-val" data-i18n="gate_pass">PASS</span>
             </div>
             <div class="gate-stage">
-              <span class="gate-label" data-i18n="gate_adv">Evidence</span>
+              <span class="gate-label" data-i18n="gate_adv">Adversarial</span>
               <span class="gate-map" data-i18n="hero_layers_l2_map">Adversarial Review</span>
               <span class="gate-val" data-i18n="gate_pass">PASS</span>
             </div>
@@ -140,7 +140,7 @@
       </a>
       <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify/tree/main/examples" rel="noopener noreferrer" data-i18n="trust_examples">Examples</a>
       <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify/blob/main/docs/self-falsify-2026-06-25.md" rel="noopener noreferrer" data-i18n="trust_self_audit">Self-Falsify audit</a>
-      <span class="trust-chip trust-item" data-i18n="trust_mit">MIT (core)</span>
+      <span class="trust-chip trust-item" data-i18n="trust_mit">MIT</span>
       <span class="trust-chip trust-item" data-i18n="trust_byok">No Falsify key · BYOK</span>
       <span class="trust-chip trust-item" data-i18n="trust_schema">falsify.review.v1</span>
     </div>
@@ -173,7 +173,7 @@
         <span class="layer-sep" aria-hidden="true">·</span>
         <article class="layer-chip" role="listitem">
           <span class="layer-step-num" aria-hidden="true">02</span>
-          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
+          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Adversarial</span>
           <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
         </article>
         <span class="layer-sep" aria-hidden="true">·</span>
@@ -185,6 +185,8 @@
       </div>
     </div>
     <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
+    <p class="layers-manifesto" data-i18n="layers_manifesto_1">Frame Audit detects structural rot. Adversarial Review attacks fatal assumptions. Cutline cuts discrete verdicts. The meta-layer audits the audit channel itself. Reviewer and author are cross-vendor independent. Verdict and authorization are deliberately separated.</p>
+    <p class="layers-manifesto layers-manifesto-kicker" data-i18n="layers_manifesto_2">Falsify does not answer &ldquo;who should criticize.&rdquo; It defines what a trustworthy conclusion means.</p>
   </div>
 </section>
 
@@ -209,7 +211,7 @@
               <option value="production" selected data-i18n="scenario_production">Production</option>
             </select>
             <button class="btn primary" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
-            <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Live review</button>
+            <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Quick review</button>
           </div>
         </div>
         <div class="panel result" id="out">
@@ -233,7 +235,7 @@
           <span class="case-domain" data-i18n="case1_domain">Strategy research</span>
           <span class="badge BLOCK case-badge">BLOCK</span>
         </div>
-        <p class="case-illus" data-i18n="case_illus">Illustrative</p>
+        <p class="case-illus" data-i18n="case_illus">Internal case</p>
         <h3 class="case-title" data-i18n="case1_title">Sharpe 4.06 · 6/7 PASS → mechanic flaw</h3>
         <p class="case-finding" data-i18n="case1_finding">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
         <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
