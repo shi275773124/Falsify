@@ -253,7 +253,7 @@ const T = {
     ap_1: "「再看一眼」≠ 完整 Falsify",
     ap_2: "只有 Cutline ≠ 完整 Falsify",
     ap_3: "每个坏味道都标 Must Fix ≠ Cutline",
-    workbench_h2: "几分钟试出裁决",
+    workbench_h2: "几分钟跑一次裁决",
     input_h3: "声明",
     input_p: "粘贴部署声明、PR 摘要或 AI 生成报告。",
     output_h3: "裁决",
