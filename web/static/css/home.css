@@ -263,11 +263,26 @@ h1 {
 .trust-band-inner {
   margin: 0 auto;
   max-width: var(--max);
-  text-align: center;
+}
+.trust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-panel);
   font: 600 11px var(--mono);
   letter-spacing: 0.04em;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.3;
   white-space: nowrap;
 }
 .trust-item {
@@ -277,8 +292,8 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  vertical-align: middle;
   color: var(--muted);
+  text-decoration: none;
 }
 .trust-link:hover { color: var(--fg); }
 .trust-gh-icon {
@@ -286,11 +301,6 @@ h1 {
   vertical-align: -2px;
   opacity: 0.75;
   flex-shrink: 0;
-}
-.trust-sep {
-  color: var(--muted);
-  opacity: 0.45;
-  user-select: none;
 }
 
 .proof-strip {
@@ -301,13 +311,16 @@ h1 {
 .proof-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  gap: 16px;
   text-align: center;
 }
+.proof-item {
+  min-width: 0;
+}
 .proof-case {
-  margin-top: 28px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
   text-align: center;
 }
 .proof-github {
@@ -357,6 +370,14 @@ h1 {
     background: var(--border);
     pointer-events: none;
   }
+  .proof-stats {
+    gap: 24px;
+  }
+  .proof-case {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
   .proof-stats .proof-lbl {
     white-space: nowrap;
     max-width: none;
@@ -393,13 +414,30 @@ h1 {
   background: var(--bg-panel);
 }
 .avatar {
+  position: relative;
   width: 48px;
   height: 48px;
   border-radius: 50%;
   background: linear-gradient(135deg, #333, #666);
-  object-fit: cover;
   flex-shrink: 0;
   align-self: center;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.avatar-initial {
+  font: 700 18px var(--font-zh, var(--font));
+  color: var(--fg);
+  line-height: 1;
+  user-select: none;
+}
+.avatar-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .quote p { margin: 0; color: var(--body); font-size: 18px; line-height: 1.55; }
 .quote cite {
@@ -429,6 +467,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 .layer-tag {
   font: 800 clamp(26px, 3.8vw, 38px)/1 var(--font);
@@ -445,11 +484,7 @@ h1 {
   line-height: 1.45;
 }
 .layer-sub-tag {
-  font: 500 9px var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  opacity: 0.75;
+  display: none;
 }
 .layer-sep {
   color: var(--muted);
@@ -708,6 +743,156 @@ footer {
 footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 footer a:hover { color: var(--fg); }
 
+@media (max-width: 767px) {
+  .hero-copy {
+    padding-top: 72px;
+    padding-bottom: 28px;
+  }
+  .hero-visual {
+    min-height: 240px;
+    padding: 20px var(--pad) 28px;
+  }
+  .hero-stamp {
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+  .proof-strip {
+    padding: 20px 0 24px;
+  }
+  .proof-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    text-align: left;
+  }
+  .proof-item {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+  }
+  .proof-item:last-child {
+    grid-column: 1 / -1;
+  }
+  .proof-item .proof-val {
+    font-size: clamp(20px, 5.5vw, 26px);
+    margin-bottom: 4px;
+    text-align: left;
+  }
+  .proof-item .proof-lbl {
+    font-size: 12px;
+    line-height: 1.4;
+    max-width: none;
+    margin: 0;
+    text-align: left;
+  }
+  .proof-case {
+    margin-top: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+    text-align: left;
+  }
+  .proof-case .proof-val {
+    font-size: clamp(18px, 5vw, 24px);
+    text-align: left;
+  }
+  .proof-case .proof-lbl {
+    font-size: 12px;
+    text-align: left;
+    margin: 0;
+  }
+  .trust-band {
+    padding: 14px var(--pad);
+  }
+  .trust-chips {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+  .trust-chip {
+    font-size: 10px;
+    padding: 5px 10px;
+    white-space: normal;
+    text-align: center;
+  }
+  .quote {
+    padding: 28px 0;
+  }
+  .quote-card {
+    padding: 16px;
+    gap: 14px;
+  }
+  .quote p {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  .hero-layers {
+    padding: 28px 0;
+  }
+  .layers-wrap {
+    text-align: left;
+  }
+  .layers-strip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .layer-sep {
+    display: none;
+  }
+  .layer-chip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+    text-align: left;
+  }
+  .layer-tag {
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .layer-map-tag {
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font);
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--fg);
+    max-width: none;
+    text-align: left;
+    line-height: 1.45;
+  }
+  .hero-layers-verdicts {
+    display: block;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    font-size: 11px;
+    text-align: center;
+  }
+  .case-card {
+    padding: 16px;
+  }
+  .case-title {
+    font-size: 16px;
+  }
+  .s {
+    padding: 48px 0;
+  }
+}
+
 @media (max-width: 960px) {
   .nav-toggle { display: inline-flex; }
   .links {
@@ -738,8 +923,7 @@ footer a:hover { color: var(--fg); }
     padding: 32px var(--pad);
   }
   .hero-copy { margin: 0 auto; max-width: none; padding-top: 96px; }
-  .trust-band-inner { white-space: normal; }
-  .proof-stats, .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
+  .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
   .gate-stages { grid-template-columns: repeat(2, 1fr); }
   .row .btn { margin-left: 0; width: 100%; }
 }
@@ -816,14 +1000,49 @@ html.lang-zh .sub {
 }
 
 html[lang="zh-CN"] .layer-map-tag,
-html.lang-zh .layer-map-tag,
-html[lang="zh-CN"] .layer-sub-tag,
-html.lang-zh .layer-sub-tag {
+html.lang-zh .layer-map-tag {
   font-family: var(--font-zh);
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: none;
   max-width: none;
+}
+
+@media (max-width: 767px) {
+  html[lang="zh-CN"] .layer-tag,
+  html.lang-zh .layer-tag {
+    font-family: var(--font-zh);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  html[lang="zh-CN"] .layer-map-tag,
+  html.lang-zh .layer-map-tag {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    word-break: keep-all;
+    line-break: strict;
+  }
+  html[lang="zh-CN"] .proof-item .proof-val,
+  html.lang-zh .proof-item .proof-val,
+  html[lang="zh-CN"] .proof-case-val,
+  html.lang-zh .proof-case-val {
+    font-size: clamp(18px, 5vw, 24px);
+    line-height: 1.25;
+  }
+  html[lang="zh-CN"] .proof-item .proof-lbl,
+  html.lang-zh .proof-item .proof-lbl,
+  html[lang="zh-CN"] .proof-case .proof-lbl,
+  html.lang-zh .proof-case .proof-lbl {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  html[lang="zh-CN"] .trust-chip,
+  html.lang-zh .trust-chip {
+    font-size: 11px;
+    white-space: normal;
+  }
 }
 
 html[lang="zh-CN"] .case-domain,
@@ -863,6 +1082,8 @@ html.lang-zh .problem {
 
 html[lang="zh-CN"] .trust-band-inner,
 html.lang-zh .trust-band-inner,
+html[lang="zh-CN"] .trust-chip,
+html.lang-zh .trust-chip,
 html[lang="zh-CN"] .trust-item,
 html.lang-zh .trust-item,
 html[lang="zh-CN"] .workbench-note,
@@ -878,8 +1099,8 @@ html[lang="zh-CN"] .trust-item[data-i18n="trust_schema"],
 html.lang-zh .trust-item[data-i18n="trust_schema"],
 html[lang="zh-CN"] .trust-item[data-i18n="trust_byok"],
 html.lang-zh .trust-item[data-i18n="trust_byok"],
-html[lang="zh-CN"] .trust-band .trust-link span,
-html.lang-zh .trust-band .trust-link span {
+html[lang="zh-CN"] .trust-chip.trust-link span,
+html.lang-zh .trust-chip.trust-link span {
   font-family: var(--mono);
   letter-spacing: 0.02em;
 }
