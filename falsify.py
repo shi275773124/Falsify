@@ -22,8 +22,8 @@ Or set it once in ./.falsify or ~/.falsify (run `falsify init`), then:
     falsify review report.md
     cat report.md | falsify review -        # paste-and-go via stdin
 
-No API key? Point it at an agent CLI you're already logged into. It rides your
-existing subscription (Claude, Codex, Gemini, Hermes, or any other):
+No Falsify API key. For live review, bring a provider key (BYOK) or point at an
+agent CLI you're already logged into (Claude, Codex, Gemini, Hermes, or any other):
 
     falsify review report.md --provider claude    # or: codex / gemini / hermes
     # any other agent: FALSIFY_AGENT_CMD='myagent --headless' falsify review report.md -p myagent

@@ -112,11 +112,13 @@ def test_homepage_layers_strip():
 
 def test_homepage_quote_attribution_and_avatar():
     assert "Chris Shi" in serve.PAGE
-    assert "史可鉴" in serve.PAGE
+    assert "史可鉴" not in serve.PAGE
     assert "Founder, Falsify" not in serve.PAGE
     assert "Falsify 创始人" not in serve.PAGE
     assert 'src="/assets/chris-shi-founder.png"' in serve.PAGE
-    assert 'alt="史可鉴 / Chris Shi"' in serve.PAGE
+    assert 'alt="Chris Shi"' in serve.PAGE
+    assert 'aria-label="Chris Shi"' in serve.PAGE
+    assert 'avatar-initial' not in serve.PAGE
     assert 'data-i18n="quote_cite">Chris Shi</cite>' in serve.PAGE
     css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
     assert "align-items: center" in css

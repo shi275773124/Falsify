@@ -306,7 +306,7 @@
 
 ### i18n / content constraints
 
-- Keep **quote A** (Chris Shi / 史可鉴) — avatar + cite, no "Founder" title.  
+- Keep **quote A** (Chris Shi) — avatar + cite, product voice only; no "Founder" title or fabricated third-party testimonial.  
 - Keep **hero_layers** i18n keys — rewrite layout only.  
 - Marketing says **框架审** not Brooks-Lint.  
 - Tests: `tests/test_web.py` updated for new section IDs; key copy phrases preserved.

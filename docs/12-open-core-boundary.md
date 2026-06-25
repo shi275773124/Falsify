@@ -13,7 +13,7 @@ Core principle:
 Falsify is not an "AI code reviewer".  
 Falsify is a **decision gate for AI-era work**.
 
-Code review asks: "Does the diff look right?"  
+Code review and lint gates catch many issues. They still ask: "Does the diff look right?"  
 Falsify asks: "Is this decision defensible?"
 
 ## Open vs Paid boundary (current)
@@ -94,3 +94,8 @@ We split into `falsify` + `falsify-team` only when all are true:
 2. API/schema boundaries are versioned
 3. Multi-repo development overhead is lower than single-repo confusion
 
+## Known Debt — open-core business model
+
+**Why not blocking:** OSS protocol + MIT templates are shipped and self-hostable today. Patterns like dbt/Vault-style open core are analogies for how teams sell workflow around an open spec — not proof that Falsify Team will convert.
+
+**Upgrade trigger:** Becomes Must Fix when we claim "open core is proven" in marketing, publish funnel/conversion data, or sign the first paying Team customer without updating this section.
