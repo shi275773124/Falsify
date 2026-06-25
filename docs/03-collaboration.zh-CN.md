@@ -4,7 +4,7 @@
 
 **这是第 1 层——互审**，抓的是*数字错*。遇到"事实对、结论却错"的高风险场景，加上第 2 层：[05 · 对抗审议](./05-adversarial-review.zh-CN.md)。
 
-Agent 一旦不守这些规则，整套 pattern 立刻失效。在 prompt 层强制。
+Agent 一旦不守这些规则，整套模式立刻失效。在 prompt 层强制。
 
 ## 规则 1 — 每段都标作者
 
@@ -14,7 +14,7 @@ Agent 写的每段都加前缀（或后缀）：
 - `[AGENT-B]` — Agent B 写的
 - `[BOTH]` — 双方同步后一致
 
-代码块、表格、列表整块标。别在一个列表里把标签撒得到处都是——整个列表标一次。
+代码块、表格、列表整块标。别在一个列表里把标签散落到每一行——整个列表标一次。
 
 ```markdown
 [AGENT-A]
@@ -111,7 +111,7 @@ Venue C Standard 档：9.0bps maker / 3.0bps taker。
 
 ## 写区（谁负责什么）
 
-为防两个 agent 互相踩，定义**写区**：
+为防两个 agent 互相冲突，定义**写区**：
 
 - `agent-a-personal/` — 仅 A 写，B 可读
 - `agent-b-personal/` — 仅 B 写，A 可读
@@ -131,7 +131,7 @@ Venue C Standard 档：9.0bps maker / 3.0bps taker。
 - [ ] 双方同意修改时，是原作者改了自己块吗？
 - [ ] 我用自己的 git 身份 commit 了吗？
 
-## 反 pattern（别做）
+## 反模式（别做）
 
 - ❌ "我觉得 Agent A 错了" 而没核源
 - ❌ 直接改 Agent A 的 `[AGENT-A]` 块"修"它
