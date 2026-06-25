@@ -136,18 +136,27 @@
 </section>
 
 <section class="trust-band" aria-label="Trust signals">
-  <p class="trust-band-inner">
-    <a class="trust-link" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">
-      <svg class="trust-gh-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      <span data-i18n="trust_band_github">GitHub</span>
-    </a><span class="trust-sep" aria-hidden="true"> · </span><span class="trust-item" data-i18n="trust_mit">MIT (core)</span><span class="trust-sep" aria-hidden="true"> · </span><span class="trust-item" data-i18n="trust_byok">BYOK</span><span class="trust-sep" aria-hidden="true"> · </span><span class="trust-item" data-i18n="trust_discipline">Cutline discipline</span><span class="trust-sep" aria-hidden="true"> · </span><span class="trust-item" data-i18n="trust_schema">falsify.review.v1</span>
-  </p>
+  <div class="trust-band-inner">
+    <div class="trust-chips">
+      <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">
+        <svg class="trust-gh-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span data-i18n="trust_band_github">GitHub</span>
+      </a>
+      <span class="trust-chip trust-item" data-i18n="trust_mit">MIT (core)</span>
+      <span class="trust-chip trust-item" data-i18n="trust_byok">BYOK</span>
+      <span class="trust-chip trust-item" data-i18n="trust_discipline">Cutline discipline</span>
+      <span class="trust-chip trust-item" data-i18n="trust_schema">falsify.review.v1</span>
+    </div>
+  </div>
 </section>
 
 <section class="quote">
   <div class="wrap">
     <div class="quote-card">
-      <img class="avatar" src="/assets/chris-shi-founder.png" alt="史可鉴 / Chris Shi" width="48" height="48">
+      <div class="avatar" role="img" aria-label="史可鉴 / Chris Shi">
+        <span class="avatar-initial" aria-hidden="true">史</span>
+        <img class="avatar-img" src="/assets/chris-shi-founder.png" alt="史可鉴 / Chris Shi" width="48" height="48" loading="lazy" decoding="async" onerror="this.remove()">
+      </div>
       <div>
         <p data-i18n="quote_p">"Green logs aren't proof. We stopped pretending they were."</p>
         <cite data-i18n="quote_cite">Chris Shi</cite>
@@ -159,21 +168,20 @@
 <section class="hero-layers" id="layers">
   <div class="wrap layers-wrap">
     <div class="layers-strip" role="list">
-      <div class="layer-chip" role="listitem">
+      <article class="layer-chip" role="listitem">
         <span class="layer-tag" data-i18n="hero_layers_l1_tag">Frame</span>
         <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Frame Audit</span>
-      </div>
+      </article>
       <span class="layer-sep" aria-hidden="true">·</span>
-      <div class="layer-chip" role="listitem">
+      <article class="layer-chip" role="listitem">
         <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
         <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
-      </div>
+      </article>
       <span class="layer-sep" aria-hidden="true">·</span>
-      <div class="layer-chip" role="listitem">
+      <article class="layer-chip" role="listitem">
         <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
         <span class="layer-map-tag" data-i18n="hero_layers_l3_map">What must change now</span>
-        <span class="layer-sub-tag" data-i18n="hero_layers_l3_sub">No audit bloat</span>
-      </div>
+      </article>
     </div>
     <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
   </div>
