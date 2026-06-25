@@ -64,6 +64,9 @@ def test_web_prompt_contains_audit_channel_checks():
 
 def test_homepage_hero_redesign():
     assert "gate-panel" in serve.PAGE
+    assert "hero-check-img" in serve.PAGE
+    assert "/static/img/hero-block-check.png" in serve.PAGE
+    assert 'data-i18n-alt="hero_img_alt"' in serve.PAGE
     assert "proof-strip" in serve.PAGE
     assert 'data-i18n="hero_definition"' in serve.PAGE
     assert 'data-i18n="hero_workbench_note"' in serve.PAGE
@@ -273,6 +276,45 @@ def test_homepage_open_core_licensing_footer():
     assert "hosted policy enforcement" in serve.PAGE
     assert "托管 policy" in serve.PAGE
     assert "Shared review templates" not in serve.PAGE
+
+
+def test_homepage_social_and_favicon_meta():
+    assert 'property="og:title"' in serve.PAGE
+    assert 'property="og:image"' in serve.PAGE
+    assert 'name="twitter:card"' in serve.PAGE
+    assert "summary_large_image" in serve.PAGE
+    assert "/static/favicon.svg" in serve.PAGE
+    assert "/static/favicon.ico" in serve.PAGE
+    assert "og-share.png" in serve.PAGE
+
+
+def test_homepage_proof_strip_github_and_case():
+    assert 'data-i18n="proof_github"' in serve.PAGE
+    assert 'data-i18n="proof_case_val"' in serve.PAGE
+    assert "github.com/shi275773124/Falsify" in serve.PAGE
+    assert "Logs ≠ state proof" in serve.PAGE
+    assert "日志 ≠ 状态证明" in serve.PAGE
+    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
+    assert "grid-template-columns: repeat(4, 1fr)" in css
+
+
+def test_homepage_block_stamp_animation():
+    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
+    assert "block-stamp" in css
+    assert "@keyframes block-stamp" in css
+    assert "block-stamp" in serve.PAGE
+
+
+def test_static_home_assets_route_returns_200():
+    for path in (
+        "/static/img/hero-block-check.png",
+        "/static/img/og-share.png",
+        "/static/favicon.svg",
+        "/static/favicon.ico",
+    ):
+        handler = make_handler(path)
+        handler.do_GET()
+        assert handler.status_code == 200, path
 
 
 def test_render_verdict_shows_upgrade_trigger():
