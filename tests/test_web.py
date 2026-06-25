@@ -321,3 +321,17 @@ def test_render_verdict_shows_upgrade_trigger():
     assert "upgrade_trigger" in serve.PAGE
     assert "Upgrade trigger:" in serve.PAGE
     assert "升级触发：" in serve.PAGE
+
+
+def test_homepage_zh_cn_typography():
+    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
+    tokens = Path(serve.WEB_DIR / "static/css/tokens.css").read_text(encoding="utf-8")
+    js = Path(serve.WEB_DIR / "static/js/home.js").read_text(encoding="utf-8")
+
+    assert "--font-zh:" in tokens
+    assert "PingFang SC" in tokens
+    assert 'html[lang="zh-CN"]' in css
+    assert "word-break: keep-all" in css
+    assert "line-height: 1.8" in css or "line-height: 1.82" in css
+    assert 'classList.toggle("lang-zh"' in js
+    assert 'document.documentElement.lang = isZh ? "zh-CN" : "en"' in js
