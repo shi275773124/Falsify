@@ -595,3 +595,196 @@ footer a:hover { color: var(--fg); }
   * { scroll-behavior: auto !important; transition: none !important; }
   .block-stamp { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
+
+/* zh-CN typography — system CJK stack, not Inter tracking/line-height */
+html[lang="zh-CN"],
+html.lang-zh {
+  --font: var(--font-zh);
+}
+
+html[lang="zh-CN"] body,
+html.lang-zh body {
+  font-family: var(--font-zh);
+  line-height: 1.8;
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html[lang="zh-CN"] .brand,
+html.lang-zh .brand {
+  font-family: var(--font-zh);
+  letter-spacing: 0;
+  font-weight: 700;
+}
+
+html[lang="zh-CN"] h1,
+html.lang-zh h1 {
+  font-family: var(--font-zh);
+  font-size: clamp(36px, 5.2vw, 56px);
+  line-height: 1.18;
+  letter-spacing: 0;
+  font-weight: 700;
+}
+
+html[lang="zh-CN"] h2,
+html.lang-zh h2,
+html[lang="zh-CN"] .hero-layers-hook,
+html.lang-zh .hero-layers-hook {
+  font-family: var(--font-zh);
+  letter-spacing: 0;
+  line-height: 1.22;
+}
+
+html[lang="zh-CN"] .hero-layers-hook,
+html.lang-zh .hero-layers-hook {
+  font-size: clamp(28px, 3.8vw, 42px);
+  max-width: 20em;
+}
+
+html[lang="zh-CN"] .sub,
+html.lang-zh .sub,
+html[lang="zh-CN"] .hero-sub-note,
+html.lang-zh .hero-sub-note,
+html[lang="zh-CN"] .lead,
+html.lang-zh .lead,
+html[lang="zh-CN"] .layer-body,
+html.lang-zh .layer-body,
+html[lang="zh-CN"] .quote p,
+html.lang-zh .quote p {
+  font-family: var(--font-zh);
+  line-height: 1.82;
+  max-width: 32em;
+  word-break: keep-all;
+  line-break: strict;
+}
+
+html[lang="zh-CN"] .sub,
+html.lang-zh .sub {
+  font-size: clamp(16px, 2vw, 19px);
+}
+
+html[lang="zh-CN"] .hero-layers-intro,
+html.lang-zh .hero-layers-intro {
+  font-size: 18px;
+  line-height: 1.75;
+  max-width: 28em;
+}
+
+html[lang="zh-CN"] .layer-step h3,
+html.lang-zh .layer-step h3 {
+  font-family: var(--font-zh);
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
+html[lang="zh-CN"] .layer-num,
+html.lang-zh .layer-num {
+  font-family: var(--font-zh);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+html[lang="zh-CN"] .links,
+html.lang-zh .links,
+html[lang="zh-CN"] .btn,
+html.lang-zh .btn,
+html[lang="zh-CN"] .problem,
+html.lang-zh .problem {
+  font-family: var(--font-zh);
+}
+
+html[lang="zh-CN"] .trust-badge,
+html.lang-zh .trust-badge {
+  font-family: var(--font-zh);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 7px 13px;
+  line-height: 1.4;
+}
+
+html[lang="zh-CN"] .trust-badge[data-i18n="trust_schema"],
+html.lang-zh .trust-badge[data-i18n="trust_schema"],
+html[lang="zh-CN"] .trust-badge[data-i18n="trust_byok"],
+html.lang-zh .trust-badge[data-i18n="trust_byok"],
+html[lang="zh-CN"] .trust-badge[data-i18n="trust_github"],
+html.lang-zh .trust-badge[data-i18n="trust_github"] {
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+
+html[lang="zh-CN"] .proof-item .proof-val,
+html.lang-zh .proof-item .proof-val,
+html[lang="zh-CN"] .proof-github,
+html.lang-zh .proof-github {
+  font-family: var(--font-zh);
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+html[lang="zh-CN"] .proof-case-val,
+html.lang-zh .proof-case-val {
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 700;
+}
+
+html[lang="zh-CN"] .proof-item .proof-lbl,
+html.lang-zh .proof-item .proof-lbl {
+  font-family: var(--font-zh);
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 16em;
+  letter-spacing: 0;
+}
+
+html[lang="zh-CN"] .hero-layers,
+html.lang-zh .hero-layers {
+  padding: clamp(72px, 9vw, 108px) 0;
+}
+
+html[lang="zh-CN"] .layer-step,
+html.lang-zh .layer-step {
+  padding: 36px 0;
+}
+
+html[lang="zh-CN"] .hero-layers-verdicts,
+html.lang-zh .hero-layers-verdicts,
+html[lang="zh-CN"] .hero-layers-close,
+html.lang-zh .hero-layers-close {
+  font-family: var(--font-zh);
+  letter-spacing: 0;
+}
+
+html[lang="zh-CN"] .hero-layers-verdicts,
+html.lang-zh .hero-layers-verdicts {
+  font-family: var(--mono);
+}
+
+html[lang="zh-CN"] .quote cite,
+html.lang-zh .quote cite {
+  font-family: var(--font-zh);
+  letter-spacing: 0;
+}
+
+html[lang="zh-CN"] .lang-btn,
+html.lang-zh .lang-btn {
+  font-family: var(--font-zh);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+html[lang="zh-CN"] .tag,
+html.lang-zh .tag {
+  font-family: var(--font-zh);
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+html[lang="zh-CN"] footer,
+html.lang-zh footer {
+  font-family: var(--font-zh);
+  line-height: 1.7;
+}
