@@ -5,7 +5,7 @@
   "cases": [
     {
       "id": "sharpe-406-fictional-horizon",
-      "title": "Sharpe 4.06 策略：6/7 门 PASS 后在双 AI 五轮对抗审中被判 NOT_VIABLE",
+      "title": "Sharpe 4.06 策略：6/7 关通过后在双 AI 五轮对抗审查中被判 NOT_VIABLE",
       "source": "Falsify/examples/real-cases/01-fictional-horizon-quant-audit.zh-CN.md",
       "vault_pointer": "当前真相/breakout20 switched_kill lookahead 修复与 live-equivalent verdict 当前真相.md",
       "scenario": "research",
@@ -91,7 +91,7 @@
       "verdict": "self-falsify 后重写诊断",
       "must_fix": "监控看 webhook_events.max(created_at)，不看 listener_online 或进程 PID",
       "homepage_usable": false,
-      "homepage_reason": "Falsify 对抗审过程精彩，但照见心灯/微信收款业务细节不宜上 Falsify 首页",
+      "homepage_reason": "Falsify 对抗审查过程精彩，但照见心灯/微信收款业务细节不宜上 Falsify 首页",
       "sensitivity": "do_not_use"
     }
   ],
