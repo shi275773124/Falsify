@@ -281,7 +281,10 @@ const T = {
 let lang = "en";
 
 function applyLang() {
-  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  const isZh = lang === "zh";
+  document.documentElement.lang = isZh ? "zh-CN" : "en";
+  document.documentElement.classList.toggle("lang-zh", isZh);
+  document.body.classList.toggle("lang-zh", isZh);
   document.getElementById("lang-btn").textContent = lang === "en" ? "中文" : "EN";
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const k = el.getAttribute("data-i18n");
