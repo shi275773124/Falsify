@@ -2,7 +2,7 @@
 
 [English](./06-risk-scalpel.md) · [返回 README](../README.zh-CN.md)
 
-**这是第 3 层。**[第 1 层 · 互审](./03-collaboration.zh-CN.md)抓事实错。[第 2 层 · 对抗审议](./05-adversarial-review.zh-CN.md)抓结论错。**风险裁刀抓的是好审计之后的失败：把每个 finding 都升成 P0，或者打着“极简”的名义删掉真实风险。**
+**这是第 3 层。**[第 1 层 · 互审](./03-collaboration.zh-CN.md)抓事实错。[第 2 层 · 对抗审议](./05-adversarial-review.zh-CN.md)抓结论错。**风险裁刀抓的是好审计之后的失败：把每个 finding 都升成 P0，或者打着"极简"的名义删掉真实风险。**
 
 Falsify 负责找出哪里会错。风险裁刀负责决定现在必须改什么。
 
@@ -12,10 +12,10 @@ Falsify 负责找出哪里会错。风险裁刀负责决定现在必须改什么
 
 一次强对抗审查可能产出十个有效 finding。之后常见两种坏结果：
 
-1. **补丁膨胀** —— 每个 finding 都变成紧急项，v1 永远 ship 不出去。
-2. **假极简** —— 团队说“砍 scope”，实际把真实风险也悄悄删了。
+1. **补丁膨胀** —— 每个 finding 都变成紧急项，v1 永远发不出去。
+2. **假极简** —— 团队说"砍 scope"，实际把真实风险也悄悄删了。
 
-风险裁刀是 review findings 和 implementation work 之间的裁决层。
+风险裁刀是审查发现和实现工作之间的裁决层。
 
 它不删除风险事实。它只判断这个风险是否阻断当前交付。
 
@@ -44,7 +44,7 @@ Current phase/objective:
 
 | Class | 不修会导致什么 | 必须输出 | 禁止 |
 |---|---|---|---|
-| **Must Fix** | 假真相、假风险、silent failure、未授权 action、不可复算、或当前阶段无法验收 | 最小修复 + 验收证据 | “以后优化” |
+| **Must Fix** | 假真相、假风险、静默失败（silent failure）、未授权 action、不可复算、或当前阶段无法验收 | 最小修复 + 验收证据 | "以后优化" |
 | **Known Debt** | 真实风险，但不阻断当前阶段 | debt note + 升级触发条件 | 模糊 TODO |
 | **Delete** | 没有当前具体 failure mode，只是完整性、通用抽象、更好看、dashboard 欲望、平台化 | 删除理由 | 改名塞回 backlog |
 
@@ -95,21 +95,22 @@ Upgrade trigger: becomes Must Fix when <specific event/scale/use-case happens>
 - 用 AI summary 代替 raw artifact / 可读 diff / fixture / 命令输出；
 - 语义 verdict 诱导在没有证据的情况下改变决策；
 - LLM probe 没有 raw verdict、parse status、HTTP status、finish reason 或 usage 却被打分；
-- 没有 reproducer/probe 就声称“没有 hidden channel”。
+- 没有 reproducer/probe 就声称"没有 hidden channel"。
 
 **Known Debt**：
 
 - Layer-2 / semantic-channel 风险真实存在，但当前阶段只是 read-only，不授权 action；
 - 没跑 reproducer，但报告也没有声称 channel 不存在；
-- known-pattern library 不完整，升级触发条件可以写成：“当本报告开始 gate CI、生产、资金、账号权力或公开发布时，升级为 Must Fix”。
+- 已知模式库不完整，升级触发条件可以写成："当本报告开始 gate CI、生产、资金、账号权力或公开发布时，升级为 Must Fix"。
 
 **Delete**：
 
 - 只是理论 channel，没有当前具体失败模式；
 - 给未证明会 strip/preserve 相关 carrier 的模型/路径加 sanitizer；
-- 没有证据就说“same vendor”或“different vendor”天然安全/不安全。
+- 没有证据就说"same vendor"或"different vendor"天然安全/不安全。
 
 ---
+
 ## 输出模板
 
 ```markdown
@@ -171,8 +172,8 @@ Minimal action: define field names, units, signs, missing-data policy, and schem
 
 ## 反模式
 
-- **Reviewer 接管 roadmap** —— 对抗审查 finding 是攻击面，不是自动需求。
-- **“极简”删除风险事实** —— 只能裁实现 scope，不能删“哪里会错”的记录。
+- **审议者接管 roadmap** —— 对抗审查 finding 是攻击面，不是自动需求。
+- **"极简"删除风险事实** —— 只能裁实现 scope，不能删"哪里会错"的记录。
 - **没有触发条件的债** —— 这只是隐藏 backlog。
 - **项目管理化** —— 风险裁刀是一张表和一个 verdict，不是 planning system。
 - **Action 泄漏** —— 证据层不能悄悄变成行动建议层。
