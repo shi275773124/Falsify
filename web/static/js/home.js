@@ -99,6 +99,10 @@ const T = {
     ev2_lbl: "PASS / PASS_WITH_DEBT / BLOCK only",
     ev3_val: "MIT",
     proof_action: "GitHub Action · open core",
+    proof_github: "GitHub",
+    proof_case_val: "Logs ≠ state proof",
+    proof_case_lbl: "Real BLOCK · reports/deploy.md",
+    hero_img_alt: "Falsify BLOCK review: logs treated as state verification on reports/deploy.md",
     quote_p: "\"Green logs aren't proof. We stopped pretending they were.\"",
     quote_cite: "Chris Shi",
     hero_layers_hook: "AI made fake proof cheap.",
@@ -199,6 +203,10 @@ const T = {
     ev2_lbl: "仅 PASS / PASS_WITH_DEBT / BLOCK",
     ev3_val: "MIT",
     proof_action: "GitHub Action · 开源核心",
+    proof_github: "GitHub",
+    proof_case_val: "日志 ≠ 状态证明",
+    proof_case_lbl: "真实 BLOCK · reports/deploy.md",
+    hero_img_alt: "Falsify BLOCK 审查：reports/deploy.md 上日志被当作状态验证",
     quote_p: "「日志绿了，不等于证据成立。我们不再假装它算数。」",
     quote_cite: "史可鉴",
     hero_layers_hook: "AI 让假证明变便宜了。",
@@ -281,6 +289,10 @@ function applyLang() {
     const v = T[lang][k];
     if (k === "hero_sub") el.innerHTML = v.replace(/\n/g, "<br>");
     else el.textContent = v;
+  });
+  document.querySelectorAll("[data-i18n-alt]").forEach((el) => {
+    const k = el.getAttribute("data-i18n-alt");
+    if (T[lang][k] !== undefined) el.alt = T[lang][k];
   });
 }
 
