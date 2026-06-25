@@ -89,6 +89,7 @@ img { max-width: 100%; }
   grid-template-columns: 1.05fr 0.95fr;
   min-height: min(84vh, 720px);
   min-width: 0;
+  align-items: stretch;
 }
 .hero-copy {
   padding: clamp(88px, 11vw, 128px) var(--pad) 64px;
@@ -98,13 +99,13 @@ img { max-width: 100%; }
 .hero-visual {
   position: relative;
   background: var(--bg-panel);
-  border-left: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 52px 44px 52px 60px;
   overflow: hidden;
   min-width: 0;
+  align-self: stretch;
 }
 .hero-artifact {
   position: relative;
@@ -293,14 +294,20 @@ h1 {
 }
 
 .proof-strip {
-  padding: 28px 0;
+  padding: 28px 0 32px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
 }
-.proof-row {
+.proof-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
+  text-align: center;
+}
+.proof-case {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
   text-align: center;
 }
 .proof-github {
@@ -321,12 +328,39 @@ h1 {
   color: var(--fg);
   margin-bottom: 6px;
 }
-.proof-item .proof-lbl {
+.proof-case .proof-val {
+  margin-bottom: 6px;
+}
+.proof-item .proof-lbl,
+.proof-case .proof-lbl {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.45;
   max-width: 28ch;
   margin: 0 auto;
+}
+.proof-case .proof-lbl {
+  max-width: none;
+}
+
+@media (min-width: 1024px) {
+  .hero-inner {
+    position: relative;
+  }
+  .hero-inner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(100% * 1.05 / (1.05 + 0.95));
+    width: 1px;
+    background: var(--border);
+    pointer-events: none;
+  }
+  .proof-stats .proof-lbl {
+    white-space: nowrap;
+    max-width: none;
+  }
 }
 
 .badge {
@@ -700,13 +734,12 @@ footer a:hover { color: var(--fg); }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-visual {
     min-height: 320px;
-    border-left: none;
     border-top: 1px solid var(--border);
     padding: 32px var(--pad);
   }
   .hero-copy { margin: 0 auto; max-width: none; padding-top: 96px; }
   .trust-band-inner { white-space: normal; }
-  .proof-row, .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
+  .proof-stats, .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
   .gate-stages { grid-template-columns: repeat(2, 1fr); }
   .row .btn { margin-left: 0; width: 100%; }
 }
@@ -867,12 +900,27 @@ html.lang-zh .proof-case-val {
 }
 
 html[lang="zh-CN"] .proof-item .proof-lbl,
-html.lang-zh .proof-item .proof-lbl {
+html.lang-zh .proof-item .proof-lbl,
+html[lang="zh-CN"] .proof-case .proof-lbl,
+html.lang-zh .proof-case .proof-lbl {
   font-family: var(--font-zh);
   font-size: 15px;
   line-height: 1.65;
   max-width: 16em;
   letter-spacing: 0;
+}
+
+html[lang="zh-CN"] .proof-case .proof-lbl,
+html.lang-zh .proof-case .proof-lbl {
+  max-width: none;
+}
+
+@media (min-width: 1024px) {
+  html[lang="zh-CN"] .proof-stats .proof-lbl,
+  html.lang-zh .proof-stats .proof-lbl {
+    white-space: nowrap;
+    max-width: none;
+  }
 }
 
 html[lang="zh-CN"] .hero-layers,

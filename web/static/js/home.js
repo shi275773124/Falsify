@@ -97,7 +97,7 @@ const T = {
     ev1_val: "< 1 day",
     ev1_lbl: "Time to first useful BLOCK",
     ev2_val: "3 verdicts",
-    ev2_lbl: "PASS / PASS_WITH_DEBT / BLOCK only",
+    ev2_lbl: "Only PASS / PASS_WITH_DEBT / BLOCK",
     ev3_val: "MIT",
     proof_action: "GitHub Action · open core",
     proof_github: "GitHub",
