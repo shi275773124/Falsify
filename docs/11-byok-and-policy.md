@@ -6,6 +6,8 @@ This doc explains how to deploy Falsify as a PR gate without the vendor paying m
 
 ## BYOK (Bring Your Own Key)
 
+Falsify has **no Falsify API key**. You bring your own model provider key, or route through an agent CLI you are already logged into (which may still require that provider's subscription).
+
 Falsify is designed to run in two modes:
 
 - **Advisory mode (default)**: no model call. Lint runs, sample/demo runs, PR comment still posts.
