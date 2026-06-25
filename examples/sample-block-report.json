@@ -1,0 +1,24 @@
+{
+  "schema_version": "falsify.review.v1",
+  "verdict": "BLOCK",
+  "target": "reports/deploy.md",
+  "scenario": "production",
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "severity": "high",
+      "issue": "Logs are treated as state verification",
+      "minimal_action": "Add read-after-write probe and attach post-deploy output"
+    },
+    {
+      "cutline": "Delete",
+      "severity": "low",
+      "issue": "Another AI reviewed it — not evidence",
+      "minimal_action": "Remove from acceptance chain"
+    }
+  ],
+  "meta": {
+    "provider": "deepseek",
+    "finish_reason": "stop"
+  }
+}

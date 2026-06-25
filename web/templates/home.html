@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Falsify — adversarial review for AI-era work</title>
+<meta name="description" content="Falsify attacks false confidence, forces evidence, and cuts every risk into Must Fix, Known Debt, or Delete.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#">Falsify</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <div class="links" id="nav-links">
+      <a href="#layers" data-i18n="nav_layers">Layers</a>
+      <a href="#artifact" data-i18n="nav_artifact">Sample</a>
+      <a href="#demo" data-i18n="nav_demo">Demo</a>
+      <a href="/docs/" data-i18n="nav_docs">Docs</a>
+      <a href="https://github.com/shi275773124/Falsify">GitHub</a>
+      <button class="lang-btn" id="lang-btn" type="button">中文</button>
+    </div>
+  </div>
+</nav>
+<div style="display:none" aria-hidden="true">
+  <canvas id="cvs" role="img" aria-label="Falsify scan canvas"></canvas>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1 data-i18n="h1">Looks right is not enough.</h1>
+      <p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p>
+      <p class="hero-sub-note" data-i18n="hero_definition">Full Falsify = Frame Audit + Adversarial Review + Cutline. Miss a layer, you only have a partial review.</p>
+      <p class="hero-sub-note" data-i18n="hero_workbench_note">Protocol is three-layer. The public workbench below shows verdict format and adversarial samples — not machine-enforced Frame Audit or Cutline.</p>
+      <div class="actions">
+        <a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
+        <a class="btn ghost" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
+      </div>
+      <div class="trust-strip" aria-label="Trust signals">
+        <span class="trust-badge" data-i18n="trust_github">GitHub Actions</span>
+        <span class="trust-badge" data-i18n="trust_mit">MIT (core)</span>
+        <span class="trust-badge" data-i18n="trust_byok">BYOK</span>
+        <span class="trust-badge" data-i18n="trust_schema">falsify.review.v1</span>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="gate-panel">
+        <div class="gate-head">
+          <span data-i18n="preview_label">Review output</span>
+          <span class="badge BLOCK">BLOCK</span>
+        </div>
+        <div class="gate-stages">
+          <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+          <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Evidence</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+          <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+          <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val">BLOCK</span></div>
+        </div>
+        <div class="gate-body">
+          <div class="preview-schema">falsify.review.v1 · reports/deploy.md</div>
+          <div class="preview-title" data-i18n="preview_title">Deployment succeeded because logs completed.</div>
+          <div class="preview-must-fix">
+            <strong data-i18n="preview_must_fix">Must Fix</strong>
+            <span data-i18n="preview_issue">Logs are treated as state verification</span>
+            <span class="preview-action" data-i18n="preview_action">Minimal action: Add read-after-write probe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="proof-strip">
+  <div class="wrap">
+    <div class="proof-row">
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev1_val">&lt; 1 day</div>
+        <div class="proof-lbl" data-i18n="ev1_lbl">Time to first useful BLOCK</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev2_val">3 verdicts</div>
+        <div class="proof-lbl" data-i18n="ev2_lbl">PASS / PASS_WITH_DEBT / BLOCK only</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev3_val">MIT</div>
+        <div class="proof-lbl" data-i18n="proof_action">GitHub Action · open core</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="wrap">
+    <div class="quote-card">
+      <img class="avatar" src="/assets/chris-shi-founder.png" alt="史可鉴 / Chris Shi" width="48" height="48">
+      <div>
+        <p data-i18n="quote_p">"Green logs aren't proof. We stopped pretending they were."</p>
+        <cite data-i18n="quote_cite">Chris Shi</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero-layers" id="layers">
+  <div class="wrap">
+    <p class="hero-layers-hook" data-i18n="hero_layers_hook">AI made fake proof cheap.</p>
+    <p class="hero-layers-intro" data-i18n="hero_layers_intro">Falsify runs three layers.</p>
+    <div class="layer-steps">
+      <div class="layer-step">
+        <div class="layer-num" data-i18n="bl_label">Layer 01</div>
+        <h3><span data-i18n="hero_layers_l1_tag">Frame</span> · <span data-i18n="hero_layers_l1_map">Frame Audit</span></h3>
+        <span class="layer-map" data-i18n="hero_layers_l1_map">Frame Audit</span>
+        <p class="layer-body" data-i18n="hero_layers_l1_body">hidden state, authority drift, missing rollback.</p>
+      </div>
+      <div class="layer-step">
+        <div class="layer-num" data-i18n="ar_label">Layer 02</div>
+        <h3><span data-i18n="hero_layers_l2_tag">Evidence</span> · <span data-i18n="hero_layers_l2_map">Adversarial Review</span></h3>
+        <span class="layer-map" data-i18n="hero_layers_l2_map">Adversarial Review</span>
+        <p class="layer-body" data-i18n="hero_layers_l2_body">false facts, fake acceptance, audit theater.</p>
+      </div>
+      <div class="layer-step">
+        <div class="layer-num" data-i18n="rs_label">Layer 03</div>
+        <h3><span data-i18n="hero_layers_l3_tag">Cutline</span></h3>
+        <span class="layer-map" data-i18n="rs_lead">Decides what blocks now — not a laundry list of every risk.</span>
+        <p class="layer-body" data-i18n="hero_layers_l3_body">must fix, known debt, delete.</p>
+      </div>
+    </div>
+    <p class="hero-layers-close" data-i18n="hero_layers_close">Three verdicts only.</p>
+    <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
+  </div>
+</section>
+
+<section class="s" id="artifact">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="artifact_tag">Artifact</div>
+      <h2 data-i18n="artifact_h2">Real BLOCK report.</h2>
+      <p class="lead" data-i18n="artifact_lead">Sample JSON from the protocol — not a fabricated GitHub check mock.</p>
+    </div>
+    <div class="artifact-panel">
+      <div class="artifact-head">
+        <span>examples/sample-block-report.json</span>
+        <span class="badge BLOCK">BLOCK</span>
+      </div>
+      <pre class="artifact-body" id="artifact-json">__SAMPLE_JSON__</pre>
+    </div>
+    <div class="artifact-actions">
+      <a class="btn ghost" href="/examples/sample-block-report.json" data-i18n="artifact_download">Download JSON</a>
+      <a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
+    </div>
+  </div>
+</section>
+
+<section class="s alt" id="not-falsify">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="antipattern_tag">Not Falsify</div>
+      <h2 data-i18n="antipattern_h2">Looks like review. Is not full Falsify.</h2>
+      <p class="lead" data-i18n="antipattern_lead">Partial checks masquerade as complete review.</p>
+    </div>
+    <div class="problems">
+      <div class="problem" data-i18n="ap_1">"A second glance" ≠ full Falsify</div>
+      <div class="problem" data-i18n="ap_2">Cutline-only ≠ full Falsify</div>
+      <div class="problem" data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="demo">
+  <div class="wrap">
+    <details class="workbench-collapse" id="workbench-details">
+      <summary data-i18n="workbench_summary">Open workbench</summary>
+      <div class="workbench-inner">
+        <div class="section-head">
+          <p class="lead" data-i18n="try_lead">Preview verdict format here. Samples are fixed adversarial demos; live review is one LLM call with your local key — not full Falsify.</p>
+        </div>
+        <div class="workbench">
+          <div class="panel">
+            <h3 data-i18n="input_h3">Claim</h3>
+            <p data-i18n="input_p">Paste a deployment claim, PR summary, or AI-generated report.</p>
+            <textarea id="t">Deployment succeeded because the logs completed. Another AI reviewed it and found no issue. No raw verdict, parse status, finish_reason, or usage counts were kept.</textarea>
+            <div class="row">
+              <select id="s">
+                <option value="general" data-i18n="scenario_general">General</option>
+                <option value="code" data-i18n="scenario_code">Code / PR</option>
+                <option value="research" data-i18n="scenario_research">Research</option>
+                <option value="production" selected data-i18n="scenario_production">Production</option>
+              </select>
+              <button class="btn ghost" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
+              <button class="btn primary" type="button" id="b" data-i18n="btn_review">Live review</button>
+            </div>
+            <div class="demo-note" data-i18n="demo_note">Partial layer only. Canned samples are adversarial demos — not full Falsify. Live /review is a single LLM pass with your local key; no Frame Audit gate, no machine Cutline.</div>
+            <p class="demo-note" data-i18n="workbench_scope">Full stack: CLI + GitHub Action. This page demonstrates output shape, not enforcement.</p>
+          </div>
+          <div class="panel result" id="out">
+            <h3 data-i18n="output_h3">Verdict</h3>
+            <p data-i18n="output_p">Hit Run sample to preview the decision artifact.</p>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="s alt" id="start">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="start_tag">Start</div>
+      <h2 data-i18n="start_h2">Run it locally in 60 seconds.</h2>
+    </div>
+    <div class="start-grid">
+      <div class="terminal">git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+python falsify.py demo
+export FALSIFY_PROVIDER=deepseek
+export DEEPSEEK_API_KEY=sk-...
+python falsify.py review report.md
+python web/serve.py
+<a href="/docs/14-github-action-install.md" data-i18n="docs_install">Install GitHub Action (5 min) →</a></div>
+      <div class="boundary-block">
+        <div class="tag" data-i18n="boundary_tag">Boundary</div>
+        <h2 data-i18n="boundary_h2">Falsify classifies risk. It does not authorize action.</h2>
+        <p class="lead" data-i18n="boundary_p">Live money, production config, cron, gateway, and external send still require independent final judgment. Self-review is not independent review.</p>
+        <p class="footer-licensing" id="licensing">
+          <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
+          <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">Read the full open core boundary →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Falsify</div>
+    <div>
+      <a href="https://github.com/shi275773124/Falsify">GitHub</a> ·
+      <a href="https://x.com/aishikejian">X</a> ·
+      <a href="mailto:chrisshi168@icloud.com">Email</a> ·
+      <a href="https://github.com/shi275773124/Falsify/blob/main/LICENSE">License</a>
+    </div>
+  </div>
+</footer>
+
+<script>__HOME_JS__</script>
+</body>
+</html>
