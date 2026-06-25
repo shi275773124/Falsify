@@ -1,0 +1,43 @@
+Falsify self-audit — WHITEPAPER.zh-CN.md v0.1
+Reviewer (Skeptic): gpt-5.5 (via cliproxy 127.0.0.1:4163)
+Author: Claude (Sonnet) — cross-vendor independent
+Date: 2026-06-25
+
+=== Verdict: BLOCK ===
+
+[AGENT-B audit] 第 11 节案例是核心卖点，但证据为零；这是 fake acceptance 风险。
+Cutline: Must Fix
+Evidence needed: 原始案例材料，不是叙述。至少要有：五轮审计的完整 transcript、模型/厂商/版本、时间戳、原始 prompt、原始响应、HTTP status、parse status、finish_reason、usage/token counts、所有中间 verdict、修复 diff、回测代码、数据快照、运行命令、输出日志、最终复算结果。
+Minimal action: 给出可公开审计的 source location，例如 方法论/Falsify Case Study 01 的具体文件路径/commit hash，并提供一条可复现命令。没有 raw artifact 就删除"Sharpe 4 幻象"作为实证案例，只能标为 hypothetical example。
+
+[AGENT-B audit] Sharpe 案例里的关键数字没有可验算来源，且存在单位/比例风险。
+Cutline: Must Fix
+Evidence needed: Sharpe 4.06–4.31、PBO 0、DSR p<1e-7、虚构 14 天持有期、真实约 1.5 天、成本低估约 9.4 倍的原始计算表、代码、数据源和公式。
+Minimal action: 增加一个可复算 notebook/script：输出每个数字的来源行、单位、公式、输入文件 checksum。
+
+[AGENT-B audit] "第 1–8、10 节已在实际审计中运行"是实测声明，但没有任何运行记录。
+Cutline: Must Fix
+Minimal action: 发布一个最小可审计样例目录，包含 input.md、framework_review.raw.json、adversarial_review.raw.json、cutline.raw.json、verdict.json、README-reproduce.md。没有这些就把"已在实际审计中运行 [实测]"降级为"设计目标/内部使用，未公开验证"。
+
+[AGENT-B audit] brooks-lint 的外部事实被当成方法论根基，但没有一手链接、commit、版本或可读 diff。
+Cutline: Must Fix
+Minimal action: 加一手验证路径，例如 https://github.com/hyhmrright/brooks-lint 加 commit hash。如果不能证明，删除这些具体特征，只保留"受某项目启发"的弱表述。
+
+[AGENT-B audit] 第 9 节"存在官方插件让一家厂商的模型在另一家的工具内做代码审"是未指名、不可验证的外部事实。
+Cutline: Must Fix
+Minimal action: 添加官方 source。没有官方来源就删除"旧主张已被证伪"这句。
+
+[AGENT-B audit] "跨厂商盲区更少/审计更有效"被同时当作核心证明和未量化假设，论证自撞。
+Cutline: Must Fix
+Minimal action: 二选一：给出评测仓库和命令附 raw results；或全文降级为假设/设计选择，删除"证明""必须""有效审计要求"等实证化措辞。
+
+[AGENT-B audit] 协议声称"只有 raw artifact 才算"，但参考资料全是本地相对路径，无法被外部读者验证。
+Cutline: Must Fix
+Minimal action: 把参考与延伸改成可点击的一手链接，或附 repo 地址和 tag。
+
+[AGENT-B audit] 最终裁决词表没有机器可解析 schema，协议容易退化成 prompt-only audit theater。
+Cutline: Known Debt
+Minimal action: 增加 schema/falsify-verdict.schema.json 和一个 parser/validator 命令；至少定义 parse fail 必须 BLOCK。
+Upgrade trigger: 一旦 Falsify 被用于任何自动化 gate、CI、生产变更、资金相关决策或对外宣称"可复现审计"，此项升级为 Must Fix。
+
+VERDICT: BLOCK
