@@ -47,16 +47,9 @@
       <h1 data-i18n="h1">Looks right is not enough.</h1>
       <p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p>
       <p class="hero-sub-note" data-i18n="hero_definition">Full Falsify = Frame Audit + Adversarial Review + Cutline. Miss a layer, you only have a partial review.</p>
-      <p class="hero-sub-note" data-i18n="hero_workbench_note">Protocol is three-layer. The public workbench below shows verdict format and adversarial samples — not machine-enforced Frame Audit or Cutline.</p>
       <div class="actions">
         <a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
         <a class="btn ghost" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
-      </div>
-      <div class="trust-strip" aria-label="Trust signals">
-        <span class="trust-badge" data-i18n="trust_github">GitHub Actions</span>
-        <span class="trust-badge" data-i18n="trust_mit">MIT (core)</span>
-        <span class="trust-badge" data-i18n="trust_byok">BYOK</span>
-        <span class="trust-badge" data-i18n="trust_schema">falsify.review.v1</span>
       </div>
     </div>
     <div class="hero-visual">
@@ -77,10 +70,24 @@
             <span class="badge BLOCK block-stamp">BLOCK</span>
           </div>
           <div class="gate-stages">
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Evidence</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-            <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val block-stamp">BLOCK</span></div>
+            <div class="gate-stage">
+              <span class="gate-label" data-i18n="gate_frame">Frame</span>
+              <span class="gate-map" data-i18n="hero_layers_l1_map">Frame Audit</span>
+              <span class="gate-val" data-i18n="gate_pass">PASS</span>
+            </div>
+            <div class="gate-stage">
+              <span class="gate-label" data-i18n="gate_adv">Evidence</span>
+              <span class="gate-map" data-i18n="hero_layers_l2_map">Adversarial Review</span>
+              <span class="gate-val" data-i18n="gate_pass">PASS</span>
+            </div>
+            <div class="gate-stage">
+              <span class="gate-label" data-i18n="gate_cut">Cutline</span>
+              <span class="gate-val" data-i18n="gate_pass">PASS</span>
+            </div>
+            <div class="gate-stage final">
+              <span class="gate-label" data-i18n="gate_verdict">Verdict</span>
+              <span class="gate-val block-stamp">BLOCK</span>
+            </div>
           </div>
           <div class="gate-body">
             <div class="preview-schema">falsify.review.v1 · reports/deploy.md</div>
@@ -125,6 +132,23 @@
   </div>
 </section>
 
+<section class="trust-band" aria-label="Trust signals">
+  <div class="wrap">
+    <div class="trust-band-inner">
+      <a class="trust-item trust-link" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">
+        <svg class="trust-gh-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span data-i18n="trust_band_github">GitHub</span>
+      </a>
+      <span class="trust-sep" aria-hidden="true">·</span>
+      <span class="trust-item" data-i18n="trust_mit">MIT (core)</span>
+      <span class="trust-sep" aria-hidden="true">·</span>
+      <span class="trust-item" data-i18n="trust_byok">BYOK</span>
+      <span class="trust-sep" aria-hidden="true">·</span>
+      <span class="trust-item" data-i18n="trust_schema">falsify.review.v1</span>
+    </div>
+  </div>
+</section>
+
 <section class="quote">
   <div class="wrap">
     <div class="quote-card">
@@ -138,30 +162,22 @@
 </section>
 
 <section class="hero-layers" id="layers">
-  <div class="wrap">
-    <p class="hero-layers-hook" data-i18n="hero_layers_hook">AI made fake proof cheap.</p>
-    <p class="hero-layers-intro" data-i18n="hero_layers_intro">Falsify runs three layers.</p>
-    <div class="layer-steps">
-      <div class="layer-step">
-        <div class="layer-num" data-i18n="bl_label">Layer 01</div>
-        <h3><span data-i18n="hero_layers_l1_tag">Frame</span> · <span data-i18n="hero_layers_l1_map">Frame Audit</span></h3>
-        <span class="layer-map" data-i18n="hero_layers_l1_map">Frame Audit</span>
-        <p class="layer-body" data-i18n="hero_layers_l1_body">hidden state, authority drift, missing rollback.</p>
+  <div class="wrap layers-wrap">
+    <div class="layers-strip" role="list">
+      <div class="layer-chip" role="listitem">
+        <span class="layer-tag" data-i18n="hero_layers_l1_tag">Frame</span>
+        <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Frame Audit</span>
       </div>
-      <div class="layer-step">
-        <div class="layer-num" data-i18n="ar_label">Layer 02</div>
-        <h3><span data-i18n="hero_layers_l2_tag">Evidence</span> · <span data-i18n="hero_layers_l2_map">Adversarial Review</span></h3>
-        <span class="layer-map" data-i18n="hero_layers_l2_map">Adversarial Review</span>
-        <p class="layer-body" data-i18n="hero_layers_l2_body">false facts, fake acceptance, audit theater.</p>
+      <span class="layer-sep" aria-hidden="true">·</span>
+      <div class="layer-chip" role="listitem">
+        <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
+        <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
       </div>
-      <div class="layer-step">
-        <div class="layer-num" data-i18n="rs_label">Layer 03</div>
-        <h3><span data-i18n="hero_layers_l3_tag">Cutline</span></h3>
-        <span class="layer-map" data-i18n="rs_lead">Decides what blocks now — not a laundry list of every risk.</span>
-        <p class="layer-body" data-i18n="hero_layers_l3_body">must fix, known debt, delete.</p>
+      <span class="layer-sep" aria-hidden="true">·</span>
+      <div class="layer-chip" role="listitem">
+        <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
       </div>
     </div>
-    <p class="hero-layers-close" data-i18n="hero_layers_close">Three verdicts only.</p>
     <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
   </div>
 </section>
@@ -187,17 +203,26 @@
   </div>
 </section>
 
-<section class="s alt" id="not-falsify">
+<section class="s alt" id="limits">
   <div class="wrap">
-    <div class="section-head">
-      <div class="tag" data-i18n="antipattern_tag">Not Falsify</div>
-      <h2 data-i18n="antipattern_h2">Looks like review. Is not full Falsify.</h2>
-      <p class="lead" data-i18n="antipattern_lead">Partial checks masquerade as complete review.</p>
-    </div>
-    <div class="problems">
-      <div class="problem" data-i18n="ap_1">"A second glance" ≠ full Falsify</div>
-      <div class="problem" data-i18n="ap_2">Cutline-only ≠ full Falsify</div>
-      <div class="problem" data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</div>
+    <div class="limits-grid">
+      <div class="limits-antipatterns">
+        <div class="tag" data-i18n="limits_tag">Not Falsify</div>
+        <div class="problems problems-stack">
+          <div class="problem" data-i18n="ap_1">"A second glance" ≠ full Falsify</div>
+          <div class="problem" data-i18n="ap_2">Cutline-only ≠ full Falsify</div>
+          <div class="problem" data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</div>
+        </div>
+      </div>
+      <div class="limits-boundary">
+        <div class="tag" data-i18n="boundary_tag">Boundary</div>
+        <h2 data-i18n="boundary_h2">Falsify classifies risk. It does not authorize action.</h2>
+        <p class="lead" data-i18n="boundary_p">Self-review is not independent review.</p>
+        <p class="footer-licensing" id="licensing">
+          <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
+          <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">Read the full open core boundary →</a>
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -205,11 +230,11 @@
 <section class="s" id="demo">
   <div class="wrap">
     <details class="workbench-collapse" id="workbench-details">
-      <summary data-i18n="workbench_summary">Open workbench</summary>
+      <summary>
+        <span data-i18n="workbench_summary">Open workbench</span>
+        <span class="workbench-note" data-i18n="workbench_scope">Verdict format demo — not full Falsify enforcement.</span>
+      </summary>
       <div class="workbench-inner">
-        <div class="section-head">
-          <p class="lead" data-i18n="try_lead">Preview verdict format here. Samples are fixed adversarial demos; live review is one LLM call with your local key — not full Falsify.</p>
-        </div>
         <div class="workbench">
           <div class="panel">
             <h3 data-i18n="input_h3">Claim</h3>
@@ -225,8 +250,6 @@
               <button class="btn ghost" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
               <button class="btn primary" type="button" id="b" data-i18n="btn_review">Live review</button>
             </div>
-            <div class="demo-note" data-i18n="demo_note">Partial layer only. Canned samples are adversarial demos — not full Falsify. Live /review is a single LLM pass with your local key; no Frame Audit gate, no machine Cutline.</div>
-            <p class="demo-note" data-i18n="workbench_scope">Full stack: CLI + GitHub Action. This page demonstrates output shape, not enforcement.</p>
           </div>
           <div class="panel result" id="out">
             <h3 data-i18n="output_h3">Verdict</h3>
@@ -244,8 +267,7 @@
       <div class="tag" data-i18n="start_tag">Start</div>
       <h2 data-i18n="start_h2">Run it locally in 60 seconds.</h2>
     </div>
-    <div class="start-grid">
-      <div class="terminal">git clone https://github.com/shi275773124/Falsify.git
+    <div class="terminal">git clone https://github.com/shi275773124/Falsify.git
 cd Falsify
 python falsify.py demo
 export FALSIFY_PROVIDER=deepseek
@@ -253,16 +275,6 @@ export DEEPSEEK_API_KEY=sk-...
 python falsify.py review report.md
 python web/serve.py
 <a href="/docs/14-github-action-install.md" data-i18n="docs_install">Install GitHub Action (5 min) →</a></div>
-      <div class="boundary-block">
-        <div class="tag" data-i18n="boundary_tag">Boundary</div>
-        <h2 data-i18n="boundary_h2">Falsify classifies risk. It does not authorize action.</h2>
-        <p class="lead" data-i18n="boundary_p">Live money, production config, cron, gateway, and external send still require independent final judgment. Self-review is not independent review.</p>
-        <p class="footer-licensing" id="licensing">
-          <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
-          <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">Read the full open core boundary →</a>
-        </p>
-      </div>
-    </div>
   </div>
 </section>
 
