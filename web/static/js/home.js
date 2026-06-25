@@ -278,7 +278,25 @@ const T = {
   },
 };
 
-let lang = "en";
+const STORAGE_KEY = "falsify-lang";
+
+function readStoredLang() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) === "zh" ? "zh" : "en";
+  } catch (_e) {
+    return "en";
+  }
+}
+
+function writeStoredLang(next) {
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+  } catch (_e) {
+    /* ignore */
+  }
+}
+
+let lang = readStoredLang();
 
 function applyLang() {
   const isZh = lang === "zh";
@@ -301,6 +319,7 @@ function applyLang() {
 
 function toggleLang() {
   lang = lang === "en" ? "zh" : "en";
+  writeStoredLang(lang);
   applyLang();
 }
 
