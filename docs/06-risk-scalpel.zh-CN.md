@@ -10,7 +10,7 @@ Falsify 负责找出哪里会错。风险裁刀负责决定现在必须改什么
 
 ## 问题
 
-一次强对抗审可能产出十个有效 finding。之后常见两种坏结果：
+一次强对抗审查可能产出十个有效 finding。之后常见两种坏结果：
 
 1. **补丁膨胀** —— 每个 finding 都变成紧急项，v1 永远 ship 不出去。
 2. **假极简** —— 团队说“砍 scope”，实际把真实风险也悄悄删了。
@@ -24,7 +24,7 @@ Falsify 负责找出哪里会错。风险裁刀负责决定现在必须改什么
 ## 一句话规则
 
 ```text
-对抗审产出 failure modes。
+对抗审查产出 failure modes。
 风险裁刀切 scope，不切风险事实。
 ```
 
@@ -137,7 +137,7 @@ PASS / PASS_WITH_DEBT / BLOCK
 
 ## 微型例子
 
-对抗审发现：
+对抗审查发现：
 
 ```text
 The proposed system has no full JSON schema.
@@ -171,7 +171,7 @@ Minimal action: define field names, units, signs, missing-data policy, and schem
 
 ## 反模式
 
-- **Reviewer 接管 roadmap** —— 对抗审 finding 是攻击面，不是自动需求。
+- **Reviewer 接管 roadmap** —— 对抗审查 finding 是攻击面，不是自动需求。
 - **“极简”删除风险事实** —— 只能裁实现 scope，不能删“哪里会错”的记录。
 - **没有触发条件的债** —— 这只是隐藏 backlog。
 - **项目管理化** —— 风险裁刀是一张表和一个 verdict，不是 planning system。
