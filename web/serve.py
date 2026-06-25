@@ -11,7 +11,7 @@ import re
 import sys
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import falsify  # noqa: E402
@@ -162,9 +162,11 @@ def inline_md(text):
 
 
 DOCS_CSS = """
-:root{color-scheme:dark;--bg:#090909;--bg-elevated:#111;--bg-panel:#161616;--fg:#f4f4f4;--muted:#8c8c8c;--border:#2a2a2a;--accent:#b8ff3c;--radius:10px;--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;--max:1120px;--pad:clamp(20px,4vw,40px)}
+:root{color-scheme:dark;--bg:#090909;--bg-elevated:#111;--bg-panel:#161616;--fg:#f4f4f4;--muted:#8c8c8c;--border:#2a2a2a;--accent:#b8ff3c;--radius:10px;--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--font-zh:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;--mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;--max:1120px;--pad:clamp(20px,4vw,40px)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 var(--font)}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-.docs-nav{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}.docs-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}.brand{font:800 18px/1 var(--font);color:var(--fg)}.brand:hover{text-decoration:none}.nav-links{display:flex;gap:18px;font-size:14px;color:var(--muted)}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--fg);text-decoration:none}
+html[lang="zh-CN"],html.lang-zh{font-family:var(--font-zh)}html[lang="zh-CN"] body,html.lang-zh body{font-family:var(--font-zh);line-height:1.82;word-break:keep-all}html[lang="zh-CN"] .doc-body h1,html.lang-zh .doc-body h1{letter-spacing:.02em;line-height:1.25}html[lang="zh-CN"] .doc-body h2,html.lang-zh .doc-body h2{letter-spacing:.04em}html[lang="zh-CN"] .docs-sidebar a,html.lang-zh .docs-sidebar a{font-family:var(--font-zh)}
+.docs-nav{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}.docs-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}.brand{font:800 18px/1 var(--font);color:var(--fg)}.brand:hover{text-decoration:none}.nav-links{display:flex;align-items:center;gap:18px;font-size:14px;color:var(--muted)}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--fg);text-decoration:none}.lang-btn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font:inherit;font-size:13px;padding:6px 12px}.lang-btn:hover{border-color:var(--fg);color:var(--fg)}
+.doc-untranslated{margin:0 0 24px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-panel);color:var(--muted);font-size:14px}
 .docs-layout{display:grid;grid-template-columns:280px 1fr;gap:32px;padding:40px 0 80px}.docs-sidebar{position:sticky;top:88px;align-self:start;max-height:calc(100vh - 104px);overflow:auto;padding-right:8px}.docs-sidebar h2{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}.docs-sidebar section+section{margin-top:24px}.docs-sidebar ul{list-style:none;margin:0;padding:0}.docs-sidebar li+li{margin-top:4px}.docs-sidebar a{display:block;padding:8px 10px;border-radius:8px;color:var(--muted);font-size:14px;line-height:1.35}.docs-sidebar a:hover,.docs-sidebar a.active{background:var(--bg-panel);color:var(--fg);text-decoration:none}
 .docs-main{min-width:0}.docs-main>section{margin-top:32px}.docs-main>section>h2{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
 .docs-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}.docs-hero h1{margin:0 0 8px;font-size:clamp(32px,4vw,44px);line-height:1.05;letter-spacing:-.02em}.docs-hero p{margin:0;color:var(--muted);max-width:60ch}
@@ -184,6 +186,48 @@ DOC_SECTIONS = [
 
 DOC_FEATURED = ["14-github-action-install", "00-getting-started", "12-open-core-boundary"]
 
+DOC_SECTION_LABELS = {
+    "en": {"Start": "Start", "Framework": "Framework", "Product": "Product", "Ops": "Ops", "Featured": "Featured"},
+    "zh": {"Start": "入门", "Framework": "框架", "Product": "产品", "Ops": "运维", "Featured": "精选"},
+}
+
+DOCS_CHROME = {
+    "en": {
+        "nav_docs": "Docs",
+        "nav_home": "Home",
+        "suffix": "Falsify docs",
+        "index_title": "Documentation",
+        "index_h1": "Documentation",
+        "index_lead": "Install the PR gate, learn the framework, and ship decision artifacts your team can defend.",
+        "card_open": "Open guide",
+        "untranslated": "This page is not yet available in Chinese. Showing the English version.",
+    },
+    "zh": {
+        "nav_docs": "文档",
+        "nav_home": "首页",
+        "suffix": "Falsify 文档",
+        "index_title": "文档",
+        "index_h1": "文档",
+        "index_lead": "安装 PR 闸门、理解框架，产出团队能辩护的决策产物。",
+        "card_open": "打开指南",
+        "untranslated": "此页暂无中文版，以下为英文原文。",
+    },
+}
+
+
+def parse_lang(query_string):
+    params = parse_qs(query_string or "")
+    values = params.get("lang") or []
+    return "zh" if values and values[0] == "zh" else "en"
+
+
+def doc_zh_path(stem):
+    return ROOT / "docs" / f"{stem}.zh-CN.md"
+
+
+def doc_has_zh(stem):
+    return doc_zh_path(stem).is_file()
+
 
 def doc_files():
     paths = sorted((ROOT / "docs").glob("*.md"))
@@ -197,8 +241,8 @@ def doc_files():
     return stems
 
 
-def doc_title(stem):
-    path = ROOT / "docs" / f"{stem}.md"
+def doc_title(stem, lang="en"):
+    path = doc_zh_path(stem) if lang == "zh" and doc_has_zh(stem) else ROOT / "docs" / f"{stem}.md"
     if not path.is_file():
         return stem.replace("-", " ").title()
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -209,8 +253,14 @@ def doc_title(stem):
     return stem.replace("-", " ").title()
 
 
-def docs_nav_html(current=None):
+def docs_href(stem, lang):
+    href = f"/docs/{stem}.md"
+    return f"{href}?lang=zh" if lang == "zh" else href
+
+
+def docs_nav_html(current=None, lang="en"):
     files = doc_files()
+    labels = DOC_SECTION_LABELS.get(lang, DOC_SECTION_LABELS["en"])
     blocks = []
     for section, stems in DOC_SECTIONS:
         items = []
@@ -220,39 +270,70 @@ def docs_nav_html(current=None):
             cls = "active" if current == f"{stem}.md" else ""
             active_attr = ' class="active"' if cls else ""
             items.append(
-                f'<li><a{active_attr} href="/docs/{stem}.md">{html_escape(doc_title(stem))}</a></li>'
+                f'<li><a{active_attr} href="{docs_href(stem, lang)}">{html_escape(doc_title(stem, lang))}</a></li>'
             )
         if items:
-            blocks.append(f"<section><h2>{html_escape(section)}</h2><ul>{''.join(items)}</ul></section>")
+            section_label = labels.get(section, section)
+            blocks.append(
+                f'<section><h2 data-i18n-section="{html_escape(section)}">{html_escape(section_label)}</h2>'
+                f"<ul>{''.join(items)}</ul></section>"
+            )
     return "".join(blocks)
 
 
-def docs_shell(title, body_html, current_path=None):
+def load_docs_js():
+    return (WEB_DIR / "static" / "js" / "docs.js").read_text(encoding="utf-8")
+
+
+def docs_shell(title, body_html, current_path=None, lang="en"):
     current = current_path.split("/")[-1] if current_path else None
-    nav = docs_nav_html(current)
+    nav = docs_nav_html(current, lang)
+    chrome = DOCS_CHROME.get(lang, DOCS_CHROME["en"])
+    html_lang = "zh-CN" if lang == "zh" else "en"
+    lang_class = ' class="lang-zh"' if lang == "zh" else ""
+    home_href = "/?lang=zh" if lang == "zh" else "/"
+    docs_index_href = "/docs/?lang=zh" if lang == "zh" else "/docs/"
+    lang_btn = "EN" if lang == "zh" else "中文"
+    docs_js = load_docs_js()
     return f"""<!doctype html>
-<html lang="en">
+<html lang="{html_lang}"{lang_class}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html_escape(title)} — Falsify docs</title>
+<title>{html_escape(title)} — {html_escape(chrome["suffix"])}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>{DOCS_CSS}</style>
 </head>
-<body>
-<nav class="docs-nav"><div class="wrap"><a class="brand" href="/">Falsify</a><div class="nav-links"><a href="/docs/">Docs</a><a href="/">Home</a><a href="https://github.com/shi275773124/Falsify">GitHub</a></div></div></nav>
+<body{lang_class}>
+<nav class="docs-nav"><div class="wrap"><a class="brand" href="{home_href}">Falsify</a><div class="nav-links"><a href="{docs_index_href}" data-i18n="nav_docs">{html_escape(chrome["nav_docs"])}</a><a href="{home_href}" data-i18n="nav_home">{html_escape(chrome["nav_home"])}</a><a href="https://github.com/shi275773124/Falsify" data-i18n="nav_github">GitHub</a><button class="lang-btn" id="lang-btn" type="button">{lang_btn}</button></div></div></nav>
 <div class="wrap docs-layout">
 <aside class="docs-sidebar">{nav}</aside>
 <main class="docs-main">{body_html}</main>
 </div>
+<script>{docs_js}</script>
 </body>
 </html>"""
 
 
-def render_markdown(text, title="Falsify docs", current_path=None):
+def resolve_doc_markdown(stem, lang="en"):
+    en_path = ROOT / "docs" / f"{stem}.md"
+    zh_path = doc_zh_path(stem)
+    if lang == "zh" and zh_path.is_file():
+        return zh_path.read_text(encoding="utf-8"), False
+    if lang == "zh" and en_path.is_file():
+        return en_path.read_text(encoding="utf-8"), True
+    if en_path.is_file():
+        return en_path.read_text(encoding="utf-8"), False
+    return "", False
+
+
+def render_markdown(text, title="Falsify docs", current_path=None, lang="en", untranslated=False):
     body = ['<article class="doc-body">']
+    if untranslated:
+        notice = DOCS_CHROME.get(lang, DOCS_CHROME["en"])["untranslated"]
+        body.append(f'<p class="doc-untranslated" data-i18n="untranslated">{html_escape(notice)}</p>')
     in_code = False
     code_lang = ""
     code_lines = []
@@ -320,20 +401,24 @@ def render_markdown(text, title="Falsify docs", current_path=None):
     if in_code and code_lines:
         body.append(f"<pre><code>{html_escape(chr(10).join(code_lines))}</code></pre>")
     body.append("</article>")
-    return docs_shell(title, "".join(body), current_path)
+    return docs_shell(title, "".join(body), current_path, lang)
 
 
-def docs_index():
+def docs_index(lang="en"):
     files = doc_files()
+    chrome = DOCS_CHROME.get(lang, DOCS_CHROME["en"])
+    labels = DOC_SECTION_LABELS.get(lang, DOC_SECTION_LABELS["en"])
+    featured_label = labels.get("Featured", "Featured")
     featured_cards = []
     for stem in DOC_FEATURED:
         if stem not in files:
             continue
-        title = doc_title(stem)
+        title = doc_title(stem, lang)
         featured_cards.append(
-            f'<a class="doc-card" href="/docs/{stem}.md">'
-            f'<div class="num">Featured</div><h3>{html_escape(title)}</h3>'
-            f'<p>Open guide</p></a>'
+            f'<a class="doc-card" href="{docs_href(stem, lang)}">'
+            f'<div class="num" data-i18n-section="Featured">{html_escape(featured_label)}</div>'
+            f'<h3>{html_escape(title)}</h3>'
+            f'<p data-i18n="card_open">{html_escape(chrome["card_open"])}</p></a>'
         )
 
     sections = []
@@ -342,29 +427,30 @@ def docs_index():
         for stem in stems:
             if stem in DOC_FEATURED or stem not in files:
                 continue
-            title = doc_title(stem)
+            title = doc_title(stem, lang)
             num = stem.split("-", 1)[0] if stem[:2].isdigit() else section
             cards.append(
-                f'<a class="doc-card" href="/docs/{stem}.md">'
+                f'<a class="doc-card" href="{docs_href(stem, lang)}">'
                 f'<div class="num">{html_escape(num)}</div>'
                 f'<h3>{html_escape(title)}</h3>'
                 f'<p>{html_escape(stem.replace("-", " "))}</p></a>'
             )
         if cards:
+            section_label = labels.get(section, section)
             sections.append(
-                f'<section><h2>{html_escape(section)}</h2>'
+                f'<section><h2 data-i18n-section="{html_escape(section)}">{html_escape(section_label)}</h2>'
                 f'<div class="docs-grid">{"".join(cards)}</div></section>'
             )
 
     body = f"""
 <div class="docs-hero">
-  <h1>Documentation</h1>
-  <p>Install the PR gate, learn the framework, and ship decision artifacts your team can defend.</p>
+  <h1 data-i18n="index_h1">{html_escape(chrome["index_h1"])}</h1>
+  <p data-i18n="index_lead">{html_escape(chrome["index_lead"])}</p>
 </div>
-<section><h2>Featured</h2><div class="docs-grid">{"".join(featured_cards)}</div></section>
+<section><h2 data-i18n-section="Featured">{html_escape(featured_label)}</h2><div class="docs-grid">{"".join(featured_cards)}</div></section>
 {"".join(sections)}
 """
-    return docs_shell("Documentation", body)
+    return docs_shell(chrome["index_title"], body, lang=lang)
 
 
 PAGE = load_homepage()
@@ -378,12 +464,19 @@ class H(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b)
 
-    def _file_response_body(self, parsed_path, target):
+    def _file_response_body(self, parsed, target):
         if target.suffix.lower() == ".md":
+            lang = parse_lang(parsed.query)
+            stem = target.stem
+            if stem.endswith(".zh-CN"):
+                stem = stem[: -len(".zh-CN")]
+            text, untranslated = resolve_doc_markdown(stem, lang)
             html = render_markdown(
-                target.read_text(encoding="utf-8"),
-                doc_title(target.stem),
-                current_path=parsed_path,
+                text,
+                doc_title(stem, lang),
+                current_path=parsed.path,
+                lang=lang,
+                untranslated=untranslated,
             )
             return html.encode("utf-8"), "text/html; charset=utf-8"
         suffix = target.suffix.lower()
@@ -391,17 +484,23 @@ class H(BaseHTTPRequestHandler):
 
     def serve_static(self):
         parsed = urlparse(self.path)
+        lang = parse_lang(parsed.query)
         if parsed.path == "/docs/":
-            return self._send(200, docs_index(), "text/html")
+            return self._send(200, docs_index(lang), "text/html")
         target = safe_web_static(self.path) or safe_examples_path(self.path) or safe_repo_path(self.path)
         if not target or not target.is_file():
             return self._send(404, json.dumps({"error": "not found"}))
         if target.suffix.lower() == ".md":
-            title = doc_title(target.stem)
+            stem = target.stem
+            if stem.endswith(".zh-CN"):
+                stem = stem[: -len(".zh-CN")]
+            text, untranslated = resolve_doc_markdown(stem, lang)
             html = render_markdown(
-                target.read_text(encoding="utf-8"),
-                title,
+                text,
+                doc_title(stem, lang),
                 current_path=parsed.path,
+                lang=lang,
+                untranslated=untranslated,
             )
             return self._send(200, html, "text/html")
         return self._send(200, target.read_bytes(), STATIC_CTYPE[target.suffix.lower()])
@@ -423,7 +522,7 @@ class H(BaseHTTPRequestHandler):
         elif parsed.path.startswith("/examples/"):
             target = safe_examples_path(self.path)
         if target and target.is_file():
-            body, ctype = self._file_response_body(parsed.path, target)
+            body, ctype = self._file_response_body(parsed, target)
             self.send_response(200)
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
