@@ -1,0 +1,43 @@
+Falsify self-audit — WHITEPAPER.zh-CN.md v0.2
+Reviewer (Skeptic): gpt-5.5 (via cliproxy 127.0.0.1:4163)
+Author: Claude (Sonnet) — cross-vendor independent
+Date: 2026-06-25
+
+=== Verdict: BLOCK ===
+
+[AGENT-B audit] 第 9 节的 openai/codex-plugin-cc 反例是高风险事实主张，当前证据不可验收。声称"OpenAI 官方发布""Apache-2.0""约 2 万 star""自带 /codex:adversarial-review"。只给了裸 repo 字符串，没有 commit、release、README 原文、license 文件、star API 返回。
+Cutline: Must Fix
+Minimal action: 要么附一手 raw artifact 和 commit 固定引用（GitHub API GET /repos/openai/codex-plugin-cc 的 stargazers_count、license、full_name），要么删除所有具体数字/官方归属/功能名，只保留"存在类似跨工具互审项目"的弱表述。
+
+[AGENT-B audit] 第 11 节"Sharpe 4 幻象"被用来支撑跨厂商对抗审有效性，但证据全部是内部摘要。当前这是 AI/作者摘要冒充案例证据。
+Cutline: Must Fix
+Minimal action: 发布可复现包；否则把第 11 节降级为"假想/匿名轶事"，删除"方向有第 11 节支持""真实内部案例"对核心假设的支撑作用。
+
+[AGENT-B audit] 第 12 节把机器可解析 schema 缺口降成 Known Debt，但这直接违反本协议自己的元层要求。这不是未来自动化才需要的债，这是当前协议验收条件缺失。
+Cutline: Must Fix
+Minimal action: 在白皮书发布前把最低 schema 写入正文或附录，并规定缺字段/parse fail/截断/过滤/空输出一律 BLOCK。
+
+[AGENT-B audit] "公开源（一手，可验证）"部分给的是不可审计引用。.../docs/06-risk-scalpel.md 这种省略路径不是 URL；没有 commit SHA。
+Cutline: Must Fix
+Minimal action: 把所有 GitHub 引用改成完整、固定版本、可点击的一手链接；删除省略号路径；列出对应 commit。
+
+[AGENT-B audit] 反复使用"跨厂商独立""中立第三方编排""裁判不归任何一个选手所有"，但没有给出任何可验证的独立性机制。跨厂商调用不等于独立。现在这是治理主张，不是协议保证。
+Cutline: Must Fix
+Minimal action: 定义"independent final judgment"的机器可检查字段和失败条件；否则把"中立第三方""裁判不归选手"改为未实现目标，不得作为当前能力宣传。
+
+[AGENT-B audit] 第 3 节和第 9 节虽然加了"假设"，但正文仍有过强结论："自审和单模型复核结构性地无能为力""同源审稿人只是把同一个盲区投票 N 次"。
+Cutline: Must Fix
+Minimal action: 把绝对断言全部降级为"设计风险/失败模式假设"；删除"结构性无能为力"这类证明口吻，直到有实证。
+
+[AGENT-B audit] 第 10 节"裁决与授权分离"描述了 live 权限闸，但没有给出可执行 enforcement。现在是政策口号，不是协议。
+Cutline: Must Fix
+Minimal action: 增加最小可执行验收清单和 BLOCK 条件；如果当前没有实现，就明确写"规范要求，尚未由工具强制"，不能暗示已经可防 live 越权。
+
+[AGENT-B audit] 草案开头声称"v0.1 经 GPT-5.5 跨厂商自审 BLOCK，本版逐条修复"，但没有任何 raw audit artifact。这个 claim 很容易变成 fake acceptance。
+Cutline: Must Fix
+Minimal action: 附完整修复矩阵和 raw audit evidence；否则删除"GPT-5.5 跨厂商自审 BLOCK"和"逐条修复"的权威背书。
+
+VERDICT: BLOCK
+
+---
+注（人类复核，非 skeptic 输出）：本轮 8 条中，约半数（独立性 enforcement、live 越权 enforcement、可复现回测包、schema 固化）要求把"白皮书"当"上线真钱系统"审，即要求正文内附 enforcement 代码才算数。这是无 Cutline 锚的对抗审必然的升级行为——也正是 Falsify 第 3 层 Cutline 存在的理由。v0.2 的处理：A 类（overclaim、死刑口吻、省略 URL、自我背书）逐条修；B 类（要求实现完成）用范围声明诚实圈定为 v0.3 工程缺口。本 README 与本目录两份 verdict 即对"无 raw artifact"一条的直接闭合。
