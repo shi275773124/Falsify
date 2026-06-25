@@ -211,6 +211,21 @@ def test_docs_index_route_returns_200():
     assert b"Documentation" in body
     assert b"docs-sidebar" in body
     assert b"doc-card" in body
+    assert b'id="lang-btn"' in body
+    assert b"docs.js" in body or b"falsify-lang" in body
+
+
+def test_docs_index_zh_route_returns_200():
+    handler = make_handler("/docs/?lang=zh")
+    handler.do_GET()
+
+    assert handler.status_code == 200
+    body = handler.wfile.getvalue()
+    assert b"lang=zh" in body
+    assert b"lang=\"zh-CN\"" in body
+    assert "文档".encode() in body
+    assert "安装 PR 闸门".encode() in body
+    assert "精选".encode() in body
 
 
 def test_docs_markdown_route_returns_200():
@@ -223,6 +238,63 @@ def test_docs_markdown_route_returns_200():
     assert b"docs-sidebar" in body
     assert b'class="active"' in body
     assert b"doc-body" in body
+
+
+def test_docs_markdown_zh_route_returns_translated_body():
+    handler = make_handler("/docs/00-getting-started.md?lang=zh")
+    handler.do_GET()
+
+    assert handler.status_code == 200
+    body = handler.wfile.getvalue()
+    assert b"lang=\"zh-CN\"" in body
+    assert "快速开始".encode() in body
+    assert "对抗审框架".encode() in body
+    assert b'<p class="doc-untranslated"' not in body
+
+
+def test_docs_markdown_zh_install_guide():
+    handler = make_handler("/docs/14-github-action-install.md?lang=zh")
+    handler.do_GET()
+
+    assert handler.status_code == 200
+    body = handler.wfile.getvalue()
+    assert "安装 Falsify GitHub Action".encode() in body
+    assert "验收清单".encode() in body
+
+
+def test_docs_markdown_zh_open_core_boundary():
+    handler = make_handler("/docs/12-open-core-boundary.md?lang=zh")
+    handler.do_GET()
+
+    assert handler.status_code == 200
+    body = handler.wfile.getvalue()
+    assert "Open Core 边界".encode() in body
+    assert "协议开源".encode() in body
+
+
+def test_docs_untranslated_page_shows_notice():
+    handler = make_handler("/docs/16-homepage-redesign-teardown.md?lang=zh")
+    handler.do_GET()
+
+    assert handler.status_code == 200
+    body = handler.wfile.getvalue()
+    assert b"doc-untranslated" in body
+    assert b'<p class="doc-untranslated"' in body
+    assert "此页暂无中文版".encode() in body
+
+
+def test_docs_zh_typography_css():
+    css = serve.DOCS_CSS
+    assert "--font-zh:" in css
+    assert "PingFang SC" in css
+    assert 'html[lang="zh-CN"]' in css
+    assert "word-break:keep-all" in css.replace(" ", "")
+
+
+def test_doc_has_zh_helpers():
+    assert serve.doc_has_zh("00-getting-started")
+    assert serve.doc_has_zh("14-github-action-install")
+    assert not serve.doc_has_zh("16-homepage-redesign-teardown")
 
 
 def test_static_traversal_is_rejected():
@@ -335,3 +407,4 @@ def test_homepage_zh_cn_typography():
     assert "line-height: 1.8" in css or "line-height: 1.82" in css
     assert 'classList.toggle("lang-zh"' in js
     assert 'document.documentElement.lang = isZh ? "zh-CN" : "en"' in js
+    assert "falsify-lang" in js
