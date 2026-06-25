@@ -47,10 +47,10 @@
     <div class="hero-copy">
       <h1 data-i18n="h1">Looks right is not enough.</h1>
       <p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p>
-      <p class="hero-sub-note" data-i18n="hero_definition">Full Falsify = Frame Audit + Adversarial Review + Cutline. Miss a layer, you only have a partial review.</p>
+      <p class="hero-sub-note"><span data-i18n="hero_definition">Frame Audit · Adversarial Review · Cutline → one protocol verdict.</span> <a class="hero-docs-link" href="/docs/05-adversarial-review.md" data-i18n="hero_docs_link">Full layers in docs →</a></p>
       <div class="actions">
-        <a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
-        <a class="btn ghost" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
+        <a class="btn primary" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
+        <a class="btn ghost" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
       </div>
     </div>
     <div class="hero-visual">
@@ -61,7 +61,7 @@
             src="/static/img/hero-block-check.png"
             width="420"
             height="260"
-            alt="Falsify BLOCK review: logs treated as state verification on reports/deploy.md"
+            alt="Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check"
             data-i18n-alt="hero_img_alt"
             loading="eager"
             decoding="async">
@@ -93,12 +93,12 @@
             </div>
           </div>
           <div class="gate-body">
-            <div class="preview-schema">falsify.review.v1 · reports/deploy.md</div>
-            <div class="preview-title" data-i18n="preview_title">Deployment succeeded because logs completed.</div>
+            <div class="preview-schema">falsify.review.v1 · strategy/breakout20</div>
+            <div class="preview-title" data-i18n="preview_title">6/7 gates PASS — ready for shadow live.</div>
             <div class="preview-must-fix">
               <strong data-i18n="preview_must_fix">Must Fix</strong>
-              <span data-i18n="preview_issue">Logs are treated as state verification</span>
-              <span class="preview-action" data-i18n="preview_action">Minimal action: Add read-after-write probe</span>
+              <span data-i18n="preview_issue">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77</span>
+              <span class="preview-action" data-i18n="preview_action">Minimal action: Mechanic ground-truth vs live journal</span>
             </div>
           </div>
         </div>
@@ -111,12 +111,12 @@
   <div class="wrap">
     <div class="proof-stats">
       <div class="proof-item">
-        <div class="proof-val" data-i18n="ev1_val">&lt; 1 day</div>
-        <div class="proof-lbl" data-i18n="ev1_lbl">Time to first useful BLOCK</div>
+        <div class="proof-val" data-i18n="ev1_val">Try in minutes</div>
+        <div class="proof-lbl" data-i18n="ev1_lbl">Workbench sample — not a benchmark</div>
       </div>
       <div class="proof-item">
-        <div class="proof-val" data-i18n="ev2_val">3 verdicts</div>
-        <div class="proof-lbl" data-i18n="ev2_lbl">Only PASS / PASS_WITH_DEBT / BLOCK</div>
+        <div class="proof-val" data-i18n="ev2_val">3 protocol verdicts</div>
+        <div class="proof-lbl" data-i18n="ev2_lbl">PASS / PASS_WITH_DEBT / BLOCK</div>
       </div>
       <div class="proof-item">
         <div class="proof-val">
@@ -126,24 +126,6 @@
           </a>
         </div>
         <div class="proof-lbl" data-i18n="proof_action">GitHub Action · open core</div>
-      </div>
-    </div>
-    <div class="proof-case">
-      <div class="proof-case-inner">
-        <div class="proof-mini-panel">
-          <div class="proof-mini-head">
-            <span class="proof-mini-file">reports/deploy.md</span>
-            <span class="badge BLOCK">BLOCK</span>
-          </div>
-          <div class="proof-mini-body">
-            <span class="proof-mini-label" data-i18n="preview_must_fix">Must Fix</span>
-            <span class="proof-mini-issue" data-i18n="preview_issue">Logs are treated as state verification</span>
-          </div>
-        </div>
-        <div class="proof-case-meta">
-          <div class="proof-val proof-case-val" data-i18n="proof_case_val">Logs ≠ state proof</div>
-          <div class="proof-lbl" data-i18n="proof_case_lbl">Real BLOCK · reports/deploy.md</div>
-        </div>
       </div>
     </div>
   </div>
@@ -156,9 +138,10 @@
         <svg class="trust-gh-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         <span data-i18n="trust_band_github">GitHub</span>
       </a>
+      <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify/tree/main/examples" rel="noopener noreferrer" data-i18n="trust_examples">Examples</a>
+      <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify/blob/main/docs/self-falsify-2026-06-25.md" rel="noopener noreferrer" data-i18n="trust_self_audit">Self-Falsify audit</a>
       <span class="trust-chip trust-item" data-i18n="trust_mit">MIT (core)</span>
       <span class="trust-chip trust-item" data-i18n="trust_byok">No Falsify key · BYOK</span>
-      <span class="trust-chip trust-item" data-i18n="trust_discipline">Cutline discipline</span>
       <span class="trust-chip trust-item" data-i18n="trust_schema">falsify.review.v1</span>
     </div>
   </div>
@@ -171,7 +154,7 @@
         <img class="avatar-img" src="/assets/chris-shi-founder.png" alt="Chris Shi" width="56" height="56" loading="lazy" decoding="async">
       </div>
       <div class="quote-body">
-        <p data-i18n="quote_p">"Green logs aren't proof. We stopped pretending they were."</p>
+        <p data-i18n="quote_p">"Six gates passed. We were one mechanic away from live money — until the second run collapsed the Sharpe."</p>
         <cite data-i18n="quote_cite">Chris Shi</cite>
       </div>
     </div>
@@ -205,6 +188,39 @@
   </div>
 </section>
 
+<section class="s" id="demo">
+  <div class="wrap">
+    <div class="section-head workbench-head">
+      <div class="tag" data-i18n="nav_demo">Demo</div>
+      <h2 data-i18n="workbench_h2">Try a verdict in minutes</h2>
+      <p class="lead workbench-note" data-i18n="workbench_scope">Verdict format demo — not full Falsify enforcement.</p>
+    </div>
+    <div class="workbench-panel">
+      <div class="workbench">
+        <div class="panel">
+          <h3 data-i18n="input_h3">Claim</h3>
+          <p data-i18n="input_p">Paste a deployment claim, PR summary, or AI-generated report.</p>
+          <textarea id="t">Deployment succeeded because the logs completed. Another AI reviewed it and found no issue. No raw verdict, parse status, finish_reason, or usage counts were kept.</textarea>
+          <div class="row">
+            <select id="s">
+              <option value="general" data-i18n="scenario_general">General</option>
+              <option value="code" data-i18n="scenario_code">Code / PR</option>
+              <option value="research" data-i18n="scenario_research">Research</option>
+              <option value="production" selected data-i18n="scenario_production">Production</option>
+            </select>
+            <button class="btn primary" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
+            <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Live review</button>
+          </div>
+        </div>
+        <div class="panel result" id="out">
+          <h3 data-i18n="output_h3">Verdict</h3>
+          <p data-i18n="output_p">Hit Run sample to preview the decision artifact.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="s alt" id="cases">
   <div class="wrap">
     <div class="section-head">
@@ -214,30 +230,32 @@
     <div class="cases-grid">
       <article class="case-card">
         <div class="case-head">
-          <span class="case-domain" data-i18n="case1_domain">DevOps · deploy</span>
+          <span class="case-domain" data-i18n="case1_domain">Strategy research</span>
           <span class="badge BLOCK case-badge">BLOCK</span>
         </div>
-        <h3 class="case-title" data-i18n="case1_title">Logs green ≠ state proof</h3>
-        <p class="case-finding" data-i18n="case1_finding">Acceptance chain treats deploy logs as verification — no read-after-write probe.</p>
-        <a class="case-link" href="/examples/sample-block-report.json" data-i18n="case1_link">sample-block-report.json →</a>
+        <p class="case-illus" data-i18n="case_illus">Illustrative</p>
+        <h3 class="case-title" data-i18n="case1_title">Sharpe 4.06 · 6/7 PASS → mechanic flaw</h3>
+        <p class="case-finding" data-i18n="case1_finding">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
       </article>
       <article class="case-card">
         <div class="case-head">
-          <span class="case-domain" data-i18n="case2_domain">Strategy research</span>
-          <span class="badge NOT_VIABLE case-badge">NOT_VIABLE</span>
+          <span class="case-domain" data-i18n="case2_domain">Research ops · fee table</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
         </div>
-        <h3 class="case-title" data-i18n="case2_title">Illustrative · Sharpe 4.06 · 6/7 PASS → NOT_VIABLE</h3>
-        <p class="case-finding" data-i18n="case2_finding">Published case study — second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
-        <a class="case-link" href="/examples/real-cases/01-fictional-horizon-quant-audit.md" data-i18n="case2_link">examples/real-cases/01-fictional-horizon-quant-audit.md →</a>
+        <p class="case-findings-count" data-i18n="case2_findings">4 findings</p>
+        <h3 class="case-title" data-i18n="case2_title">4 pricing errors in one table</h3>
+        <p class="case-finding" data-i18n="case2_finding">No cite per cell — wrong base, flipped sign, wrong row. Conflicts logged, not silently overwritten.</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/comparison-case-study/README.md" target="_blank" rel="noopener noreferrer" data-i18n="case2_link">comparison case study →</a>
       </article>
       <article class="case-card">
         <div class="case-head">
-          <span class="case-domain" data-i18n="case3_domain">Research ops · fee table</span>
-          <span class="badge CAUGHT case-badge" data-i18n="case3_verdict">4 CAUGHT</span>
+          <span class="case-domain" data-i18n="case3_domain">DevOps · deploy</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
         </div>
-        <h3 class="case-title" data-i18n="case3_title">4 pricing errors in one table</h3>
-        <p class="case-finding" data-i18n="case3_finding">No cite per cell — wrong base, flipped sign, wrong row. Conflicts logged, not silently overwritten.</p>
-        <a class="case-link" href="/examples/comparison-case-study/README.md" data-i18n="case3_link">comparison case study →</a>
+        <h3 class="case-title" data-i18n="case3_title">Logs green ≠ state proof</h3>
+        <p class="case-finding" data-i18n="case3_finding">Acceptance chain treats deploy logs as verification — no read-after-write probe.</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/sample-block-report.json" target="_blank" rel="noopener noreferrer" data-i18n="case3_link">sample-block-report.json →</a>
       </article>
     </div>
   </div>
@@ -248,7 +266,7 @@
     <div class="section-head">
       <div class="tag" data-i18n="artifact_tag">Artifact</div>
       <h2 data-i18n="artifact_h2">Real BLOCK report.</h2>
-      <p class="lead" data-i18n="artifact_lead">Sample JSON from the protocol — not a fabricated GitHub check mock.</p>
+      <p class="lead" data-i18n="artifact_lead">Sample JSON from the protocol — deploy logs ≠ state proof. Not a fabricated GitHub check mock.</p>
     </div>
     <div class="artifact-panel">
       <div class="artifact-head">
@@ -285,40 +303,6 @@
         </p>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="s" id="demo">
-  <div class="wrap">
-    <details class="workbench-collapse" id="workbench-details">
-      <summary>
-        <span data-i18n="workbench_summary">Open workbench</span>
-        <span class="workbench-note" data-i18n="workbench_scope">Verdict format demo — not full Falsify enforcement.</span>
-      </summary>
-      <div class="workbench-inner">
-        <div class="workbench">
-          <div class="panel">
-            <h3 data-i18n="input_h3">Claim</h3>
-            <p data-i18n="input_p">Paste a deployment claim, PR summary, or AI-generated report.</p>
-            <textarea id="t">Deployment succeeded because the logs completed. Another AI reviewed it and found no issue. No raw verdict, parse status, finish_reason, or usage counts were kept.</textarea>
-            <div class="row">
-              <select id="s">
-                <option value="general" data-i18n="scenario_general">General</option>
-                <option value="code" data-i18n="scenario_code">Code / PR</option>
-                <option value="research" data-i18n="scenario_research">Research</option>
-                <option value="production" selected data-i18n="scenario_production">Production</option>
-              </select>
-              <button class="btn ghost" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
-              <button class="btn primary" type="button" id="b" data-i18n="btn_review">Live review</button>
-            </div>
-          </div>
-          <div class="panel result" id="out">
-            <h3 data-i18n="output_h3">Verdict</h3>
-            <p data-i18n="output_p">Hit Run sample to preview the decision artifact.</p>
-          </div>
-        </div>
-      </div>
-    </details>
   </div>
 </section>
 

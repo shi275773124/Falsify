@@ -76,35 +76,35 @@ const T = {
     nav_docs: "Docs",
     h1: "Looks right is not enough.",
     hero_sub: "Falsify turns confident AI output into a shipping decision:\nPASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.",
-    hero_definition: "Full Falsify = Frame Audit + Adversarial Review + Cutline. Miss a layer, you only have a partial review.",
+    hero_definition: "Frame Audit · Adversarial Review · Cutline → one protocol verdict.",
+    hero_docs_link: "Full layers in docs →",
     btn_install: "Install GitHub Action",
     btn_run_sample_hero: "Run sample",
     trust_band_github: "GitHub",
+    trust_examples: "Examples",
+    trust_self_audit: "Self-Falsify audit",
     trust_mit: "MIT (core)",
     trust_byok: "No Falsify key · BYOK",
-    trust_discipline: "Cutline discipline",
     trust_schema: "falsify.review.v1",
     preview_label: "Review output",
-    preview_title: "Deployment succeeded because logs completed.",
+    preview_title: "6/7 gates PASS — ready for shadow live.",
     preview_must_fix: "Must Fix",
-    preview_issue: "Logs are treated as state verification",
-    preview_action: "Minimal action: Add read-after-write probe",
+    preview_issue: "Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77",
+    preview_action: "Minimal action: Mechanic ground-truth vs live journal",
     gate_frame: "Frame",
     gate_adv: "Adversarial",
     gate_cut: "Cutline",
     gate_verdict: "Verdict",
     gate_pass: "PASS",
-    ev1_val: "< 1 day",
-    ev1_lbl: "Time to first useful BLOCK",
-    ev2_val: "3 verdicts",
-    ev2_lbl: "Only PASS / PASS_WITH_DEBT / BLOCK",
+    ev1_val: "Try in minutes",
+    ev1_lbl: "Workbench sample — not a benchmark",
+    ev2_val: "3 protocol verdicts",
+    ev2_lbl: "PASS / PASS_WITH_DEBT / BLOCK",
     ev3_val: "MIT",
     proof_action: "GitHub Action · open core",
     proof_github: "GitHub",
-    proof_case_val: "Logs ≠ state proof",
-    proof_case_lbl: "Real BLOCK · reports/deploy.md",
-    hero_img_alt: "Falsify BLOCK review: logs treated as state verification on reports/deploy.md",
-    quote_p: "\"Green logs aren't proof. We stopped pretending they were.\"",
+    hero_img_alt: "Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check",
+    quote_p: "\"Six gates passed. We were one mechanic away from live money — until the second run collapsed the Sharpe.\"",
     quote_cite: "Chris Shi",
     hero_layers_l1_tag: "Frame",
     hero_layers_l1_map: "Find rot in the frame",
@@ -115,19 +115,20 @@ const T = {
     hero_layers_verdicts: "PASS / PASS_WITH_DEBT / BLOCK",
     cases_tag: "Cases",
     cases_h2: "Blind spots caught",
-    case1_domain: "DevOps · deploy",
-    case1_title: "Logs green ≠ state proof",
-    case1_finding: "Acceptance chain treats deploy logs as verification — no read-after-write probe.",
-    case1_link: "sample-block-report.json →",
-    case2_domain: "Strategy research",
-    case2_title: "Illustrative · Sharpe 4.06 · 6/7 PASS → NOT_VIABLE",
-    case2_finding: "Published case study — second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.",
-    case2_link: "examples/real-cases/01-fictional-horizon-quant-audit.md →",
-    case3_domain: "Research ops · fee table",
-    case3_verdict: "4 CAUGHT",
-    case3_title: "4 pricing errors in one table",
-    case3_finding: "No cite per cell — wrong base, flipped sign, wrong row. Conflicts logged, not silently overwritten.",
-    case3_link: "comparison case study →",
+    case_illus: "Illustrative",
+    case1_domain: "Strategy research",
+    case1_title: "Sharpe 4.06 · 6/7 PASS → mechanic flaw",
+    case1_finding: "Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.",
+    case1_link: "01-fictional-horizon-quant-audit.md →",
+    case2_domain: "Research ops · fee table",
+    case2_findings: "4 findings",
+    case2_title: "4 pricing errors in one table",
+    case2_finding: "No cite per cell — wrong base, flipped sign, wrong row. Conflicts logged, not silently overwritten.",
+    case2_link: "comparison case study →",
+    case3_domain: "DevOps · deploy",
+    case3_title: "Logs green ≠ state proof",
+    case3_finding: "Acceptance chain treats deploy logs as verification — no read-after-write probe.",
+    case3_link: "sample-block-report.json →",
     bl_label: "Layer 01",
     ar_label: "Layer 02",
     rs_label: "Layer 03",
@@ -398,9 +399,19 @@ function initNav() {
   const toggle = document.getElementById("nav-toggle");
   const links = document.getElementById("nav-links");
   if (!toggle || !links) return;
+
+  const closeNav = () => {
+    links.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  };
+
   toggle.addEventListener("click", () => {
     const open = links.classList.toggle("open");
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  links.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeNav);
   });
 }
 

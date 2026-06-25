@@ -372,6 +372,24 @@ def test_homepage_proof_strip_github_and_case():
     assert "grid-template-columns: repeat(4, 1fr)" in css
 
 
+def test_homepage_case_card_links():
+    case_urls = [
+        "https://github.com/shi275773124/Falsify/blob/main/examples/sample-block-report.json",
+        "https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md",
+        "https://github.com/shi275773124/Falsify/blob/main/examples/comparison-case-study/README.md",
+    ]
+    for url in case_urls:
+        assert url in serve.PAGE
+    cards = serve.re.findall(r'<a class="case-card"([^>]*)>', serve.PAGE)
+    assert len(cards) == 3
+    for attrs in cards:
+        assert 'target="_blank"' in attrs
+        assert "noopener" in attrs
+        assert "noreferrer" in attrs
+    assert serve.PAGE.count('class="case-link-icon"') == 3
+    assert '<article class="case-card">' not in serve.PAGE
+
+
 def test_homepage_block_stamp_animation():
     css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
     assert "block-stamp" in css
