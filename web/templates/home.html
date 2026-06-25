@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Falsify — adversarial review for AI-era work</title>
 <meta name="description" content="Falsify attacks false confidence, forces evidence, and cuts every risk into Must Fix, Known Debt, or Delete.">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/static/favicon.ico" sizes="32x32">
+<meta property="og:title" content="Falsify — adversarial review for AI-era work">
+<meta property="og:description" content="Falsify turns confident AI output into a shipping decision: PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.">
+<meta property="og:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
+<meta property="og:url" content="https://falsify.zjdeng.xyz/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Falsify — adversarial review for AI-era work">
+<meta name="twitter:description" content="PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.">
+<meta name="twitter:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,28 +59,40 @@
         <span class="trust-badge" data-i18n="trust_schema">falsify.review.v1</span>
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true">
-      <div class="gate-panel">
-        <div class="gate-head">
-          <span data-i18n="preview_label">Review output</span>
-          <span class="badge BLOCK">BLOCK</span>
-        </div>
-        <div class="gate-stages">
-          <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-          <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Evidence</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-          <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-          <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val">BLOCK</span></div>
-        </div>
-        <div class="gate-body">
-          <div class="preview-schema">falsify.review.v1 · reports/deploy.md</div>
-          <div class="preview-title" data-i18n="preview_title">Deployment succeeded because logs completed.</div>
-          <div class="preview-must-fix">
-            <strong data-i18n="preview_must_fix">Must Fix</strong>
-            <span data-i18n="preview_issue">Logs are treated as state verification</span>
-            <span class="preview-action" data-i18n="preview_action">Minimal action: Add read-after-write probe</span>
+    <div class="hero-visual">
+      <figure class="hero-artifact">
+        <img
+          class="hero-check-img"
+          src="/static/img/hero-block-check.png"
+          width="420"
+          height="260"
+          alt="Falsify BLOCK review: logs treated as state verification on reports/deploy.md"
+          data-i18n-alt="hero_img_alt"
+          loading="eager"
+          decoding="async">
+        <span class="hero-stamp badge BLOCK block-stamp" aria-hidden="true">BLOCK</span>
+        <div class="gate-panel gate-panel-fallback" aria-hidden="true">
+          <div class="gate-head">
+            <span data-i18n="preview_label">Review output</span>
+            <span class="badge BLOCK block-stamp">BLOCK</span>
+          </div>
+          <div class="gate-stages">
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Evidence</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+            <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val block-stamp">BLOCK</span></div>
+          </div>
+          <div class="gate-body">
+            <div class="preview-schema">falsify.review.v1 · reports/deploy.md</div>
+            <div class="preview-title" data-i18n="preview_title">Deployment succeeded because logs completed.</div>
+            <div class="preview-must-fix">
+              <strong data-i18n="preview_must_fix">Must Fix</strong>
+              <span data-i18n="preview_issue">Logs are treated as state verification</span>
+              <span class="preview-action" data-i18n="preview_action">Minimal action: Add read-after-write probe</span>
+            </div>
           </div>
         </div>
-      </div>
+      </figure>
     </div>
   </div>
 </header>
@@ -86,8 +109,17 @@
         <div class="proof-lbl" data-i18n="ev2_lbl">PASS / PASS_WITH_DEBT / BLOCK only</div>
       </div>
       <div class="proof-item">
-        <div class="proof-val" data-i18n="ev3_val">MIT</div>
+        <div class="proof-val">
+          <a class="proof-github" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">
+            <svg class="proof-gh-icon" width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span data-i18n="proof_github">GitHub</span>
+          </a>
+        </div>
         <div class="proof-lbl" data-i18n="proof_action">GitHub Action · open core</div>
+      </div>
+      <div class="proof-item proof-case">
+        <div class="proof-val proof-case-val" data-i18n="proof_case_val">Logs ≠ state proof</div>
+        <div class="proof-lbl" data-i18n="proof_case_lbl">Real BLOCK · reports/deploy.md</div>
       </div>
     </div>
   </div>

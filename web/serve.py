@@ -18,7 +18,7 @@ import falsify  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB_DIR = Path(__file__).resolve().parent
-ALLOWED_STATIC_EXTS = {".md", ".svg", ".png", ".gif", ".css", ".js", ".json"}
+ALLOWED_STATIC_EXTS = {".md", ".svg", ".png", ".gif", ".css", ".js", ".json", ".ico", ".webp"}
 STATIC_CTYPE = {
     ".svg": "image/svg+xml",
     ".png": "image/png",
@@ -26,6 +26,8 @@ STATIC_CTYPE = {
     ".css": "text/css",
     ".js": "application/javascript",
     ".json": "application/json",
+    ".ico": "image/x-icon",
+    ".webp": "image/webp",
 }
 PROVIDER = os.environ.get("FALSIFY_PROVIDER")
 
