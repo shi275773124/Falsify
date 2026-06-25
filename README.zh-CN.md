@@ -148,8 +148,8 @@ VERDICT: BLOCK
 Falsify 会继续围绕 AI agent、代码审查和生产风险工作流演进。如果你也在做类似问题，欢迎关注或联系。
 
 - GitHub: https://github.com/shi275773124/Falsify
-- X / Twitter: https://x.com/YOUR_HANDLE
-- Email: YOUR_EMAIL@example.com
+- X / Twitter: https://x.com/aishikejian
+- Email: chrisshi168@icloud.com
 
 ## License
 
