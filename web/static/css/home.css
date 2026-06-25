@@ -103,6 +103,26 @@ img { max-width: 100%; }
   justify-content: center;
   padding: 40px 32px 40px 48px;
 }
+.hero-artifact {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+}
+.hero-check-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.hero-stamp {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  pointer-events: none;
+}
 .gate-panel {
   width: 100%;
   max-width: 420px;
@@ -112,6 +132,13 @@ img { max-width: 100%; }
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 }
+.gate-panel-fallback { display: none; }
+@keyframes block-stamp {
+  0%, 72% { opacity: 0; transform: scale(1.35) rotate(-4deg); }
+  82% { opacity: 1; transform: scale(0.96) rotate(0deg); }
+  90%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.block-stamp { animation: block-stamp 5s ease-out infinite; }
 .gate-head {
   display: flex;
   align-items: center;
@@ -224,10 +251,22 @@ h1 {
 }
 .proof-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   text-align: center;
 }
+.proof-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--fg);
+  font: 700 clamp(22px, 2.8vw, 32px)/1 var(--font);
+  letter-spacing: -0.02em;
+}
+.proof-github:hover { color: var(--accent); }
+.proof-gh-icon { flex-shrink: 0; opacity: 0.85; }
+.proof-case-val { font-size: clamp(22px, 2.8vw, 34px); }
 .proof-item .proof-val {
   font: 800 clamp(28px, 3.5vw, 40px)/1 var(--font);
   letter-spacing: -0.03em;
@@ -554,4 +593,5 @@ footer a:hover { color: var(--fg); }
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+  .block-stamp { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
