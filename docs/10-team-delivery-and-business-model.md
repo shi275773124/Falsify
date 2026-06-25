@@ -99,5 +99,5 @@ Recommended for Falsify now: BYOK hybrid for Team, annual contract for Enterpris
 
 ## Positioning line
 
-Most tools review diffs. Falsify reviews whether a decision is defensible.
+Many automated checks focus on diffs and green CI. Falsify reviews whether a decision is defensible.
 

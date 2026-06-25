@@ -10,8 +10,8 @@ Falsify 是面向 AI 时代工作的**决策闸门（decision gate）**：用于
 
 Falsify 不是“另一个模型说看起来没问题”。它是一套协议，用来把可辩护的决策与自信噪音分开。
 
-传统 code review 在问：**“这个 diff 看起来对不对？”**  
-Falsify 在问：**“这个决策是否可辩护？”**
+传统 code review / lint 能拦住很多问题，但仍主要在问：**「这个 diff 看起来对不对？」**  
+Falsify 在问：**「这个决策是否可辩护？」**
 
 [English](./README.md) · [Getting Started](./docs/00-getting-started.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
@@ -71,6 +71,8 @@ python -m pip install -e .[dev]
 
 # 无 API key：本地 fixture demo。
 python falsify.py demo
+
+# 无 Falsify API key。真审查走你的 provider key（BYOK）或已登录的 agent CLI。
 
 # 无 API key：本地 tag/blocker lint。
 python falsify.py lint examples/comparison-case-study/05-final-excerpt.md

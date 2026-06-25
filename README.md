@@ -10,7 +10,7 @@ It forces decisions to bottom out in evidence and cuts risk into **Must Fix**, *
 
 Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise.
 
-Code review asks: **"Does the diff look right?"**  
+Code review and lint gates catch many issues. They still ask: **"Does the diff look right?"**  
 Falsify asks: **"Is this decision defensible?"**
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
@@ -52,6 +52,8 @@ python -m pip install -e .[dev]
 
 # No API key: deterministic local fixture demo.
 python falsify.py demo
+
+# No Falsify API key. Live review uses your provider key (BYOK) or a logged-in agent CLI.
 
 # No API key: local tag/blocker lint.
 python falsify.py lint examples/comparison-case-study/05-final-excerpt.md
