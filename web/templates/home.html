@@ -129,8 +129,22 @@
       </div>
     </div>
     <div class="proof-case">
-      <div class="proof-val proof-case-val" data-i18n="proof_case_val">Logs ≠ state proof</div>
-      <div class="proof-lbl" data-i18n="proof_case_lbl">Real BLOCK · reports/deploy.md</div>
+      <div class="proof-case-inner">
+        <div class="proof-mini-panel">
+          <div class="proof-mini-head">
+            <span class="proof-mini-file">reports/deploy.md</span>
+            <span class="badge BLOCK">BLOCK</span>
+          </div>
+          <div class="proof-mini-body">
+            <span class="proof-mini-label" data-i18n="preview_must_fix">Must Fix</span>
+            <span class="proof-mini-issue" data-i18n="preview_issue">Logs are treated as state verification</span>
+          </div>
+        </div>
+        <div class="proof-case-meta">
+          <div class="proof-val proof-case-val" data-i18n="proof_case_val">Logs ≠ state proof</div>
+          <div class="proof-lbl" data-i18n="proof_case_lbl">Real BLOCK · reports/deploy.md</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -154,9 +168,9 @@
   <div class="wrap">
     <div class="quote-card">
       <div class="avatar" role="img" aria-label="Chris Shi">
-        <img class="avatar-img" src="/assets/chris-shi-founder.png" alt="Chris Shi" width="48" height="48" loading="lazy" decoding="async">
+        <img class="avatar-img" src="/assets/chris-shi-founder.png" alt="Chris Shi" width="56" height="56" loading="lazy" decoding="async">
       </div>
-      <div>
+      <div class="quote-body">
         <p data-i18n="quote_p">"Green logs aren't proof. We stopped pretending they were."</p>
         <cite data-i18n="quote_cite">Chris Shi</cite>
       </div>
@@ -166,21 +180,26 @@
 
 <section class="hero-layers" id="layers">
   <div class="wrap layers-wrap">
-    <div class="layers-strip" role="list">
-      <article class="layer-chip" role="listitem">
-        <span class="layer-tag" data-i18n="hero_layers_l1_tag">Frame</span>
-        <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Frame Audit</span>
-      </article>
-      <span class="layer-sep" aria-hidden="true">·</span>
-      <article class="layer-chip" role="listitem">
-        <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
-        <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
-      </article>
-      <span class="layer-sep" aria-hidden="true">·</span>
-      <article class="layer-chip" role="listitem">
-        <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
-        <span class="layer-map-tag" data-i18n="hero_layers_l3_map">What must change now</span>
-      </article>
+    <div class="layers-scroll-wrap">
+      <div class="layers-strip" role="list">
+        <article class="layer-chip" role="listitem">
+          <span class="layer-step-num" aria-hidden="true">01</span>
+          <span class="layer-tag" data-i18n="hero_layers_l1_tag">Frame</span>
+          <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Frame Audit</span>
+        </article>
+        <span class="layer-sep" aria-hidden="true">·</span>
+        <article class="layer-chip" role="listitem">
+          <span class="layer-step-num" aria-hidden="true">02</span>
+          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
+          <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
+        </article>
+        <span class="layer-sep" aria-hidden="true">·</span>
+        <article class="layer-chip" role="listitem">
+          <span class="layer-step-num" aria-hidden="true">03</span>
+          <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
+          <span class="layer-map-tag" data-i18n="hero_layers_l3_map">What must change now</span>
+        </article>
+      </div>
     </div>
     <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
   </div>
@@ -251,9 +270,9 @@
       <div class="limits-antipatterns">
         <div class="tag" data-i18n="limits_tag">Not Falsify</div>
         <div class="problems problems-stack">
-          <div class="problem" data-i18n="ap_1">"A second glance" ≠ full Falsify</div>
-          <div class="problem" data-i18n="ap_2">Cutline-only ≠ full Falsify</div>
-          <div class="problem" data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</div>
+          <div class="problem problem-accent"><span class="problem-mark" aria-hidden="true">≠</span><span data-i18n="ap_1">"A second glance" ≠ full Falsify</span></div>
+          <div class="problem problem-accent"><span class="problem-mark" aria-hidden="true">≠</span><span data-i18n="ap_2">Cutline-only ≠ full Falsify</span></div>
+          <div class="problem problem-accent"><span class="problem-mark" aria-hidden="true">≠</span><span data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</span></div>
         </div>
       </div>
       <div class="limits-boundary">
