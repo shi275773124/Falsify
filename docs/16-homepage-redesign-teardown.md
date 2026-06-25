@@ -2,7 +2,7 @@
 
 > **Date**: 2026-06-24  
 > **Purpose**: Phase 2 teardown before any homepage rebuild. Phase 3 rebuild spec for Chris review.  
-> **Constraint**: 框架审 on marketing (not Brooks-Lint). Keep quote A + hero_layers content; redesign presentation only.
+> **Constraint**: 框架审计 on marketing (not Brooks-Lint). Keep quote A + hero_layers content; redesign presentation only.
 
 ---
 
@@ -263,7 +263,7 @@
 |---|---------|--------------------------------|--------------|
 | 1 | **Hero** | H1, quote A one-liner (optional sub), Install CTA + View sample CTA | Left copy / right **real screenshot** of BLOCK report or Factory-style gate panel. Trust strip: GitHub Actions · MIT · BYOK. |
 | 2 | **Proof strip** | 3 metrics: `<1 day to first BLOCK` · `3 verdicts only` · `strict debt trigger` | CodeRabbit-style **one row**, no card grid. |
-| 3 | **Three layers** | hero_layers copy (框架审 / 对抗审 / Cutline) | Detail-style **3 steps** or Factory **stage strip** — not 3 equal cards. |
+| 3 | **Three layers** | hero_layers copy (框架审计 / 对抗审查 / Cutline) | Detail-style **3 steps** or Factory **stage strip** — not 3 equal cards. |
 | 4 | **Sample artifact** | `/examples/` real JSON + link to GitHub Action install | **One** artifact panel (JSON syntax highlighted) — kill dual deliverables + gh-check mock. |
 | 5 | **Workbench** | Partial scope disclaimer, Run sample | Keep functional `/review` but **collapse** on homepage — link "Open workbench" vs full section. |
 | 6 | **Start + boundary** | 60s install, open-core one-liner (no $99 grid) | Detail-style dual CTA; footer MIT/Team honesty. |
@@ -308,7 +308,7 @@
 
 - Keep **quote A** (Chris Shi) — avatar + cite, product voice only; no "Founder" title or fabricated third-party testimonial.  
 - Keep **hero_layers** i18n keys — rewrite layout only.  
-- Marketing says **框架审** not Brooks-Lint.  
+- Marketing says **框架审计** not Brooks-Lint.  
 - Tests: `tests/test_web.py` updated for new section IDs; key copy phrases preserved.
 
 ---

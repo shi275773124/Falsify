@@ -9,7 +9,7 @@
 ### zh-CN
 
 **Claim:** 单 AI 正式 7 门审计 — Sharpe 4.06，PBO 0.000，6/7 PASS，下一步 shadow live。  
-**Artifact:** 第二 AI 用不同 rebalance mechanic 重跑同 panel → SR 崩至 ≈0.77；regime 80% 时间为 1–2 天 chop，回测 horizon=14 在 live 里几乎从未成立。  
+**Artifact:** 第二 AI 用不同再平衡机制重跑同 panel → SR 崩至 ≈0.77；regime 80% 时间为 1–2 天 chop，回测 horizon=14 在 live 里几乎从未成立。  
 **Verdict:** BLOCK — NOT_VIABLE；SR 是成本÷虚构持仓期的会计幻象，不是 alpha。  
 **Must Fix:** 任何升级 paper/live 前必须 mechanic 实证对照 + 成本/天 explicit；PBO=0 ≠ live-safe。
 

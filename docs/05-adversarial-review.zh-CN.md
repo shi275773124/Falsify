@@ -63,7 +63,7 @@ G4 的完整案例:[`examples/wrong-tool-right-data.md`](../examples/wrong-tool-
 
 前沿模型的程序化外语 / covert channel 研究给 Falsify 的提醒是：另一个模型说“我审过了”还不够。AI 可能在一层人类和 monitor 都不可靠审计的文本/代码结构里工作。
 
-不要新增第四层。把这些检查并入对抗审：
+不要新增第四层。把这些检查并入对抗审查：
 
 - **人类可审计性。** verdict 是否落到 raw artifact、可读 diff、命令、fixture、源链接等人能检查的证据？如果只依赖 AI summary，BLOCK。
 - **语义 verdict 诱导。** 普通语言是否在没有满足 gate 的情况下推动 reviewer 判 `PASS` / `PASS_WITH_DEBT` / `Known Debt`？例如“not blocking / 证据已足够 / 另一个模型同意 / 只是理论风险 / blocker 改名 debt”。

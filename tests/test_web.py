@@ -13,7 +13,7 @@ REQUIRED_PUBLIC_COPY = [
     "先审，再信。",
     "Falsify 不争。只问一件事：证据在哪。",
     "Frame Audit + Adversarial Review + Cutline.",
-    "框架审 + 对抗审 + Cutline。",
+    "框架审计 + 对抗审查 + Cutline。",
     "audit the audit channel itself",
     "审计通道本身也要被审计",
     "human-auditability break",
@@ -71,7 +71,7 @@ def test_homepage_hero_redesign():
     assert 'data-i18n="hero_definition"' in serve.PAGE
     assert "gate-map" in serve.PAGE
     assert "Frame Audit" in serve.PAGE
-    assert "框架审" in serve.PAGE
+    assert "框架审计" in serve.PAGE
     assert "trust-band" in serve.PAGE
     assert 'data-i18n="trust_band_github"' in serve.PAGE
     assert 'data-i18n="trust_schema"' in serve.PAGE
@@ -151,7 +151,7 @@ def test_web_template_contains_public_product_markers():
     assert "Review first. Trust after." in serve.PAGE
     assert "Frame Audit + Adversarial Review + Cutline." in serve.PAGE
     assert "Full Falsify = Frame Audit + Adversarial Review + Cutline." in serve.PAGE
-    assert "完整 Falsify = 框架审 + 对抗审 + Cutline" in serve.PAGE
+    assert "完整 Falsify = 框架审计 + 对抗审查 + Cutline" in serve.PAGE
     for phrase in REQUIRED_PUBLIC_COPY:
         assert phrase in serve.PAGE
     assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
@@ -249,7 +249,7 @@ def test_docs_markdown_zh_route_returns_translated_body():
     body = handler.wfile.getvalue()
     assert b"lang=\"zh-CN\"" in body
     assert "快速开始".encode() in body
-    assert "对抗审框架".encode() in body
+    assert "对抗审查框架".encode() in body
     assert b'<p class="doc-untranslated"' not in body
 
 
@@ -347,7 +347,7 @@ def test_homepage_open_core_licensing_footer():
     assert "Self-hosted · unlimited repos" in serve.PAGE
     assert "自托管，仓库不限" in serve.PAGE or "自托管 · 仓库不限" in serve.PAGE
     assert "hosted policy enforcement" in serve.PAGE
-    assert "托管 policy" in serve.PAGE
+    assert "托管策略" in serve.PAGE
     assert "Shared review templates" not in serve.PAGE
     assert 'class="boundary-block"' not in serve.PAGE
 
