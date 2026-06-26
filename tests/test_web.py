@@ -11,7 +11,7 @@ REQUIRED_PUBLIC_COPY = [
     "Review first. Trust after.",
     "Falsify does not argue. It asks one question: where is the evidence.",
     "先审，再信。",
-    "Falsify 不争。只问一件事：证据在哪。",
+    "Falsify 不争辩，只问一件事：证据在哪里。",
     "Frame Audit + Adversarial Review + Cutline.",
     "框架审计 + 对抗审查 + Cutline。",
     "audit the audit channel itself",

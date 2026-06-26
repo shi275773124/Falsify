@@ -1298,6 +1298,50 @@ html.lang-zh .layer-map-tag {
 }
 
 @media (max-width: 767px) {
+  .proof-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    scroll-snap-type: none;
+  }
+  .proof-item,
+  .proof-item:last-child {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    scroll-snap-align: none;
+  }
+  .trust-chips {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+  .trust-chip {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+  }
+  .layers-scroll-wrap {
+    overflow: visible;
+    margin: 0 0 10px;
+    padding: 0;
+    scroll-snap-type: none;
+  }
+  .layers-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding-bottom: 0;
+  }
+  .layer-chip {
+    width: 100%;
+    flex: none;
+    scroll-snap-align: none;
+  }
   html[lang="zh-CN"] .layer-tag,
   html.lang-zh .layer-tag {
     font-family: var(--font-zh);
