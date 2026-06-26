@@ -95,6 +95,7 @@ const SAMPLES = {
 
 const T = {
   en: {
+    nav_menu: "Menu",
     nav_layers: "Layers",
     nav_cases: "Cases",
     nav_artifact: "Sample",
@@ -207,6 +208,7 @@ const T = {
     lic_team_2: "Team — org workspace, not OSS overlap",
   },
   zh: {
+    nav_menu: "菜单",
     nav_layers: "三层",
     nav_cases: "案例",
     nav_artifact: "样例",

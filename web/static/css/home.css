@@ -1205,13 +1205,13 @@ footer a:hover { color: var(--fg); }
     pointer-events: auto;
   }
   .links a { display: block; padding: 8px 0; }
-  .hero-inner { grid-template-columns: 1fr; }
+  .hero-inner { grid-template-columns: 1fr; min-height: auto; align-items: start; }
   .hero-visual {
-    min-height: 320px;
+    min-height: 200px;
     border-top: 1px solid var(--border);
-    padding: 32px var(--pad);
+    padding: 24px var(--pad);
   }
-  .hero-copy { margin: 0 auto; max-width: none; padding-top: 96px; }
+  .hero-copy { margin: 0 auto; max-width: none; padding-top: 48px; padding-bottom: 40px; }
   .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
   .gate-stages { grid-template-columns: repeat(2, 1fr); }
   .row .btn { margin-left: 0; width: 100%; }
