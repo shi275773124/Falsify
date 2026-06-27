@@ -2,7 +2,7 @@ const PUBLIC_COPY = [
   "Review first. Trust after.",
   "Falsify does not argue. It asks one question: where is the evidence.",
   "先审，再信。",
-  "Falsify 不争。只问一件事：证据在哪。",
+  "Falsify 不争辩，只问一件事：证据在哪里。",
   "Frame Audit + Adversarial Review + Cutline.",
   "框架审计 + 对抗审查 + Cutline。",
   "audit the audit channel itself",
@@ -42,33 +42,60 @@ const SAMPLES = {
   general: {
     verdict: "BLOCK",
     risks: [
-      { cutline: "Must Fix", issue: "Claim reads confident but cites no raw artifact.", minimal_action: "Attach source output, command log, or reproducible check." },
-      { cutline: "Known Debt", issue: "Secondary review mentioned but not independently verified.", minimal_action: "Re-run with explicit failure-mode checklist.", upgrade_trigger: "Before any customer-facing decision." },
+      {
+        cutline: "Must Fix",
+        issue: "Claim reads confident but cites no raw artifact.",
+        minimal_action: "Attach source output, command log, or reproducible check.",
+      },
+      {
+        cutline: "Known Debt",
+        issue: "Secondary review mentioned but not independently verified.",
+        minimal_action: "Re-run with explicit failure-mode checklist.",
+        upgrade_trigger: "Before any customer-facing decision.",
+      },
     ],
   },
   code: {
     verdict: "PASS_WITH_DEBT",
     risks: [
-      { cutline: "Known Debt", issue: "Tests pass but do not assert the risky default path.", minimal_action: "Add one negative test for the default branch.", upgrade_trigger: "Before merge to main." },
+      {
+        cutline: "Known Debt",
+        issue: "Tests pass but do not assert the risky default path.",
+        minimal_action: "Add one negative test for the default branch.",
+        upgrade_trigger: "Before merge to main.",
+      },
     ],
   },
   research: {
     verdict: "BLOCK",
     risks: [
-      { cutline: "Must Fix", issue: "Conclusion cites summary tables without primary source excerpt.", minimal_action: "Attach table screenshot or raw CSV hash." },
+      {
+        cutline: "Must Fix",
+        issue: "Conclusion cites summary tables without primary source excerpt.",
+        minimal_action: "Attach table screenshot or raw CSV hash.",
+      },
     ],
   },
   production: {
     verdict: "BLOCK",
     risks: [
-      { cutline: "Must Fix", issue: "Logs completed, but no read-after-write or invariant check proves intended state.", minimal_action: "Attach post-deploy probe output and rollback command." },
-      { cutline: "Delete", issue: "Another AI reviewed it — not evidence.", minimal_action: "Remove from acceptance chain." },
+      {
+        cutline: "Must Fix",
+        issue: "Logs completed, but no read-after-write or invariant check proves intended state.",
+        minimal_action: "Attach post-deploy probe output and rollback command.",
+      },
+      {
+        cutline: "Delete",
+        issue: "Another AI reviewed it is not evidence.",
+        minimal_action: "Remove from acceptance chain.",
+      },
     ],
   },
 };
 
 const T = {
   en: {
+    nav_menu: "Menu",
     nav_layers: "Layers",
     nav_cases: "Cases",
     nav_artifact: "Sample",
@@ -89,7 +116,7 @@ const T = {
     preview_label: "Review output",
     preview_title: "6/7 gates PASS — ready for shadow live.",
     preview_must_fix: "Must Fix",
-    preview_issue: "Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77",
+    preview_issue: "Second AI reran a different rebalance mechanic; SR collapsed to ≤.77",
     preview_action: "Minimal action: Mechanic ground-truth vs live journal",
     gate_frame: "Frame",
     gate_adv: "Adversarial",
@@ -118,7 +145,7 @@ const T = {
     case_illus: "Illustrative",
     case1_domain: "Strategy research",
     case1_title: "Sharpe 4.06 · 6/7 PASS → mechanic flaw",
-    case1_finding: "Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.",
+    case1_finding: "Second AI reran a different rebalance mechanic; SR collapsed to ≤.77. Gate pass is not evidence.",
     case1_link: "01-fictional-horizon-quant-audit.md →",
     case2_domain: "Research ops · fee table",
     case2_findings: "4 findings",
@@ -181,14 +208,15 @@ const T = {
     lic_team_2: "Team — org workspace, not OSS overlap",
   },
   zh: {
+    nav_menu: "菜单",
     nav_layers: "三层",
     nav_cases: "案例",
     nav_artifact: "样例",
     nav_demo: "演示",
     nav_docs: "文档",
     h1: "看起来对，不够。",
-    hero_sub: "Falsify 把 AI 的自信结论变成上线决策：\nPASS、PASS_WITH_DEBT、BLOCK — 以原始证据为准。",
-    hero_definition: "框架审计 · 对抗审查 · Cutline → 一种协议裁决。",
+    hero_sub: "Falsify 把 AI 的自信结论变成上线决策：\nPASS、PASS_WITH_DEBT 或 BLOCK，并以原始证据为准。",
+    hero_definition: "框架审计 · 对抗审查 · Cutline → 一个协议裁决。",
     hero_docs_link: "完整三层见文档 →",
     btn_install: "安装 GitHub Action",
     btn_run_sample_hero: "运行样例",
@@ -201,7 +229,7 @@ const T = {
     preview_label: "审查输出",
     preview_title: "6/7 关 PASS — 准备 shadow live。",
     preview_must_fix: "Must Fix",
-    preview_issue: "第二 AI 用不同再平衡机制重跑，SR 崩至 ≈0.77",
+    preview_issue: "第二个 AI 用不同再平衡机制重跑，SR 跌到 ≤.77",
     preview_action: "最小动作：机制实证对照 live 流水",
     gate_frame: "框架",
     gate_adv: "对抗",
@@ -209,14 +237,14 @@ const T = {
     gate_verdict: "裁决",
     gate_pass: "PASS",
     ev1_val: "几分钟可试",
-    ev1_lbl: "工作台样例 — 非基准数据",
+    ev1_lbl: "工作台样例 — 非基准测试",
     ev2_val: "3 种协议裁决",
     ev2_lbl: "PASS / PASS_WITH_DEBT / BLOCK",
     ev3_val: "MIT",
     proof_action: "GitHub Action · 开源核心",
     proof_github: "GitHub",
-    hero_img_alt: "Falsify BLOCK 审查：Sharpe 4.06 策略在机制交叉验证后被拦截",
-    quote_p: "「六关过了。差一个机制就要上实盘 — 直到第二次重跑把 Sharpe 打穿。」",
+    hero_img_alt: "Falsify BLOCK 审查：Sharpe 4.06 策略在机制交叉验证后被阻断",
+    quote_p: "“六关过了，差一个机制就要上实盘，直到第二次重跑把 Sharpe 打穿。”",
     quote_cite: "Chris Shi",
     hero_layers_l1_tag: "框架",
     hero_layers_l1_map: "找出框架腐点",
@@ -230,7 +258,7 @@ const T = {
     case_illus: "说明性案例",
     case1_domain: "策略研究",
     case1_title: "Sharpe 4.06 · 6/7 PASS → 机制缺陷",
-    case1_finding: "第二 AI 用不同再平衡机制重跑，SR 崩至 ≈0.77。PASS 本身不是证据。",
+    case1_finding: "第二个 AI 用不同再平衡机制重跑，SR 跌到 ≤.77。PASS 本身不是证据。",
     case1_link: "01-fictional-horizon-quant-audit.md →",
     case2_domain: "研究运维 · 费率表",
     case2_findings: "4 处发现",
@@ -250,21 +278,21 @@ const T = {
     artifact_lead: "协议样例 JSON — 部署日志 ≠ 状态证明。不是伪造的 GitHub Check 截图。",
     artifact_download: "下载 JSON",
     limits_tag: "不是 Falsify",
-    ap_1: "「再看一眼」≠ 完整 Falsify",
+    ap_1: "“再看一眼” ≠ 完整 Falsify",
     ap_2: "只有 Cutline ≠ 完整 Falsify",
     ap_3: "每个坏味道都标 Must Fix ≠ Cutline",
     workbench_h2: "几分钟跑一次裁决",
     input_h3: "声明",
     input_p: "粘贴部署声明、PR 摘要或 AI 生成报告。",
     output_h3: "裁决",
-    output_p: "点「运行样例」预览裁决。",
+    output_p: "点“运行样例”预览裁决产物。",
     workbench_scope: "裁决格式演示 — 非完整 Falsify 强制。",
     scenario_general: "通用",
     scenario_code: "代码 / PR",
     scenario_research: "研究",
     scenario_production: "生产",
     btn_sample: "运行样例",
-    btn_review: "真审查",
+    btn_review: "真实审查",
     start_tag: "开始",
     start_h2: "60 秒本地跑起来。",
     docs_install: "5 分钟安装 GitHub Action →",
@@ -290,11 +318,19 @@ const T = {
     hero_chip_2: "对抗审查",
     hero_chip_3: "Cutline",
     lic_open_2: "MIT — 自托管，仓库不限",
-    lic_team_2: "Team — 组织工作区，不与 OSS 重叠",
+    lic_team_2: "Team — 组织工作区，不与 OSS 重复",
   },
 };
 
 const STORAGE_KEY = "falsify-lang";
+
+function readRequestedLang() {
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get("lang");
+  if (fromQuery === "zh" || fromQuery === "zh-CN") return "zh";
+  if (fromQuery === "en") return "en";
+  return null;
+}
 
 function readStoredLang() {
   try {
@@ -312,14 +348,15 @@ function writeStoredLang(next) {
   }
 }
 
-let lang = readStoredLang();
+let lang = readRequestedLang() || readStoredLang();
+if (readRequestedLang()) writeStoredLang(lang);
 
 function applyLang() {
   const isZh = lang === "zh";
   document.documentElement.lang = isZh ? "zh-CN" : "en";
   document.documentElement.classList.toggle("lang-zh", isZh);
   document.body.classList.toggle("lang-zh", isZh);
-  document.getElementById("lang-btn").textContent = lang === "en" ? "中文" : "EN";
+  document.getElementById("lang-btn").textContent = isZh ? "EN" : "中文";
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const k = el.getAttribute("data-i18n");
     if (T[lang][k] === undefined) return;
@@ -365,11 +402,11 @@ async function go() {
   const out = document.getElementById("out");
   const b = document.getElementById("b");
   if (!t) {
-    out.innerHTML = "<p>Paste something first.</p>";
+    out.innerHTML = "<p>" + (lang === "zh" ? "请先粘贴内容。" : "Paste something first.") + "</p>";
     return;
   }
   b.disabled = true;
-  out.innerHTML = "<p>Reviewing...</p>";
+  out.innerHTML = "<p>" + (lang === "zh" ? "审查中..." : "Reviewing...") + "</p>";
   try {
     const r = await fetch("/review", {
       method: "POST",
