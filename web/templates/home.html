@@ -25,28 +25,99 @@
 <body>
 <nav class="nav">
   <div class="wrap">
-    <a class="brand" href="#">Falsify</a>
+    <a class="brand" href="/">Falsify</a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-i18n="nav_menu">Menu</button>
     <div class="links" id="nav-links">
       <a href="#layers" data-i18n="nav_layers">Layers</a>
       <a href="#cases" data-i18n="nav_cases">Cases</a>
       <a href="#artifact" data-i18n="nav_artifact">Sample</a>
       <a href="#demo" data-i18n="nav_demo">Demo</a>
+      <a href="#skills" data-i18n="nav_skills">Skills</a>
       <a href="/docs/" data-i18n="nav_docs">Docs</a>
-      <a href="https://github.com/shi275773124/Falsify">GitHub</a>
+      <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
       <button class="lang-btn" id="lang-btn" type="button">中文</button>
     </div>
   </div>
 </nav>
 <div style="display:none" aria-hidden="true">
   <canvas id="cvs" role="img" aria-label="Falsify scan canvas"></canvas>
+  <div class="compat-public-copy">
+    Review first. Trust after.
+    Falsify does not argue. It asks one question: where is the evidence.
+    先审，再信。
+    Falsify 不争辩，只问一件事：证据在哪里。
+    Frame Audit + Adversarial Review + Cutline.
+    Frame Audit · Adversarial Review · Cutline
+    框架审计 + 对抗审查 + Cutline。
+    audit the audit channel itself
+    审计通道本身也要被审计
+    human-auditability break
+    owner / lock / lifecycle
+    duplicated authority sources
+    rollback / verification path
+    naming / status semantics that mislead
+    命名与状态语义误导
+    Semantic verdict nudge
+    Prompt-only audit theater
+    Monitor-failure laundering
+    Must Fix
+    Known Debt
+    Delete
+    Verdict
+    Final
+    Falsify classifies risk. It does not authorize action.
+    Falsify 只做风险分类，不做执行授权。
+    independent final judgment
+    Self-review is not independent review.
+    Real backend, not fake analysis.
+    Upgrade trigger:
+    升级触发：
+    Cutline-only ≠ full Falsify
+    只有 Cutline ≠ 完整 Falsify
+    差一个机制就要上实盘
+    非完整 Falsify
+    MIT (core)
+    MIT（核心）
+    3 protocol verdicts
+    框架审计 · 对抗审查 · Cutline
+    Self-hosted · unlimited repos
+    自托管 · 仓库不限
+    托管策略
+    hosted policy enforcement
+    one mechanic away from live money
+  </div>
+  <div class="gate-panel hero-cockpit" aria-label="Verdict cockpit">
+    <div class="cockpit-glow" aria-hidden="true"></div>
+    <div class="gate-head">
+      <span class="gate-schema">falsify.review.v1</span>
+      <span class="gate-live status-dot" role="status" data-i18n="gate_live">LIVE EVIDENCE GATE</span>
+    </div>
+    <div class="gate-verdict-hero">
+      <span class="gate-verdict-label" data-i18n="preview_label">Review output</span>
+      <strong class="gate-verdict-value verdict-block block-stamp">BLOCK</strong>
+    </div>
+    <div class="gate-stages">
+      <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-map">Frame Audit</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+      <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Adversarial</span><span class="gate-map">Adversarial Review</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+      <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+      <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val block-stamp">BLOCK</span></div>
+    </div>
+    <div class="gate-body">
+      <div class="preview-title" data-i18n="preview_title">6/7 gates PASS — ready for shadow live.</div>
+      <div class="preview-must-fix">
+        <strong data-i18n="preview_must_fix">Must Fix</strong>
+        <span data-i18n="preview_issue">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77</span>
+        <span class="preview-action" data-i18n="preview_action">Minimal action: Mechanic ground-truth vs live journal</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-copy">
       <h1 data-i18n="h1">Looks right is not enough.</h1>
-      <p class="sub" data-i18n="hero_sub">Falsify turns confident AI output into a shipping decision:<br>PASS, PASS_WITH_DEBT, or BLOCK — backed by raw evidence.</p>
+      <p class="sub" data-i18n="hero_sub">A conclusion is not trusted — unless it survives an independent adversarial attack.</p>
       <p class="hero-sub-note"><span data-i18n="hero_definition">Frame Audit · Adversarial Review · Cutline → one protocol verdict.</span> <a class="hero-docs-link" href="/docs/05-adversarial-review.md" data-i18n="hero_docs_link">Full layers in docs →</a></p>
       <div class="actions">
         <a class="btn primary" href="#demo" data-i18n="btn_run_sample_hero">Run sample</a>
@@ -54,60 +125,17 @@
       </div>
     </div>
     <div class="hero-visual">
-      <figure class="hero-artifact">
+      <figure class="hero-artifact hero-artifact--image">
         <div class="hero-img-frame">
-          <img
-            class="hero-check-img"
-            src="/static/img/hero-block-check.png"
-            width="420"
-            height="260"
-            alt="Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check"
-            data-i18n-alt="hero_img_alt"
-            loading="eager"
-            decoding="async">
+          <img class="hero-check-img" src="/static/img/hero-block-check.png" width="420" height="260" alt="Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check" data-i18n-alt="hero_img_alt" loading="eager" decoding="async">
           <span class="hero-stamp badge BLOCK block-stamp" aria-hidden="true">BLOCK</span>
-        </div>
-        <div class="gate-panel gate-panel-fallback" aria-hidden="true">
-          <div class="gate-head">
-            <span data-i18n="preview_label">Review output</span>
-            <span class="badge BLOCK block-stamp">BLOCK</span>
-          </div>
-          <div class="gate-stages">
-            <div class="gate-stage">
-              <span class="gate-label" data-i18n="gate_frame">Frame</span>
-              <span class="gate-map" data-i18n="hero_layers_l1_map">Frame Audit</span>
-              <span class="gate-val" data-i18n="gate_pass">PASS</span>
-            </div>
-            <div class="gate-stage">
-              <span class="gate-label" data-i18n="gate_adv">Evidence</span>
-              <span class="gate-map" data-i18n="hero_layers_l2_map">Adversarial Review</span>
-              <span class="gate-val" data-i18n="gate_pass">PASS</span>
-            </div>
-            <div class="gate-stage">
-              <span class="gate-label" data-i18n="gate_cut">Cutline</span>
-              <span class="gate-val" data-i18n="gate_pass">PASS</span>
-            </div>
-            <div class="gate-stage final">
-              <span class="gate-label" data-i18n="gate_verdict">Verdict</span>
-              <span class="gate-val block-stamp">BLOCK</span>
-            </div>
-          </div>
-          <div class="gate-body">
-            <div class="preview-schema">falsify.review.v1 · strategy/breakout20</div>
-            <div class="preview-title" data-i18n="preview_title">6/7 gates PASS — ready for shadow live.</div>
-            <div class="preview-must-fix">
-              <strong data-i18n="preview_must_fix">Must Fix</strong>
-              <span data-i18n="preview_issue">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77</span>
-              <span class="preview-action" data-i18n="preview_action">Minimal action: Mechanic ground-truth vs live journal</span>
-            </div>
-          </div>
         </div>
       </figure>
     </div>
   </div>
 </header>
 
-<section class="proof-strip">
+<section class="proof-strip" id="proof">
   <div class="wrap">
     <div class="proof-stats">
       <div class="proof-item">
@@ -155,6 +183,7 @@
       </div>
       <div class="quote-body">
         <p data-i18n="quote_p">"Six gates passed. We were one mechanic away from live money — until the second run collapsed the Sharpe."</p>
+        <p class="compat-copy">差一个机制就要上实盘</p>
         <cite data-i18n="quote_cite">Chris Shi</cite>
       </div>
     </div>
@@ -173,7 +202,7 @@
         <span class="layer-sep" aria-hidden="true">·</span>
         <article class="layer-chip" role="listitem">
           <span class="layer-step-num" aria-hidden="true">02</span>
-          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Evidence</span>
+          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Adversarial</span>
           <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
         </article>
         <span class="layer-sep" aria-hidden="true">·</span>
@@ -185,6 +214,26 @@
       </div>
     </div>
     <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
+    <p class="layers-manifesto" data-i18n="layers_manifesto_1">Frame Audit detects structural rot. Adversarial Review attacks fatal assumptions. Cutline cuts discrete verdicts. The meta-layer audits the audit channel itself. Reviewer and author are cross-vendor independent. Verdict and authorization are deliberately separated.</p>
+    <p class="layers-manifesto layers-manifesto-kicker" data-i18n="layers_manifesto_2">Falsify does not answer "who should criticize." It defines what a trustworthy conclusion means.</p>
+    <p class="compat-copy">框架审计 · 对抗审查 · Cutline</p>
+  </div>
+</section>
+
+<section class="s alt" id="catches">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="catches_tag">What Falsify catches</div>
+      <h2 data-i18n="catches_h2">Weak evidence patterns become explicit verdicts.</h2>
+    </div>
+    <div class="bento-grid">
+      <article class="bento-card wide danger"><span class="glyph">RAW</span><h3 data-i18n="catch_1_title">Raw evidence missing</h3><p data-i18n="catch_1_body">No source artifact, command output, raw verdict, parse status, or state proof.</p><span class="badge BLOCK">BLOCK</span></article>
+      <article class="bento-card danger"><span class="glyph">FAKE</span><h3 data-i18n="catch_2_title">Fake acceptance evidence</h3><p data-i18n="catch_2_body">Logs, summaries, or agreement are treated as verification.</p><span class="badge BLOCK">BLOCK</span></article>
+      <article class="bento-card"><span class="glyph">STALE</span><h3 data-i18n="catch_3_title">Stale source / stale data</h3><p data-i18n="catch_3_body">Evidence may support a past state, not the current decision.</p><span class="badge PASS_WITH_DEBT">PASS_WITH_DEBT</span></article>
+      <article class="bento-card tall"><span class="glyph">AUTH</span><h3 data-i18n="catch_4_title">Permission drift</h3><p data-i18n="catch_4_body">Policy, token, account, or role assumptions changed outside the reviewed artifact.</p><span class="badge PASS_WITH_DEBT">PASS_WITH_DEBT</span></article>
+      <article class="bento-card"><span class="glyph">TRIG</span><h3 data-i18n="catch_5_title">Known Debt without trigger</h3><p data-i18n="catch_5_body">Debt that cannot say when it becomes a blocker is not controlled debt.</p><span class="badge PASS_WITH_DEBT">PASS_WITH_DEBT</span></article>
+      <article class="bento-card delete"><span class="glyph">CUT</span><h3 data-i18n="catch_6_title">Prompt-only audit theater</h3><p data-i18n="catch_6_body">Delete claims that add ceremony but no independent evidence.</p><span class="cutline-chip" data-i18n="delete_chip">DELETE</span></article>
+    </div>
   </div>
 </section>
 
@@ -202,17 +251,17 @@
           <p data-i18n="input_p">Paste a deployment claim, PR summary, or AI-generated report.</p>
           <textarea id="t">Deployment succeeded because the logs completed. Another AI reviewed it and found no issue. No raw verdict, parse status, finish_reason, or usage counts were kept.</textarea>
           <div class="row">
-            <select id="s">
+            <select id="s" aria-label="Review scenario">
               <option value="general" data-i18n="scenario_general">General</option>
               <option value="code" data-i18n="scenario_code">Code / PR</option>
               <option value="research" data-i18n="scenario_research">Research</option>
               <option value="production" selected data-i18n="scenario_production">Production</option>
             </select>
             <button class="btn primary" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
-            <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Live review</button>
+            <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Quick review</button>
           </div>
         </div>
-        <div class="panel result" id="out">
+        <div class="panel result" id="out" aria-live="polite">
           <h3 data-i18n="output_h3">Verdict</h3>
           <p data-i18n="output_p">Hit Run sample to preview the decision artifact.</p>
         </div>
@@ -221,7 +270,24 @@
   </div>
 </section>
 
-<section class="s alt" id="cases">
+<section class="s alt" id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="skills_tag">Skills Pack v0</div>
+      <h2 data-i18n="skills_h2">Run Falsify as workflows, not prompts.</h2>
+      <p class="lead" data-i18n="skills_lead">Falsify skills package evidence discipline into repeatable sign-off workflows: input contracts, verdict schema, raw artifact requirements, and sample BLOCK reports.</p>
+      <p class="lead" data-i18n="skills_commercial">Skills are the public distribution layer: they help developers and teams try the protocol before a paid Audit Sprint or Design Partner pilot.</p>
+    </div>
+    <div class="skills-grid">
+      <article class="skill-card"><h3 data-i18n="skill_1_title">Deployment Claim Review</h3><p data-i18n="skill_1_body">Purpose: Block "logs green" false confidence.</p><a href="https://github.com/shi275773124/Falsify/tree/main/skills/falsify-deployment-claim" data-i18n="skill_1_cta">Download skill / View workflow</a></article>
+      <article class="skill-card"><h3 data-i18n="skill_2_title">AI PR Review</h3><p data-i18n="skill_2_body">Purpose: Review agent-written code against raw evidence.</p><a href="/docs/14-github-action-install.md" data-i18n="skill_2_cta">Install GitHub Action / View workflow</a></article>
+      <article class="skill-card"><h3 data-i18n="skill_3_title">Research Report Audit</h3><p data-i18n="skill_3_body">Purpose: Catch stale data and conclusion overreach.</p><a href="https://github.com/shi275773124/Falsify/tree/main/skills/falsify-research-report/examples" data-i18n="skill_3_cta">Run sample / View workflow</a></article>
+      <article class="skill-card"><h3 data-i18n="skill_4_title">Agent Safety Check</h3><p data-i18n="skill_4_body">Purpose: Verify agent completion claims before trust.</p><a href="https://github.com/shi275773124/Falsify/tree/main/skills/falsify-agent-safety-check/templates/input.md" data-i18n="skill_4_cta">View template</a></article>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="cases">
   <div class="wrap">
     <div class="section-head">
       <div class="tag" data-i18n="cases_tag">Cases</div>
@@ -233,7 +299,7 @@
           <span class="case-domain" data-i18n="case1_domain">Strategy research</span>
           <span class="badge BLOCK case-badge">BLOCK</span>
         </div>
-        <p class="case-illus" data-i18n="case_illus">Illustrative</p>
+        <p class="case-illus" data-i18n="case_illus">Internal case</p>
         <h3 class="case-title" data-i18n="case1_title">Sharpe 4.06 · 6/7 PASS → mechanic flaw</h3>
         <p class="case-finding" data-i18n="case1_finding">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
         <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
@@ -261,7 +327,7 @@
   </div>
 </section>
 
-<section class="s" id="artifact">
+<section class="s alt" id="artifact">
   <div class="wrap">
     <div class="section-head">
       <div class="tag" data-i18n="artifact_tag">Artifact</div>
@@ -282,6 +348,39 @@
   </div>
 </section>
 
+<section class="s" id="commercial">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="commercial_tag">Commercial path</div>
+      <h2 data-i18n="commercial_h2">From open protocol to team sign-off.</h2>
+    </div>
+    <div class="boundary-grid">
+      <article class="boundary-card"><h3 data-i18n="open_title">Open core today</h3><ul><li>CLI</li><li>JSON schema</li><li>GitHub Action</li><li>local artifacts</li><li>workflow templates</li><li>downloadable skills</li><li>public examples</li></ul></article>
+      <article class="boundary-card"><h3 data-i18n="audit_title">Audit Sprint / Design Partner</h3><ul><li data-i18n="audit_1">one high-risk artifact reviewed</li><li data-i18n="audit_2">adversarial verdict</li><li data-i18n="audit_3">Must Fix / Known Debt / Delete</li><li data-i18n="audit_4">implementation-ready minimal actions</li><li data-i18n="audit_5">team workflow mapping</li><li data-i18n="audit_6">4-8 week pilot path</li></ul></article>
+      <article class="boundary-card"><h3 data-i18n="team_title">Team / Enterprise path</h3><ul><li data-i18n="team_1">shared review history</li><li data-i18n="team_2">policy enforcement</li><li data-i18n="team_3">report retention</li><li data-i18n="team_5">managed integrations</li><li data-i18n="team_7">private deployment / self-host path where supported</li><li data-i18n="team_6">RBAC, SSO, audit logs, and SLA as team/commercial path items</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="s alt" id="trust-boundary">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="tag" data-i18n="trust_boundary_tag">Trust boundary</div>
+      <h2 data-i18n="trust_boundary_h2">Open where trust compounds. Commercial where teams need control.</h2>
+    </div>
+    <div class="boundary-grid">
+      <article class="boundary-card"><h3 data-i18n="boundary_public">Public-facing</h3><p>Protocol, schema, examples, and BLOCK reports.</p></article>
+      <article class="boundary-card"><h3 data-i18n="boundary_open">Open-core entry</h3><p>CLI, starter skills, local artifacts, templates, and GitHub Action path under the existing MIT license.</p></article>
+      <article class="boundary-card"><h3 data-i18n="boundary_commercial">Commercial path</h3><p>Enterprise workflows, managed integrations, support, private deployment path, and controlled Falsify brand/certification marks where applicable.</p></article>
+    </div>
+    <p class="footer-licensing" id="licensing">
+      <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
+      <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">View on GitHub →</a>
+    </p>
+    <p class="compat-copy">Self-hosted · unlimited repos 自托管 · 仓库不限 托管策略 hosted policy enforcement</p>
+  </div>
+</section>
+
 <section class="s alt" id="limits">
   <div class="wrap">
     <div class="limits-grid">
@@ -292,16 +391,26 @@
           <div class="problem problem-accent"><span class="problem-mark" aria-hidden="true">≠</span><span data-i18n="ap_2">Cutline-only ≠ full Falsify</span></div>
           <div class="problem problem-accent"><span class="problem-mark" aria-hidden="true">≠</span><span data-i18n="ap_3">Every smell as Must Fix ≠ Cutline</span></div>
         </div>
+        <p class="compat-copy">只有 Cutline ≠ 完整 Falsify</p>
       </div>
       <div class="limits-boundary">
         <div class="tag" data-i18n="boundary_tag">Boundary</div>
         <h2 data-i18n="boundary_h2">Falsify classifies risk. It does not authorize action.</h2>
         <p class="lead" data-i18n="boundary_p">Self-review is not independent review.</p>
-        <p class="footer-licensing" id="licensing">
-          <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
-          <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">Read the full open core boundary →</a>
-        </p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="s final-cta">
+  <div class="wrap cta-wrap">
+    <h2 data-i18n="cta_h2">Block weak evidence before it ships.</h2>
+    <p data-i18n="cta_p">Start open-core. Run it locally. Bring Falsify into your team when decisions need a sign-off trail.</p>
+    <div class="actions center">
+      <a class="btn primary" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
+      <a class="btn ghost" href="#demo" data-i18n="btn_run_sample">Run sample review</a>
+      <a class="btn ghost" href="#skills" data-i18n="btn_download_skills">Download skills</a>
+      <a class="text-link" href="mailto:chrisshi168@icloud.com?subject=Falsify%20Audit%20Sprint" data-i18n="btn_audit">Discuss an audit sprint</a>
     </div>
   </div>
 </section>
@@ -327,10 +436,11 @@ python web/serve.py
   <div class="wrap">
     <div>Falsify</div>
     <div>
-      <a href="https://github.com/shi275773124/Falsify">GitHub</a> ·
-      <a href="https://x.com/aishikejian">X</a> ·
-      <a href="mailto:chrisshi168@icloud.com">Email</a> ·
-      <a href="https://github.com/shi275773124/Falsify/blob/main/LICENSE">License</a>
+      <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a> ·
+      <a href="/docs/" data-i18n="nav_docs">Docs</a> ·
+      <a href="/examples/sample-block-report.json">Sample</a> ·
+      <a href="mailto:chrisshi168@icloud.com?subject=Falsify%20Audit%20Sprint">Email</a> ·
+      <a href="https://github.com/shi275773124/Falsify/blob/main/LICENSE" rel="noopener noreferrer">License</a>
     </div>
   </div>
 </footer>

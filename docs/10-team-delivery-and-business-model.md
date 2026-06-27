@@ -86,8 +86,8 @@ Recommended for Falsify now: BYOK hybrid for Team, annual contract for Enterpris
 - Team: $49-99 per active committer/month
   - includes shared templates, PR gate, exports
   - BYOK default, optional managed credits add-on
-- Enterprise: custom annual
-  - SSO, audit logs, private deployment, support SLA
+- Enterprise path: custom annual
+  - SSO, audit logs, private deployment, and support path only where explicitly supported or contracted
 
 ## Commercial KPIs to track
 
@@ -100,4 +100,3 @@ Recommended for Falsify now: BYOK hybrid for Team, annual contract for Enterpris
 ## Positioning line
 
 Many automated checks focus on diffs and green CI. Falsify reviews whether a decision is defensible.
-
