@@ -1305,20 +1305,52 @@ html.lang-zh .layer-map-tag {
   }
   .nav .wrap,
   .hero-copy,
+  .sub,
   .hero-sub-note,
   .actions {
     min-width: 0;
   }
+  .nav-toggle {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
   .nav .wrap {
+    position: relative;
     width: calc(100% - var(--pad) * 2);
   }
+  .hero-inner {
+    width: 100vw;
+    max-width: 100vw;
+    overflow: hidden;
+  }
   .hero-copy {
-    width: 100%;
+    width: 100vw;
+    max-width: 100vw;
     margin-left: 0;
+    padding-left: var(--pad);
+    padding-right: var(--pad);
   }
   .hero-sub-note,
+  .sub,
   .hero-docs-link {
     overflow-wrap: anywhere;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: calc(100vw - var(--pad) * 2);
+    max-width: calc(100vw - var(--pad) * 2);
+  }
+  .actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 14px;
+    white-space: normal;
+  }
+  h1,
+  .sub,
+  .hero-sub-note {
+    max-width: calc(100vw - var(--pad) * 2);
   }
   .proof-stats {
     display: grid;
