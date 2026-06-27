@@ -1,0 +1,22 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "checkout-api production deployment",
+  "scenario": "deployment-claim",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "medium",
+  "summary": "State proof exists, but rollback rehearsal evidence is old.",
+  "must_fix": [],
+  "known_debt": ["Rollback rehearsal is older than the current deployment path."],
+  "delete": [],
+  "findings": [
+    {
+      "cutline": "Known Debt",
+      "issue": "Rollback command exists but was not recently rehearsed.",
+      "evidence": "State query passed; rollback doc last verified two releases ago.",
+      "minimal_action": "Schedule rollback rehearsal before next production release.",
+      "upgrade_trigger": "Before next deploy or any schema change."
+    }
+  ],
+  "minimal_action": "Record rollback rehearsal trigger.",
+  "next_evidence": "Fresh rollback rehearsal output."
+}

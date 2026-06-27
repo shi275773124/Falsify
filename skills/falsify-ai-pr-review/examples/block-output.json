@@ -1,0 +1,21 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "billing migration PR",
+  "scenario": "ai-pr-review",
+  "verdict": "BLOCK",
+  "confidence": "high",
+  "summary": "The safety claim relies on tests that do not cover the changed runtime path.",
+  "must_fix": ["Migration invariant is untested.", "Permission drift was not reviewed."],
+  "known_debt": [],
+  "delete": ["Another AI reviewed the PR."],
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "issue": "Tests pass but do not exercise the migrated runtime path.",
+      "evidence": "Unit output covers old path only.",
+      "minimal_action": "Add an invariant test that fails on the old path and passes on the new path."
+    }
+  ],
+  "minimal_action": "Add invariant coverage and runtime verification.",
+  "next_evidence": "CI output plus runtime check for the migrated path."
+}

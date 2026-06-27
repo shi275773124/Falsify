@@ -1,0 +1,21 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "market entry memo",
+  "scenario": "research-report",
+  "verdict": "BLOCK",
+  "confidence": "high",
+  "summary": "The memo overreaches beyond undated summary evidence.",
+  "must_fix": ["Source dates are missing.", "No falsifier is provided."],
+  "known_debt": [],
+  "delete": ["The data supports this decision."],
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "issue": "The report uses summary data without source dates or raw excerpts.",
+      "evidence": "Summary table only.",
+      "minimal_action": "Attach dated primary-source excerpts and state the falsifier."
+    }
+  ],
+  "minimal_action": "Add dated raw sources and narrow the conclusion.",
+  "next_evidence": "Primary excerpts with dates, method, and falsifier."
+}

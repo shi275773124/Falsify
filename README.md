@@ -4,11 +4,13 @@
 
 > **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md).
 
-Falsify is the **decision gate for AI-era work**: adversarial review for code, research, and production decisions.
+Falsify is an **adversarial sign-off layer for high-risk AI work**: PRs, deployments, research reports, and agent outputs are reviewed against raw evidence before a team ships the decision.
+
+It is still a decision gate: it turns raw evidence into `PASS`, `PASS_WITH_DEBT`, or `BLOCK` before a high-risk decision ships.
 
 It forces decisions to bottom out in evidence and cuts risk into **Must Fix**, **Known Debt**, or **Delete**.
 
-Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise.
+Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise and returning exactly one of `PASS`, `PASS_WITH_DEBT`, or `BLOCK`.
 
 Code review and lint gates catch many issues. They still ask: **"Does the diff look right?"**  
 Falsify asks: **"Is this decision defensible?"**
@@ -16,6 +18,36 @@ Falsify asks: **"Is this decision defensible?"**
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [Chinese](./README.zh-CN.md) · [Getting started](./docs/00-getting-started.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+
+## Entry path
+
+1. Install the CLI or [GitHub Action](./docs/14-github-action-install.md).
+2. Run a sample review with `python falsify.py demo` or the homepage workbench.
+3. Download a repeatable workflow from [`skills/`](./skills/).
+4. Use Falsify on one high-risk artifact before the decision ships.
+5. If the workflow repeats or becomes high-stakes, discuss an Audit Sprint or Design Partner pilot.
+
+## Skills are workflows, not prompts
+
+The v0 skills pack packages evidence discipline into reusable sign-off workflows. Each skill includes an input contract, raw artifact requirements, verdict schema, BLOCK sample, PASS_WITH_DEBT sample, pitfalls, and minimal action examples.
+
+- [Deployment Claim Review](./skills/falsify-deployment-claim/) blocks "logs green" false confidence.
+- [AI PR Review](./skills/falsify-ai-pr-review/) reviews agent-written or human-written PR claims against raw evidence.
+- [Research Report Audit](./skills/falsify-research-report/) catches stale data, cherry-picking, and conclusion overreach.
+- [Agent Safety Check](./skills/falsify-agent-safety-check/) verifies agent completion claims before trust.
+
+## Audit Sprint / Design Partner / Team path
+
+Open core is the CLI, JSON schema, GitHub Action template, local artifacts, workflow templates, public examples, and downloadable skills. The commercial path is for teams that need an Audit Sprint on one high-risk artifact, a 4-8 week Design Partner pilot, shared policy, review history, report retention, org rollout, managed integrations, or private deployment/support paths. Those team capabilities are described as a path, not claimed as hosted features in this repo.
+
+Implemented today versus path:
+
+- Implemented today: CLI, local demo, JSON verdict format, GitHub Action template, docs, examples, and starter skills.
+- Available as service: Audit Sprint review of one high-risk artifact.
+- Design Partner path: workflow mapping and pilot integration for one team.
+- Team / Enterprise path: shared history, retention, managed integrations, private deployment, RBAC, SSO, audit logs, and SLA only where explicitly supported or contracted.
+
+License/commercial boundary: this repo contains an MIT `LICENSE`. Commercial workflow packaging, managed integrations, support, private deployment path, and controlled Falsify brand/certification marks remain commercial boundary items.
 
 ## What problem it solves
 

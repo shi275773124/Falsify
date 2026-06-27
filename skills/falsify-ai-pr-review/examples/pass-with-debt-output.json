@@ -1,0 +1,22 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "billing migration PR",
+  "scenario": "ai-pr-review",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "medium",
+  "summary": "The risky invariant is covered, but a low-traffic fallback path needs follow-up.",
+  "must_fix": [],
+  "known_debt": ["Fallback path lacks runtime probe."],
+  "delete": [],
+  "findings": [
+    {
+      "cutline": "Known Debt",
+      "issue": "Fallback runtime path has no probe, but it is outside the current migration invariant.",
+      "evidence": "Main invariant test and runtime check passed.",
+      "minimal_action": "Add fallback probe before enabling the feature for all tenants.",
+      "upgrade_trigger": "Before full tenant rollout."
+    }
+  ],
+  "minimal_action": "Track fallback probe before rollout.",
+  "next_evidence": "Fallback runtime probe output."
+}
