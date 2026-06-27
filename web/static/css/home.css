@@ -123,6 +123,7 @@ img { max-width: 100%; }
   position: relative;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
+  width: 100%;
   min-height: min(84vh, 720px);
   min-width: 0;
   align-items: stretch;
@@ -135,7 +136,8 @@ img { max-width: 100%; }
 }
 .hero-visual {
   position: relative;
-  background: var(--bg-panel);
+  background:
+    linear-gradient(165deg, rgba(14, 19, 28, 0.98) 0%, rgba(8, 11, 17, 1) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,7 +145,7 @@ img { max-width: 100%; }
   overflow: hidden;
   min-width: 0;
   align-self: stretch;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--border-subtle);
   animation: hero-rise 0.48s var(--ease-out) 0.06s both;
 }
 .hero-artifact {
@@ -267,7 +269,6 @@ img { max-width: 100%; }
   color: var(--block-bright);
   text-shadow: 0 0 32px var(--block-glow);
 }
-.hero-img-accent { opacity: 0.92; }
 @keyframes hero-artifact-rise {
   from { opacity: 0; transform: translateY(14px) scale(0.985); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -1401,9 +1402,7 @@ footer a:hover { color: var(--fg); }
     padding-top: 20px;
     padding-bottom: 32px;
   }
-  .hero-img-accent { display: none; }
-  .hero-artifact,
-  .hero-cockpit { max-width: none; }
+  .hero-artifact { max-width: none; }
   .problems, .workbench, .start-grid, .limits-grid, .cases-grid { grid-template-columns: 1fr; }
   .gate-stages { grid-template-columns: repeat(2, 1fr); }
   .row .btn { margin-left: 0; width: 100%; }
@@ -1420,13 +1419,6 @@ footer a:hover { color: var(--fg); }
   .hero-stamp { opacity: 1 !important; }
 }
 
-@media (min-width: 961px) {
-  .hero-img-accent {
-    max-width: 72%;
-    margin-left: auto;
-    margin-right: 0;
-  }
-}
 
 @media (max-width: 560px) {
   .hero-visual { padding-top: 16px; padding-bottom: 12px; }
@@ -1996,4 +1988,32 @@ html.lang-zh footer {
     font-size: clamp(34px, 9.2vw, 44px);
     line-height: 1.22;
   }
+}
+
+/* Production hero parity — image-first visual, cockpit in compat DOM only */
+.hero-artifact--image {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.hero-artifact--image .hero-img-frame {
+  border-radius: 14px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.hero-artifact--image .hero-check-img {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.hero::before { display: none; }
+.btn.ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+  box-shadow: none;
+}
+.btn.ghost:hover {
+  border-color: #3a3a3a;
+  color: var(--body);
+  background: transparent;
 }
