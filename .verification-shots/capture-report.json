@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-06-27T14:31:53.279436+00:00",
+  "url": "http://127.0.0.1:8001/?lang=zh",
+  "suffix": "v5",
+  "shots": [
+    {
+      "file": "mobile-360x800-v5.png",
+      "viewport": [
+        360,
+        800
+      ],
+      "bytes": 843149,
+      "horizontal_scroll": false,
+      "cockpit_visible": false,
+      "block_badge_visible": true
+    },
+    {
+      "file": "mobile-390x844-v5.png",
+      "viewport": [
+        390,
+        844
+      ],
+      "bytes": 869603,
+      "horizontal_scroll": false,
+      "cockpit_visible": false,
+      "block_badge_visible": true
+    },
+    {
+      "file": "tablet-768x1024-v5.png",
+      "viewport": [
+        768,
+        1024
+      ],
+      "bytes": 1138864,
+      "horizontal_scroll": false,
+      "cockpit_visible": false,
+      "block_badge_visible": true
+    },
+    {
+      "file": "desktop-1440x1000-v5.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "bytes": 1240348,
+      "horizontal_scroll": false,
+      "cockpit_visible": false,
+      "block_badge_visible": true
+    }
+  ]
+}

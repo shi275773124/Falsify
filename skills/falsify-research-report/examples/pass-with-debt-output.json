@@ -1,0 +1,22 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "market entry memo",
+  "scenario": "research-report",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "medium",
+  "summary": "Evidence supports a narrower exploratory decision, not full market entry.",
+  "must_fix": [],
+  "known_debt": ["Competitor data must refresh before budget approval."],
+  "delete": [],
+  "findings": [
+    {
+      "cutline": "Known Debt",
+      "issue": "Competitor data is current enough for discovery but not for budget commitment.",
+      "evidence": "Dated source excerpts attached.",
+      "minimal_action": "Limit decision to discovery sprint.",
+      "upgrade_trigger": "Before budget approval or vendor commitment."
+    }
+  ],
+  "minimal_action": "Narrow recommendation to discovery sprint.",
+  "next_evidence": "Fresh competitor dataset before budget approval."
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Falsify Verdict",
+  "type": "object",
+  "required": ["schema_version", "target", "scenario", "verdict", "summary", "findings", "minimal_action", "next_evidence"],
+  "properties": {
+    "schema_version": { "const": "falsify.review.v1" },
+    "target": { "type": "string" },
+    "scenario": { "type": "string" },
+    "verdict": { "enum": ["PASS", "PASS_WITH_DEBT", "BLOCK"] },
+    "confidence": { "type": "string" },
+    "summary": { "type": "string" },
+    "must_fix": { "type": "array", "items": { "type": "string" } },
+    "known_debt": { "type": "array", "items": { "type": "string" } },
+    "delete": { "type": "array", "items": { "type": "string" } },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cutline", "issue", "minimal_action"],
+        "properties": {
+          "cutline": { "enum": ["Must Fix", "Known Debt", "Delete"] },
+          "issue": { "type": "string" },
+          "evidence": { "type": "string" },
+          "minimal_action": { "type": "string" },
+          "upgrade_trigger": { "type": "string" }
+        }
+      }
+    },
+    "minimal_action": { "type": "string" },
+    "next_evidence": { "type": "string" }
+  }
+}
