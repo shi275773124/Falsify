@@ -101,23 +101,23 @@
     </div>
     <div class="hero-visual">
       <figure class="hero-artifact">
-        <div class="hero-img-frame">
-          <img class="hero-check-img" src="/static/img/hero-block-check.png" width="420" height="260" alt="Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check" data-i18n-alt="hero_img_alt" loading="eager" decoding="async">
-          <span class="hero-stamp badge BLOCK block-stamp" aria-hidden="true">BLOCK</span>
-        </div>
-        <div class="gate-panel gate-panel-fallback" aria-hidden="true">
+        <div class="gate-panel hero-cockpit" aria-label="Verdict cockpit">
+          <div class="cockpit-glow" aria-hidden="true"></div>
           <div class="gate-head">
-            <span data-i18n="preview_label">Review output</span>
-            <span class="badge BLOCK block-stamp">BLOCK</span>
+            <span class="gate-schema">falsify.review.v1</span>
+            <span class="gate-live status-dot" role="status" data-i18n="gate_live">LIVE EVIDENCE GATE</span>
+          </div>
+          <div class="gate-verdict-hero">
+            <span class="gate-verdict-label" data-i18n="preview_label">Review output</span>
+            <strong class="gate-verdict-value verdict-block block-stamp">BLOCK</strong>
           </div>
           <div class="gate-stages">
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-map" data-i18n="hero_layers_l1_map">Frame Audit</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Adversarial</span><span class="gate-map" data-i18n="hero_layers_l2_map">Adversarial Review</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-map">Frame Audit</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Adversarial</span><span class="gate-map">Adversarial Review</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
             <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
             <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val block-stamp">BLOCK</span></div>
           </div>
           <div class="gate-body">
-            <div class="preview-schema">falsify.review.v1 · strategy/breakout20</div>
             <div class="preview-title" data-i18n="preview_title">6/7 gates PASS — ready for shadow live.</div>
             <div class="preview-must-fix">
               <strong data-i18n="preview_must_fix">Must Fix</strong>
@@ -125,6 +125,10 @@
               <span class="preview-action" data-i18n="preview_action">Minimal action: Mechanic ground-truth vs live journal</span>
             </div>
           </div>
+        </div>
+        <div class="hero-img-frame hero-img-accent">
+          <img class="hero-check-img" src="/static/img/hero-block-check.png" width="420" height="260" alt="Falsify BLOCK review: Sharpe 4.06 strategy blocked after mechanic cross-check" data-i18n-alt="hero_img_alt" loading="eager" decoding="async">
+          <span class="hero-stamp badge BLOCK block-stamp" aria-hidden="true">BLOCK</span>
         </div>
       </figure>
     </div>
