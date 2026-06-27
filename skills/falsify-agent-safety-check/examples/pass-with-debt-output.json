@@ -1,0 +1,22 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "customer-record update agent task",
+  "scenario": "agent-safety-check",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "medium",
+  "summary": "The external side effect was verified, but artifact retention needs tightening.",
+  "must_fix": [],
+  "known_debt": ["Tool output retention is local-only."],
+  "delete": [],
+  "findings": [
+    {
+      "cutline": "Known Debt",
+      "issue": "Read-back verification exists, but the tool output is not retained in shared storage.",
+      "evidence": "External query matched expected state.",
+      "minimal_action": "Store the read-back output in the review artifact folder.",
+      "upgrade_trigger": "Before repeating this workflow for customer-impacting changes."
+    }
+  ],
+  "minimal_action": "Retain read-back artifact in shared review storage.",
+  "next_evidence": "Shared artifact URL or path."
+}

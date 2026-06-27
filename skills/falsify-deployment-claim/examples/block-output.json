@@ -1,0 +1,21 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "checkout-api production deployment",
+  "scenario": "deployment-claim",
+  "verdict": "BLOCK",
+  "confidence": "high",
+  "summary": "The claim relies on execution logs but provides no state proof.",
+  "must_fix": ["Logs green are not state verification.", "No rollback point was provided."],
+  "known_debt": [],
+  "delete": ["Another AI reviewed it."],
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "issue": "Deployment logs prove the job ran, not that production state changed.",
+      "evidence": "Deploy log only.",
+      "minimal_action": "Run a read-after-write probe against production and attach raw output."
+    }
+  ],
+  "minimal_action": "Add post-deploy state verification and rollback command.",
+  "next_evidence": "Read-after-write result from the deployed service."
+}

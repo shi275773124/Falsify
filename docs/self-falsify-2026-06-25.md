@@ -160,9 +160,11 @@ curl.exe -sS https://falsify.zjdeng.xyz/ | findstr "trust_byok"
 ```html
 <span class="trust-chip trust-item" data-i18n="trust_byok">No Falsify key · BYOK</span>
 <cite data-i18n="quote_cite">Chris Shi</cite>
-<h3 class="case-title" data-i18n="case2_title">Illustrative · Sharpe 4.06 · 6/7 PASS → NOT_VIABLE</h3>
+<h3 class="case-title" data-i18n="case2_title">Illustrative · Sharpe 4.06 · 6/7 PASS → BLOCK</h3>
 <p class="lead" data-i18n="boundary_p">Self-review is not independent review.</p>
 ```
+
+> **Note (2026-06-27):** The quoted case title uses current protocol verdict vocabulary (`BLOCK`). Older drafts used legacy `NOT_VIABLE`; this edit syncs the homepage quote only — it does not change the audit verdicts recorded above.
 
 **Vault cross-check (`创作/Falsify 发布物料.md`):** pillars ①零 API key ②中立裁判 ③审判断不审 diff — items ②③ and 20.5k★ are **vault-only**; public repo uses softened README/docs copy. No repo change required for vault draft posts.
 

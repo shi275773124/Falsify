@@ -407,6 +407,14 @@ def test_homepage_block_stamp_animation():
     assert "block-stamp" in serve.PAGE
 
 
+def test_homepage_hero_image_first():
+    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
+    assert "hero-cockpit" in serve.PAGE
+    assert "hero-artifact--image" in serve.PAGE
+    assert "hero-cockpit { display: none" not in css
+    hero_visual = serve.PAGE.split('class="hero-visual"')[1].split("</header>")[0]
+    assert "hero-check-img" in hero_visual
+    assert "hero-cockpit" not in hero_visual
 def test_static_home_assets_route_returns_200():
     for path in (
         "/static/img/hero-block-check.png",
