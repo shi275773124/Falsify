@@ -1,0 +1,25 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "scheduled momentum executor post-incident restore",
+  "scenario": "live-production-gate",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "medium",
+  "summary": "Stale-panel rootfix proven via production-runner incident replay and input manifest; structural book risk and metric-replacement debt remain.",
+  "must_fix": [],
+  "known_debt": [
+    "Universe volume metric replacement registered as strategy change, not equivalence — upgrade when claiming faithful metric restore.",
+    "Drawdown oracle seeded from historical CSV — upgrade when using DD% for scale/promotion gates."
+  ],
+  "delete": ["Cron scheduled equals healthy live-auto without account-state tick."],
+  "findings": [
+    {
+      "cutline": "Known Debt",
+      "issue": "Metric replacement semantics documented but live still uses legacy volume field.",
+      "evidence": "STRATEGY_CHANGE diff artifact; live code unchanged.",
+      "minimal_action": "Do not claim universe faithful restore until equivalence proven or strategy change accepted.",
+      "upgrade_trigger": "Becomes Must Fix when promoting or scaling based on new universe membership."
+    }
+  ],
+  "minimal_action": "Maintain negative fixture in CI; refresh manifest each production Falsify cycle.",
+  "next_evidence": "Next natural cron tick account-state readback; manifest mtime after panel refresh."
+}

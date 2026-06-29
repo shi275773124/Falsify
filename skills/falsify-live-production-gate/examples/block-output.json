@@ -1,0 +1,30 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "scheduled momentum executor live restore",
+  "scenario": "live-production-gate",
+  "verdict": "BLOCK",
+  "confidence": "high",
+  "summary": "Derived freshness false-green: fresh signal timestamp does not prove upstream panel freshness; no production-runner negative fixture or input manifest.",
+  "must_fix": [
+    "Add FALSIFY_INCIDENT_REPLAY_V1 stale-panel red sample through production wrapper.",
+    "Publish input provenance manifest with upstream min/max timestamps and stale list."
+  ],
+  "known_debt": [],
+  "delete": ["Verify PASS proves data fresh."],
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "issue": "Incident class claimed fixed without permanent red sample routed through production runner.",
+      "evidence": "No fixture command or exit code on file.",
+      "minimal_action": "Run stale-panel negative fixture via cron wrapper entrypoint; archive PASS with UTC timestamp."
+    },
+    {
+      "cutline": "Must Fix",
+      "issue": "Derived artifact freshness treated as upstream freshness proof.",
+      "evidence": "Signal timestamp today; panel CSV age not independently listed.",
+      "minimal_action": "Attach input provenance manifest listing each active source and expected freshness boundary."
+    }
+  ],
+  "minimal_action": "Route stale upstream + fresh derived artifact through production runner; fail-close before order path; mirror manifest.",
+  "next_evidence": "Negative fixture stdout with exit code != 0 on bad sample and exit 0 on guarded path; manifest JSON with min_last dates."
+}
