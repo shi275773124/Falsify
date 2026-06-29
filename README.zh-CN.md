@@ -13,11 +13,40 @@ Falsify 不是“另一个模型说看起来没问题”。它是一套协议，
 传统 code review / lint 能拦住很多问题，但仍主要在问：**「这个 diff 看起来对不对？」**  
 Falsify 在问：**「这个决策是否可辩护？」**
 
-[English](./README.md) · [Getting Started](./docs/00-getting-started.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[English](./README.md) · [线上站点](https://falsify.zjdeng.xyz/) · [Getting Started](./docs/00-getting-started.zh-CN.md) · [Skills 安装](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+
+## 目录
+
+- [入口路径](#入口路径)
+- [Skills（4 个工作流）](#skills4-个工作流)
+- [文档](#文档)
+- [快速开始](#快速开始)
+
+## 入口路径
+
+1. 在 [Claude Code 或 Cursor 安装 skill](./docs/17-skills.md) — 从 [`skills/`](./skills/) 复制文件夹（BYOK；无需 Falsify API key）。
+2. 用 `python falsify.py demo` 或 [首页工作台](https://falsify.zjdeng.xyz/#try) 跑样例审查。
+3. 当 PR 文档需要闸门时，安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md)。
+4. 在一个高风险产物上跑 Falsify，再决定是否放行。
+5. 工作流重复或 stakes 升高时，讨论 Audit Sprint 或 Design Partner pilot。
+
+## Skills（4 个工作流）
+
+v0 skills pack 把证据纪律封装为可重复签收工作流 — 不是提示词。每个 skill 含输入契约、原始产物要求、裁决 schema、BLOCK / PASS_WITH_DEBT 样例、陷阱与最小动作。
+
+| 工作流 | 路径 | 用途 |
+|---|---|---|
+| Deployment Claim Review | [`skills/falsify-deployment-claim/`](./skills/falsify-deployment-claim/) | 拦截「日志绿了」的虚假自信。 |
+| AI PR Review | [`skills/falsify-ai-pr-review/`](./skills/falsify-ai-pr-review/) | 用原始证据审查 agent 或人工 PR 声明。 |
+| Research Report Audit | [`skills/falsify-research-report/`](./skills/falsify-research-report/) | 抓过期数据、cherry-pick 与结论越界。 |
+| Agent Safety Check | [`skills/falsify-agent-safety-check/`](./skills/falsify-agent-safety-check/) | 信任前验证 agent 完成声明。 |
+
+**安装：** [Skills 指南（Claude Code / Cursor / BYOK）](./docs/17-skills.md) · [GitHub 浏览 `skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
 
 ## 文档
 
-- [Getting Started](./docs/00-getting-started.md)
+- [Getting Started](./docs/00-getting-started.zh-CN.md)
+- [Skills 安装（Claude Code / Cursor）](./docs/17-skills.md)
 - [Brooks-Lint](./docs/09-brooks-lint.md)
 - [Adversarial Review](./docs/05-adversarial-review.md)
 - [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)

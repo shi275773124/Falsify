@@ -1,0 +1,446 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Falsify Homepage Hero v1 — A+B Comp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --graphite-950: #080806;
+      --graphite-900: #10100d;
+      --graphite-850: #171713;
+      --paper-50: #f6f1e7;
+      --paper-100: #eee6d8;
+      --text-on-dark: #f6f1e7;
+      --text-muted: #a49b8d;
+      --line-dark: rgba(246, 241, 231, 0.14);
+      --line-dark-strong: rgba(246, 241, 231, 0.28);
+      --pass-green: #607b5d;
+      --radius: 8px;
+      --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: #1a1916;
+      color: var(--text-on-dark);
+      padding: 32px 24px 64px;
+    }
+
+    .doc-header {
+      max-width: 1240px;
+      margin: 0 auto 32px;
+    }
+
+    .doc-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .doc-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+
+    .doc-header .tag {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--line-dark-strong);
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .artboards {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .artboard-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .artboard-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--graphite-950);
+      display: grid;
+      align-items: center;
+    }
+
+    .hero--desktop {
+      width: 1440px;
+      height: 900px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 64px;
+      padding: 72px 96px;
+    }
+
+    .hero--mobile {
+      width: 390px;
+      height: 844px;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 32px;
+      padding: 32px 24px 40px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 520px;
+    }
+
+    .hero--mobile .hero-copy {
+      max-width: none;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .h1 {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-on-dark);
+    }
+
+    .hero--mobile .h1 { font-size: 36px; }
+
+    .sub {
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      max-width: 46ch;
+    }
+
+    .hero--mobile .sub { font-size: 16px; }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: default;
+    }
+
+    .btn--primary {
+      background: var(--pass-green);
+      color: var(--paper-50);
+    }
+
+    .btn--secondary {
+      background: transparent;
+      color: var(--text-on-dark);
+      border-color: var(--line-dark-strong);
+      font-weight: 500;
+    }
+
+    .skill-note {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border: 1px solid var(--line-dark-strong);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* ── Right column only: product-in-scene visual ── */
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: stretch;
+    }
+
+    .hero--mobile .hero-visual {
+      min-height: 320px;
+    }
+
+    .product-scene {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      height: 100%;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .hero--mobile .product-scene {
+      max-width: none;
+      min-height: 300px;
+    }
+
+    .scene-void {
+      position: absolute;
+      inset: -12% -8%;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 72% 58% at 58% 42%, rgba(96, 123, 93, 0.14) 0%, transparent 62%),
+        radial-gradient(ellipse 90% 70% at 40% 68%, rgba(246, 241, 231, 0.05) 0%, transparent 55%);
+    }
+
+    .scene-geo {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .scene-geo--arc-a {
+      width: 560px;
+      height: 560px;
+      top: -120px;
+      right: -140px;
+      border: 1.5px solid rgba(246, 241, 231, 0.1);
+      clip-path: inset(0 0 52% 22%);
+    }
+
+    .scene-geo--arc-b {
+      width: 380px;
+      height: 380px;
+      bottom: -60px;
+      left: -100px;
+      border: 1px solid rgba(246, 241, 231, 0.06);
+      clip-path: inset(48% 30% 0 0);
+    }
+
+    .scene-geo--line {
+      width: 320px;
+      height: 1px;
+      bottom: 18%;
+      left: -48px;
+      border-radius: 0;
+      background: linear-gradient(90deg, transparent, rgba(246, 241, 231, 0.14) 40%, transparent);
+      transform: rotate(-22deg);
+      transform-origin: left center;
+    }
+
+    .product-card {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 580px);
+      transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+      transform-origin: center center;
+      filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.55))
+              drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+    }
+
+    .hero--mobile .product-card {
+      width: 100%;
+      transform: perspective(900px) rotateY(-2deg) rotateX(1deg);
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))
+              drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
+    }
+
+    .product-card__clip {
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--graphite-900);
+      mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+    }
+
+    .product-card__clip img {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    .product-card__sheen {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      pointer-events: none;
+      background: linear-gradient(
+        135deg,
+        rgba(246, 241, 231, 0.06) 0%,
+        transparent 42%,
+        transparent 100%
+      );
+    }
+
+    .float-badge {
+      position: absolute;
+      top: -10px;
+      right: 24px;
+      z-index: 4;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #ff8a8a;
+      background: rgba(40, 18, 18, 0.92);
+      border: 1px solid rgba(255, 92, 92, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transform: translateZ(20px);
+    }
+
+    .hero--mobile .float-badge {
+      top: -8px;
+      right: 16px;
+      font-size: 10px;
+      padding: 5px 12px;
+    }
+
+    @media (max-width: 1500px) {
+      .hero--desktop {
+        width: min(1440px, 100%);
+        height: auto;
+        min-height: 720px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="doc-header">
+    <h1>Falsify Homepage Hero v1 — A+B Strategy Comp</h1>
+    <p>
+      <strong>A (core):</strong> real product media — GitHub Check screenshot at
+      <code>web/static/img/hero-block-check.png</code> (replace with live capture when ready).
+      <strong>B (shell):</strong> warm ink/paper geometry, whitespace, Plus Jakarta Sans, skill strip.
+      No fake gate-panel UI, no MUST FIX red boxes in the hero visual.
+    </p>
+    <span class="tag">Chris approval comp · 2026-06-28 · do not ship to home.html</span>
+  </header>
+
+  <div class="artboards">
+    <section class="artboard-wrap">
+      <span class="artboard-label">Desktop · 1440 × 900</span>
+      <div class="hero hero--desktop">
+        <div class="hero-copy">
+          <p class="eyebrow">Adversarial sign-off · Skills</p>
+          <h2 class="h1">Looks right isn't enough.</h2>
+          <p class="sub">Falsify attacks high-risk AI conclusions — then cuts a PASS, debt, or BLOCK before you ship.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/docs/17-skills.md">Install skill</a>
+            <a class="btn btn--secondary" href="#try">Run sample</a>
+          </div>
+          <p class="skill-note">Claude Code · BYOK · no Falsify key</p>
+          <div class="chips">
+            <span class="chip">GitHub</span>
+            <span class="chip">MIT</span>
+            <span class="chip">BYOK</span>
+            <span class="chip">falsify.review.v1</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="product-scene">
+            <div class="scene-void" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--arc-a" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--arc-b" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--line" aria-hidden="true"></div>
+            <figure class="product-card">
+              <span class="float-badge" aria-hidden="true">BLOCK</span>
+              <div class="product-card__clip">
+                <img src="hero-block-check.png" width="720" height="380" alt="Falsify GitHub Check — BLOCK verdict on deploy report">
+              </div>
+              <div class="product-card__sheen" aria-hidden="true"></div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="artboard-wrap">
+      <span class="artboard-label">Mobile · 390 × 844</span>
+      <div class="hero hero--mobile">
+        <div class="hero-copy">
+          <p class="eyebrow">Adversarial sign-off · Skills</p>
+          <h2 class="h1">Looks right isn't enough.</h2>
+          <p class="sub">Falsify attacks high-risk AI conclusions — then cuts a PASS, debt, or BLOCK before you ship.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/docs/17-skills.md">Install skill</a>
+            <a class="btn btn--secondary" href="#try">Run sample</a>
+          </div>
+          <p class="skill-note">Claude Code · BYOK · no Falsify key</p>
+          <div class="chips">
+            <span class="chip">GitHub</span>
+            <span class="chip">MIT</span>
+            <span class="chip">BYOK</span>
+            <span class="chip">falsify.review.v1</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="product-scene">
+            <div class="scene-void" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--arc-a" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--arc-b" aria-hidden="true"></div>
+            <div class="scene-geo scene-geo--line" aria-hidden="true"></div>
+            <figure class="product-card">
+              <span class="float-badge" aria-hidden="true">BLOCK</span>
+              <div class="product-card__clip">
+                <img src="hero-block-check.png" width="720" height="380" alt="Falsify GitHub Check — BLOCK verdict on deploy report">
+              </div>
+              <div class="product-card__sheen" aria-hidden="true"></div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
