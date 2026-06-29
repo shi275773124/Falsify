@@ -43,25 +43,38 @@ def _rounded_rect(draw: ImageDraw.ImageDraw, xy, radius: int, fill, outline=None
     draw.rounded_rectangle(xy, radius=radius, fill=fill, outline=outline, width=width)
 
 
-def draw_hero_check() -> Image.Image:
-    w, h = 840, 520
+def draw_hero_check(*, compact: bool = False) -> Image.Image:
+    """GitHub Checks–style card. compact=True drops the stage grid for hero comps."""
+    w, h = (720, 380) if compact else (840, 520)
     img = Image.new("RGB", (w, h), BG)
     draw = ImageDraw.Draw(img)
 
-    pad = 24
+    pad = 20 if compact else 24
     panel = (pad, pad, w - pad, h - pad)
-    _rounded_rect(draw, panel, 14, ELEVATED, outline=BORDER, width=1)
+    _rounded_rect(draw, panel, 12 if compact else 14, ELEVATED, outline=BORDER, width=1)
 
     mono_sm = _font(11, mono=True)
     mono_md = _font(13, mono=True)
-    sans_md = _font(15)
+    sans_md = _font(15 if compact else 15)
     sans_sm = _font(12)
 
     head_y = pad + 14
-    draw.text((pad + 16, head_y), "FALSIFY REVIEW", fill=MUTED, font=mono_sm)
+    draw.text((pad + 16, head_y), "Falsify review", fill=FG, font=sans_md)
+
+    if compact:
+        body_y = pad + 56
+        draw.text((pad + 16, body_y), "falsify.review.v1 · reports/deploy.md", fill=MUTED, font=_font(10, mono=True))
+        draw.text((pad + 16, body_y + 24), "Deployment succeeded because logs completed.", fill=FG, font=sans_md)
+        draw.text((pad + 16, body_y + 54), "Logs are treated as state verification", fill=BODY, font=sans_sm)
+        draw.text((pad + 16, body_y + 78), "Add read-after-write probe before merge", fill=MUTED, font=_font(11, mono=True))
+        gh_y = h - pad - 28
+        draw.line((pad + 16, gh_y - 12, w - pad - 16, gh_y - 12), fill=BORDER, width=1)
+        draw.text((pad + 16, gh_y), "shi275773124/Falsify · pull request #42 · GitHub Checks", fill=MUTED, font=_font(10, mono=True))
+        return img
+
     badge_x = w - pad - 16 - 72
-    _rounded_rect(draw, (badge_x, head_y - 4, badge_x + 72, head_y + 22), 999, (40, 18, 18), outline=(120, 40, 40))
-    draw.text((badge_x + 12, head_y), "BLOCK", fill=BLOCK, font=mono_md)
+    _rounded_rect(draw, (badge_x, head_y - 2, badge_x + 72, head_y + 24), 999, (40, 18, 18), outline=(120, 40, 40))
+    draw.text((badge_x + 12, head_y + 2), "BLOCK", fill=BLOCK, font=mono_md)
 
     stage_top = pad + 52
     stage_h = 58
@@ -125,8 +138,11 @@ def draw_favicon() -> Image.Image:
 
 def main() -> None:
     IMG_DIR.mkdir(parents=True, exist_ok=True)
+    design_dir = ROOT / "design"
+    design_dir.mkdir(parents=True, exist_ok=True)
     hero = draw_hero_check()
     hero.save(IMG_DIR / "hero-block-check.png", optimize=True)
+    draw_hero_check(compact=True).save(design_dir / "hero-block-check.png", optimize=True)
     draw_og_card().save(IMG_DIR / "og-share.png", optimize=True)
     fav = draw_favicon()
     fav.save(OUT_DIR / "favicon.png")

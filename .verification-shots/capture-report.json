@@ -1,36 +1,48 @@
 {
-  "generated_at": "2026-06-27T15:03:00.000000+00:00",
-  "url": "http://127.0.0.1:8000/?lang=zh",
-  "suffix": "v6",
+  "generated_at": "2026-06-28T15:05:40.392840+00:00",
+  "url": "http://127.0.0.1:8010/",
+  "suffix": "v15",
   "shots": [
     {
-      "file": "mobile-360x800-v6.png",
-      "viewport": [360, 800],
-      "bytes": 675495,
+      "file": "mobile-360x800-v15.png",
+      "viewport": [
+        360,
+        800
+      ],
+      "bytes": 284669,
       "horizontal_scroll": false,
       "cockpit_visible": false,
       "block_badge_visible": true
     },
     {
-      "file": "mobile-390x844-v6.png",
-      "viewport": [390, 844],
-      "bytes": 675035,
+      "file": "mobile-390x844-v15.png",
+      "viewport": [
+        390,
+        844
+      ],
+      "bytes": 290494,
       "horizontal_scroll": false,
       "cockpit_visible": false,
       "block_badge_visible": true
     },
     {
-      "file": "tablet-768x1024-v6.png",
-      "viewport": [768, 1024],
-      "bytes": 711914,
+      "file": "tablet-768x1024-v15.png",
+      "viewport": [
+        768,
+        1024
+      ],
+      "bytes": 340819,
       "horizontal_scroll": false,
       "cockpit_visible": false,
       "block_badge_visible": true
     },
     {
-      "file": "desktop-1440x1000-v6.png",
-      "viewport": [1440, 1000],
-      "bytes": 774616,
+      "file": "desktop-1440x1000-v15.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "bytes": 481987,
       "horizontal_scroll": false,
       "cockpit_visible": false,
       "block_badge_visible": true

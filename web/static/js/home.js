@@ -96,20 +96,37 @@ const SAMPLES = {
 const T = {
   en: {
     nav_menu: "Menu",
+    nav_how: "How",
+    nav_proof: "Proof",
+    nav_try: "Try",
     nav_layers: "Layers",
     nav_cases: "Cases",
     nav_artifact: "Sample",
     nav_demo: "Demo",
-    nav_skills: "Skills",
     nav_docs: "Docs",
-    h1: "Looks right is not enough.",
-    hero_sub: "A conclusion is not trusted — unless it survives an independent adversarial attack.",
+    nav_skills: "Skills",
+    footer_skills: "Skills",
+    hero_eyebrow: "Skills Pack v0 · workflows, not prompts",
+    h1: "Looks right isn't enough.",
+    hero_sub: "Install a Falsify skill in Claude Code or Cursor — BYOK — and get PASS, debt, or BLOCK before you ship.",
     hero_definition: "Frame Audit · Adversarial Review · Cutline → one protocol verdict.",
-    hero_docs_link: "Full layers in docs →",
+    hero_docs_link: "How adversarial review works →",
+    how_label: "How it decides",
+    proof_label: "Proof",
+    proof_h2: "Six gates passed. Still BLOCK.",
+    gh_check_repo: "Falsify / horizon-quant-audit",
+    gh_check_run: "falsify-review / strategy gate",
+    gh_check_job: "Strategy sign-off",
+    gh_check_link: "View artifact →",
+    loop_submit: "Submit",
+    loop_attack: "Attack",
+    loop_cutline: "Cutline",
+    loop_verdict: "Verdict",
+    loop_artifact: "Artifact",
     btn_install: "Install GitHub Action",
     btn_run_sample: "Run sample review",
     btn_run_sample_hero: "Run sample",
-    btn_download_skills: "Download skills",
+    btn_install_skill: "Install skill",
     btn_audit: "Discuss an audit sprint",
     btn_docs: "Read docs",
     trust_band_github: "GitHub",
@@ -119,6 +136,12 @@ const T = {
     trust_byok: "No Falsify key · BYOK",
     trust_schema: "falsify.review.v1",
     preview_label: "Review output",
+    hero_skill_install: "Install skill",
+    hero_skill_claude: "Claude Code",
+    hero_skill_cursor: "Cursor",
+    hero_skill_byok: "BYOK",
+    hero_skill_strip_label: "Install Falsify skills — Claude Code or Cursor, BYOK",
+    hero_claim: "Sharpe 4.06 — strategy looks ready for shadow live",
     gate_live: "LIVE EVIDENCE GATE",
     preview_title: "6/7 gates PASS — ready for shadow live.",
     preview_must_fix: "Must Fix",
@@ -189,8 +212,10 @@ const T = {
     btn_sample: "Run sample",
     btn_review: "Quick review (single-step)",
     start_tag: "Start",
-    start_h2: "Run it locally in 60 seconds.",
+    start_h2: "Install a workflow in 60 seconds.",
     docs_install: "Install GitHub Action (5 min) →",
+    try_skills_note: "Four starter workflows: deployment claim, AI PR, research report, agent safety.",
+    try_skills_link: "Install a Falsify skill (Claude Code or Cursor) →",
     boundary_tag: "Boundary",
     boundary_h2: "Falsify classifies risk. It does not authorize action.",
     boundary_p: "Self-review is not independent review.",
@@ -229,22 +254,6 @@ const T = {
     catch_6_title: "Prompt-only audit theater",
     catch_6_body: "Delete claims that add ceremony but no independent evidence.",
     delete_chip: "DELETE",
-    skills_tag: "Skills Pack v0",
-    skills_h2: "Run Falsify as workflows, not prompts.",
-    skills_lead: "Falsify skills package evidence discipline into repeatable sign-off workflows: input contracts, verdict schema, raw artifact requirements, and sample BLOCK reports.",
-    skills_commercial: "Skills are the public distribution layer: they help developers and teams try the protocol before a paid Audit Sprint or Design Partner pilot.",
-    skill_1_title: "Deployment Claim Review",
-    skill_1_body: "Purpose: Block \"logs green\" false confidence.",
-    skill_1_cta: "Download skill / View workflow",
-    skill_2_title: "AI PR Review",
-    skill_2_body: "Purpose: Review agent-written code against raw evidence.",
-    skill_2_cta: "Install GitHub Action / View workflow",
-    skill_3_title: "Research Report Audit",
-    skill_3_body: "Purpose: Catch stale data and conclusion overreach.",
-    skill_3_cta: "Run sample / View workflow",
-    skill_4_title: "Agent Safety Check",
-    skill_4_body: "Purpose: Verify agent completion claims before trust.",
-    skill_4_cta: "View template",
     commercial_tag: "Commercial path",
     commercial_h2: "From open protocol to team sign-off.",
     open_title: "Open core today",
@@ -288,20 +297,37 @@ const T = {
   },
   zh: {
     nav_menu: "菜单",
+    nav_how: "如何裁决",
+    nav_proof: "证据",
+    nav_try: "试用",
     nav_layers: "三层",
     nav_cases: "案例",
     nav_artifact: "样例",
     nav_demo: "演示",
-    nav_skills: "技能",
     nav_docs: "文档",
-    h1: "看起来对，不够。",
-    hero_sub: "结论不可信——除非它扛过独立对抗攻击。\nFalsify 把自信输出变成上线决策：PASS、PASS_WITH_DEBT 或 BLOCK，以原始证据为准。",
+    nav_skills: "技能",
+    footer_skills: "Skills",
+    hero_eyebrow: "Skills Pack v0 · 工作流，不是提示词",
+    h1: "看起来对，还不够。",
+    hero_sub: "在 Claude Code 或 Cursor 安装 Falsify skill — BYOK — 放行前先拿到 PASS、债务或 BLOCK。",
     hero_definition: "框架审计 · 对抗审查 · Cutline → 一个协议裁决。",
-    hero_docs_link: "完整三层见文档 →",
+    hero_docs_link: "对抗审查如何工作 →",
+    how_label: "如何裁决",
+    proof_label: "证据",
+    proof_h2: "六道关全过，仍然 BLOCK。",
+    gh_check_repo: "Falsify / horizon-quant-audit",
+    gh_check_run: "falsify-review / strategy gate",
+    gh_check_job: "策略签署",
+    gh_check_link: "查看证据 →",
+    loop_submit: "提交",
+    loop_attack: "攻击",
+    loop_cutline: "分界线",
+    loop_verdict: "裁决",
+    loop_artifact: "证据",
     btn_install: "安装 GitHub Action",
     btn_run_sample: "运行样例审查",
     btn_run_sample_hero: "运行样例",
-    btn_download_skills: "下载 skills",
+    btn_install_skill: "安装 skill",
     btn_audit: "讨论 Audit Sprint",
     btn_docs: "阅读文档",
     trust_band_github: "GitHub",
@@ -311,6 +337,12 @@ const T = {
     trust_byok: "无 Falsify key · BYOK",
     trust_schema: "falsify.review.v1",
     preview_label: "审查输出",
+    hero_skill_install: "安装 skill",
+    hero_skill_claude: "Claude Code",
+    hero_skill_cursor: "Cursor",
+    hero_skill_byok: "BYOK",
+    hero_skill_strip_label: "安装 Falsify skills — Claude Code 或 Cursor，BYOK",
+    hero_claim: "Sharpe 4.06 — 策略看起来可以 shadow live",
     gate_live: "实时证据门",
     preview_title: "6/7 关 PASS — 准备 shadow live。",
     preview_must_fix: "Must Fix",
@@ -381,8 +413,10 @@ const T = {
     btn_sample: "运行样例",
     btn_review: "快速审查（单步）",
     start_tag: "开始",
-    start_h2: "60 秒本地跑起来。",
+    start_h2: "60 秒安装一个工作流。",
     docs_install: "5 分钟安装 GitHub Action →",
+    try_skills_note: "四个 starter 工作流：部署声明、AI PR、研究报告、agent 安全。",
+    try_skills_link: "安装 Falsify skill（Claude Code 或 Cursor）→",
     boundary_tag: "边界",
     boundary_h2: "Falsify 只做风险分类，不做执行授权。",
     boundary_p: "自己审自己不算独立判断。",
@@ -421,22 +455,6 @@ const T = {
     catch_6_title: "只有提示词的审计表演",
     catch_6_body: "删除那些增加仪式但没有独立证据的声明。",
     delete_chip: "DELETE",
-    skills_tag: "Skills Pack v0",
-    skills_h2: "把 Falsify 当工作流运行，不是提示词。",
-    skills_lead: "Falsify skills 把证据纪律封装为可重复签收工作流：输入契约、裁决 schema、原始产物要求和样例 BLOCK 报告。",
-    skills_commercial: "Skills 是公开分发层：帮助开发者和团队先试用协议，再进入付费 Audit Sprint 或 Design Partner pilot。",
-    skill_1_title: "部署声明审查",
-    skill_1_body: "用途：拦截“日志绿了”的虚假自信。",
-    skill_1_cta: "下载 skill / 查看工作流",
-    skill_2_title: "AI PR 审查",
-    skill_2_body: "用途：用原始证据审查 agent 写的代码。",
-    skill_2_cta: "安装 GitHub Action / 查看工作流",
-    skill_3_title: "研究报告审计",
-    skill_3_body: "用途：抓出过期数据和结论越界。",
-    skill_3_cta: "运行样例 / 查看工作流",
-    skill_4_title: "Agent 安全检查",
-    skill_4_body: "用途：信任前验证 agent 完成声明。",
-    skill_4_cta: "查看模板",
     commercial_tag: "商业路径",
     commercial_h2: "从开放协议到团队签收。",
     open_title: "今天可用的开放核心",
@@ -525,6 +543,10 @@ function applyLang() {
   document.querySelectorAll("[data-i18n-alt]").forEach((el) => {
     const k = el.getAttribute("data-i18n-alt");
     if (T[lang][k] !== undefined) el.alt = T[lang][k];
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    const k = el.getAttribute("data-i18n-aria");
+    if (T[lang][k] !== undefined) el.setAttribute("aria-label", T[lang][k]);
   });
 }
 
@@ -644,8 +666,47 @@ function initNav() {
   });
 }
 
+function initHeroScene() {
+  const scene = document.querySelector(".hero-scene");
+  if (!scene) return;
+
+  const dots = Array.from(scene.querySelectorAll(".hero-scene-loop .loop-dot"));
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const loopMs = 6500;
+  const stepMs = 1200;
+  let activeStep = 3;
+
+  function paintDots(step) {
+    dots.forEach((dot, i) => {
+      dot.classList.remove("is-past", "is-active");
+      dot.removeAttribute("aria-current");
+      if (i < step) dot.classList.add("is-past");
+      if (i === step) {
+        dot.classList.add("is-active");
+        dot.setAttribute("aria-current", "step");
+      }
+    });
+  }
+
+  if (reduced) {
+    scene.classList.add("hero-scene--static");
+    paintDots(3);
+    return;
+  }
+
+  paintDots(0);
+  let tick = 0;
+  window.setInterval(() => {
+    tick += 1;
+    if (tick >= 3 && tick < 6) activeStep = 3;
+    else activeStep = Math.min(4, Math.floor((tick * stepMs) / loopMs) % 5);
+    paintDots(activeStep);
+  }, stepMs);
+}
+
 document.getElementById("lang-btn").addEventListener("click", toggleLang);
 document.getElementById("btn-sample").addEventListener("click", runSample);
 document.getElementById("b").addEventListener("click", go);
 initNav();
+initHeroScene();
 applyLang();

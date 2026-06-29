@@ -64,28 +64,26 @@ def test_web_prompt_contains_audit_channel_checks():
 
 def test_homepage_hero_redesign():
     assert "gate-panel" in serve.PAGE
-    assert "hero-check-img" in serve.PAGE
+    assert "hero-cockpit" in serve.PAGE
     assert "/static/img/hero-block-check.png" in serve.PAGE
     assert 'data-i18n-alt="hero_img_alt"' in serve.PAGE
-    assert "proof-strip" in serve.PAGE
-    assert 'data-i18n="hero_definition"' in serve.PAGE
     assert 'data-i18n="hero_docs_link"' in serve.PAGE
     assert "gate-map" in serve.PAGE
     assert "Frame Audit" in serve.PAGE
     assert "框架审计" in serve.PAGE
-    assert "trust-band" in serve.PAGE
     assert 'data-i18n="trust_band_github"' in serve.PAGE
-    assert 'data-i18n="trust_examples"' in serve.PAGE
-    assert 'data-i18n="trust_self_audit"' in serve.PAGE
-    assert 'data-i18n="trust_schema"' in serve.PAGE
     assert 'data-i18n="trust_byok"' in serve.PAGE
-    assert 'href="#demo"' in serve.PAGE
+    assert 'data-i18n="trust_schema"' in serve.PAGE
+    assert 'href="#try"' in serve.PAGE
     assert 'data-i18n="btn_run_sample_hero"' in serve.PAGE
+    assert 'data-i18n="btn_install_skill"' in serve.PAGE
+    assert "/docs/17-skills.md" in serve.PAGE
     assert "preview-must-fix" in serve.PAGE
     assert "falsify.review.v1" in serve.PAGE
     assert "workbench-panel" in serve.PAGE
     assert "workbench-collapse" not in serve.PAGE
-    assert 'class="btn primary" href="#demo"' in serve.PAGE
+    assert 'class="btn primary" href="/docs/17-skills.md"' in serve.PAGE
+    assert 'class="btn ghost" href="#try"' in serve.PAGE
     assert "NOT_VIABLE" not in serve.PAGE
     assert "CAUGHT" not in serve.PAGE
     assert "id=\"pricing\"" not in serve.PAGE
@@ -93,19 +91,16 @@ def test_homepage_hero_redesign():
     assert "evidence-grid" not in serve.PAGE
     assert "trust-strip" not in serve.PAGE
     assert 'id="not-falsify"' not in serve.PAGE
+    hero_visual = serve.PAGE.split('class="hero-visual"')[1].split("</header>")[0]
+    assert "hero-cockpit" in hero_visual
+    assert "gate-panel" in hero_visual
 
 
-def test_homepage_limits_section():
-    assert 'id="limits"' in serve.PAGE
-    assert 'data-i18n="limits_tag"' in serve.PAGE
-    assert 'data-i18n="ap_1"' in serve.PAGE
-    assert 'data-i18n="ap_2"' in serve.PAGE
-    assert 'data-i18n="ap_3"' in serve.PAGE
-    assert 'data-i18n="boundary_h2"' in serve.PAGE
-    assert 'data-i18n="boundary_p"' in serve.PAGE
+def test_homepage_limits_compat_copy():
     assert "Cutline-only ≠ full Falsify" in serve.PAGE
     assert "只有 Cutline ≠ 完整 Falsify" in serve.PAGE
-    assert "limits-grid" in serve.PAGE
+    assert 'id="limits"' not in serve.PAGE
+    assert "limits-grid" not in serve.PAGE
 
 
 def test_homepage_layers_strip():
@@ -137,12 +132,11 @@ def test_homepage_quote_attribution_and_avatar():
 
 
 def test_homepage_hero_layers_section():
-    assert 'class="hero-layers"' in serve.PAGE
-    assert 'id="layers"' in serve.PAGE
-    assert serve.PAGE.index('class="trust-band"') < serve.PAGE.index('class="quote"')
-    assert serve.PAGE.index('class="quote"') < serve.PAGE.index('class="hero-layers"')
-    assert serve.PAGE.index('class="hero-layers"') < serve.PAGE.index('id="demo"')
-    assert serve.PAGE.index('id="demo"') < serve.PAGE.index('id="artifact"')
+    assert 'class="hero-layers section-flow"' in serve.PAGE
+    assert 'id="how"' in serve.PAGE
+    assert serve.PAGE.index('class="hero"') < serve.PAGE.index('class="hero-layers section-flow"')
+    assert serve.PAGE.index('class="hero-layers section-flow"') < serve.PAGE.index('id="proof"')
+    assert serve.PAGE.index('id="proof"') < serve.PAGE.index('id="try"')
     assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
     assert "差一个机制就要上实盘" in serve.PAGE
     assert "one mechanic away from live money" in serve.PAGE
@@ -372,32 +366,25 @@ def test_homepage_social_and_favicon_meta():
 
 
 def test_homepage_proof_strip_github():
-    assert 'data-i18n="proof_github"' in serve.PAGE
+    assert 'data-i18n="trust_band_github"' in serve.PAGE
     assert "github.com/shi275773124/Falsify" in serve.PAGE
     assert "proof-case" not in serve.PAGE
     assert "< 1 day" not in serve.PAGE
     assert "Only PASS" not in serve.PAGE
     assert "仅 PASS" not in serve.PAGE
     assert "3 protocol verdicts" in serve.PAGE
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in css
 
 
 def test_homepage_case_card_links():
-    case_urls = [
-        "https://github.com/shi275773124/Falsify/blob/main/examples/sample-block-report.json",
-        "https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md",
-        "https://github.com/shi275773124/Falsify/blob/main/examples/comparison-case-study/README.md",
-    ]
-    for url in case_urls:
-        assert url in serve.PAGE
+    assert "https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" in serve.PAGE
+    assert "/examples/sample-block-report.json" in serve.PAGE
     links = serve.re.findall(r'<a class="case-link"([^>]*)>', serve.PAGE)
-    assert len(links) == 3
+    assert len(links) == 1
     for attrs in links:
         assert 'target="_blank"' in attrs
         assert "noopener" in attrs
         assert "noreferrer" in attrs
-    assert serve.PAGE.count('<article class="case-card">') == 3
+    assert serve.PAGE.count('<article class="case-card">') == 1
 
 
 def test_homepage_block_stamp_animation():
@@ -410,11 +397,11 @@ def test_homepage_block_stamp_animation():
 def test_homepage_hero_image_first():
     css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
     assert "hero-cockpit" in serve.PAGE
-    assert "hero-artifact--image" in serve.PAGE
     assert "hero-cockpit { display: none" not in css
     hero_visual = serve.PAGE.split('class="hero-visual"')[1].split("</header>")[0]
-    assert "hero-check-img" in hero_visual
-    assert "hero-cockpit" not in hero_visual
+    assert "hero-cockpit" in hero_visual
+    assert "gate-panel" in hero_visual
+    assert "hero-check-img" not in hero_visual
 def test_static_home_assets_route_returns_200():
     for path in (
         "/static/img/hero-block-check.png",
