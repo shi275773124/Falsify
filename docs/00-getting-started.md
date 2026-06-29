@@ -64,6 +64,10 @@ Open `http://127.0.0.1:8000`.
 
 The homepage explains the framework. The reviewer panel calls the real configured backend and returns a setup error if no provider/key is available.
 
+## Install a skill (Claude Code / Cursor)
+
+Copy a workflow pack from [`skills/`](../skills/) into your agent host — see [Skills install guide](./17-skills.md). No Falsify API key; live review uses BYOK.
+
 ## Decision semantics
 
 `PASS` means the current decision has enough evidence.

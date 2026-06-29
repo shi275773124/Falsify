@@ -1,0 +1,256 @@
+<!doctype html>
+<!-- 朋友圈配图 · 1080×1350。重新生成：py assets/make-moments-card.py -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1080px; height: 1350px; overflow: hidden;
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #090909;
+    color: #f4f4f4;
+  }
+  .card {
+    width: 1080px; height: 1350px;
+    padding: 48px 56px 44px;
+    display: flex; flex-direction: column;
+    position: relative;
+    background:
+      radial-gradient(900px 520px at 0% -5%, rgba(184,255,60,.08) 0%, transparent 58%),
+      radial-gradient(700px 500px at 100% 105%, rgba(255,92,92,.06) 0%, transparent 55%),
+      #090909;
+  }
+  .card::before {
+    content: "";
+    position: absolute; inset: 24px;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    pointer-events: none;
+  }
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px;
+    position: relative; z-index: 2;
+  }
+  .brand {
+    font: 800 34px/1 "Inter", "Segoe UI", sans-serif;
+    letter-spacing: -.03em;
+  }
+  .layer-row { display: flex; align-items: center; gap: 8px; }
+  .layer-chip {
+    font: 700 16px/1 "IBM Plex Mono", Consolas, monospace;
+    letter-spacing: .02em;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid #2a2a2a;
+    color: #d6d6d6;
+    background: #111;
+  }
+  .layer-chip.accent {
+    border-color: rgba(184,255,60,.35);
+    color: #b8ff3c;
+    background: rgba(184,255,60,.06);
+  }
+  .layer-arrow { color: #4a4a4a; font: 700 16px/1 monospace; }
+  .hero {
+    flex: 0 0 auto;
+    position: relative; z-index: 2;
+    max-width: 640px;
+  }
+  .tag {
+    font: 600 18px/1 "IBM Plex Mono", Consolas, monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #b8ff3c;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 76px;
+    line-height: 1.04;
+    letter-spacing: -.04em;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .flow {
+    font: 600 22px/1.4 var(--font, inherit);
+    color: #8c8c8c;
+    margin-bottom: 32px;
+  }
+  .flow em { font-style: normal; color: #b8ff3c; }
+  .pain {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 32px;
+  }
+  .pain li {
+    list-style: none;
+    font-size: 26px;
+    line-height: 1.4;
+    color: #d6d6d6;
+    font-weight: 600;
+    padding-left: 24px;
+    position: relative;
+  }
+  .pain li::before {
+    content: "";
+    position: absolute; left: 0; top: 13px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #ff5c5c;
+    box-shadow: 0 0 10px rgba(255,92,92,.45);
+  }
+  .quote-box {
+    padding: 26px 30px;
+    border-radius: 14px;
+    border: 1px solid #2a2a2a;
+    background: linear-gradient(180deg, #161616 0%, #111 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-box::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, rgba(184,255,60,.7), transparent);
+  }
+  .quote-box p {
+    font-size: 30px;
+    line-height: 1.5;
+    color: #ececec;
+    font-weight: 600;
+  }
+  .quote-box cite {
+    display: block;
+    margin-top: 14px;
+    font: 600 20px/1 "IBM Plex Mono", Consolas, monospace;
+    color: #8c8c8c;
+    font-style: normal;
+  }
+  .spacer { flex: 1; min-height: 12px; }
+  .bottom {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 20px;
+    position: relative; z-index: 2;
+    padding-top: 20px;
+  }
+  .verdicts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .v {
+    font: 700 18px/1 "IBM Plex Mono", Consolas, monospace;
+    padding: 10px 16px;
+    border-radius: 999px;
+    letter-spacing: .02em;
+  }
+  .v.pass { background: rgba(61,214,140,.14); color: #3dd68c; }
+  .v.debt { background: rgba(240,180,41,.14); color: #f0b429; }
+  .v.block { background: rgba(255,92,92,.14); color: #ff5c5c; }
+  .url {
+    text-align: right;
+    font: 700 26px/1.2 "IBM Plex Mono", Consolas, monospace;
+    color: #b8ff3c;
+    letter-spacing: -.01em;
+  }
+  .url small {
+    display: block;
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #8c8c8c;
+  }
+  .preview {
+    position: absolute;
+    right: 40px; top: 168px;
+    width: 292px;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    background: #111;
+    box-shadow: 0 20px 56px rgba(0,0,0,.55);
+    overflow: hidden;
+    transform: rotate(2deg);
+    z-index: 1;
+  }
+  .preview-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #2a2a2a;
+    background: rgba(255,92,92,.08);
+  }
+  .preview-bar span {
+    font: 700 13px/1 "IBM Plex Mono", Consolas, monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #ff5c5c;
+  }
+  .badge-block {
+    font: 700 12px/1 "IBM Plex Mono", Consolas, monospace;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(255,92,92,.14);
+    color: #ff5c5c;
+  }
+  .preview-body { padding: 16px; }
+  .preview-title {
+    font-size: 16px; font-weight: 700; color: #f4f4f4;
+    line-height: 1.4; margin-bottom: 12px;
+  }
+  .preview-line {
+    font: 13px/1.5 "IBM Plex Mono", Consolas, monospace;
+    color: #8c8c8c;
+    margin-bottom: 6px;
+  }
+  .preview-line strong { color: #ff5c5c; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="top">
+      <div class="brand">Falsify</div>
+      <div class="layer-row">
+        <div class="layer-chip">框架审计</div>
+        <span class="layer-arrow">→</span>
+        <div class="layer-chip">对抗审查</div>
+        <span class="layer-arrow">→</span>
+        <div class="layer-chip accent">Cutline</div>
+      </div>
+    </div>
+
+    <div class="preview" aria-hidden="true">
+      <div class="preview-bar">
+        <span>Review output</span>
+        <div class="badge-block">BLOCK</div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-title">部署成功，因为日志跑完了。</div>
+        <div class="preview-line"><strong>Must Fix</strong> · 日志被当作状态验证</div>
+        <div class="preview-line">Minimal action: read-after-write 探针</div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="tag">Decision gate</div>
+      <h1>看起来对，<br>不够。</h1>
+      <p class="flow">先<em>框住</em>问题 → 再<em>证伪</em> → 落到 <em>Cutline</em></p>
+      <ul class="pain">
+        <li>日志绿了，不代表状态对了</li>
+        <li>第二个模型点头，不代表证据成立</li>
+        <li>安全检查只写在提示词里</li>
+      </ul>
+      <div class="quote-box">
+        <p>「日志绿了，不等于证据成立。<br>我们不再假装它算数。」</p>
+        <cite>— Chris Shi</cite>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="bottom">
+      <div class="verdicts">
+        <div class="v pass">PASS</div>
+        <div class="v debt">PASS_WITH_DEBT</div>
+        <div class="v block">BLOCK</div>
+      </div>
+      <div class="url">
+        falsify.zjdeng.xyz
+        <small>GitHub Action · BYOK · 开源协议</small>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

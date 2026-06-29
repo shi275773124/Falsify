@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Falsify local website and paste-and-go reviewer.
 
 The homepage is static product/docs copy. The /review endpoint is real: it
@@ -28,6 +28,10 @@ STATIC_CTYPE = {
     ".json": "application/json",
     ".ico": "image/x-icon",
     ".webp": "image/webp",
+    ".html": "text/html; charset=utf-8",
+    ".md": "text/plain; charset=utf-8",
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
 }
 PROVIDER = os.environ.get("FALSIFY_PROVIDER")
 
@@ -135,6 +139,24 @@ def safe_examples_path(url_path):
     return _safe_under(ROOT / "examples", rel)
 
 
+def safe_design_path(url_path):
+    raw = unquote(urlparse(url_path).path)
+    if not raw.startswith("/design/"):
+        return None
+    rel = posixpath.normpath(raw[len("/design/"):]).lstrip("/")
+    if rel in {"", "."} or rel.startswith("../") or "/../" in f"/{rel}":
+        return None
+    target = (ROOT / "design" / rel).resolve()
+    try:
+        target.relative_to((ROOT / "design").resolve())
+    except ValueError:
+        return None
+    allowed = {".html", ".png", ".css", ".js", ".svg", ".webp", ".ico", ".mp4", ".webm", ".md"}
+    if target.suffix.lower() not in allowed:
+        return None
+    return target
+
+
 def load_homepage():
     template = (WEB_DIR / "templates" / "home.html").read_text(encoding="utf-8")
     js = (WEB_DIR / "static" / "js" / "home.js").read_text(encoding="utf-8")
@@ -178,13 +200,13 @@ html[lang="zh-CN"],html.lang-zh{font-family:var(--font-zh)}html[lang="zh-CN"] bo
 
 
 DOC_SECTIONS = [
-    ("Start", ["00-getting-started", "14-github-action-install", "02-setup", "04-troubleshooting"]),
+    ("Start", ["00-getting-started", "17-skills", "14-github-action-install", "02-setup", "04-troubleshooting"]),
     ("Framework", ["01-architecture", "05-adversarial-review", "06-risk-scalpel", "07-audit-channel-risks", "08-examples", "09-brooks-lint"]),
     ("Product", ["10-team-delivery-and-business-model", "11-byok-and-policy", "12-open-core-boundary", "13-team-edition-spec"]),
     ("Ops", ["15-ci-and-release-gate", "03-collaboration"]),
 ]
 
-DOC_FEATURED = ["14-github-action-install", "00-getting-started", "12-open-core-boundary"]
+DOC_FEATURED = ["17-skills", "14-github-action-install", "00-getting-started", "12-open-core-boundary"]
 
 DOC_SECTION_LABELS = {
     "en": {"Start": "Start", "Framework": "Framework", "Product": "Product", "Ops": "Ops", "Featured": "Featured"},
@@ -487,7 +509,7 @@ class H(BaseHTTPRequestHandler):
         lang = parse_lang(parsed.query)
         if parsed.path == "/docs/":
             return self._send(200, docs_index(lang), "text/html")
-        target = safe_web_static(self.path) or safe_examples_path(self.path) or safe_repo_path(self.path)
+        target = safe_web_static(self.path) or safe_examples_path(self.path) or safe_design_path(self.path) or safe_repo_path(self.path)
         if not target or not target.is_file():
             return self._send(404, json.dumps({"error": "not found"}))
         if target.suffix.lower() == ".md":
@@ -515,12 +537,14 @@ class H(BaseHTTPRequestHandler):
             self.end_headers()
             return
         target = None
-        if parsed.path.startswith("/docs/") or parsed.path.startswith("/assets/"):
-            target = safe_repo_path(self.path)
-        elif parsed.path.startswith("/static/"):
+        if parsed.path.startswith("/static/"):
             target = safe_web_static(self.path)
         elif parsed.path.startswith("/examples/"):
             target = safe_examples_path(self.path)
+        elif parsed.path.startswith("/design/"):
+            target = safe_design_path(self.path)
+        elif parsed.path.startswith("/docs/") or parsed.path.startswith("/assets/"):
+            target = safe_repo_path(self.path)
         if target and target.is_file():
             body, ctype = self._file_response_body(parsed, target)
             self.send_response(200)
@@ -540,6 +564,7 @@ class H(BaseHTTPRequestHandler):
             or parsed.path.startswith("/assets/")
             or parsed.path.startswith("/static/")
             or parsed.path.startswith("/examples/")
+            or parsed.path.startswith("/design/")
         ):
             self.serve_static()
         else:
