@@ -2620,3 +2620,25 @@ html.lang-zh footer {
   }
   .hero-scene-claim::after { display: none; }
 }
+
+.why-now-strip {
+  padding: 14px 0 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt, var(--bg));
+}
+.why-now-line {
+  margin: 0;
+  font: 500 14px/1.55 var(--sans);
+  color: var(--muted);
+}
+.why-now-tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font: 600 10px var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}

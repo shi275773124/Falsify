@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Falsify - evidence gate for high-risk AI conclusions</title>
-<meta name="description" content="Install Falsify skills in Claude Code or Cursor — BYOK — and get PASS, debt, or BLOCK before you ship.">
+<title>Falsify — 假绿全过，真钱只差一步</title>
+<meta name="description" content="跨厂商对抗审查 → exit code + PASS / PASS_WITH_DEBT / BLOCK。机器产物，不是 Sharpe 剧场。">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/static/favicon.ico" sizes="32x32">
-<meta property="og:title" content="Falsify - important AI conclusions need evidence">
-<meta property="og:description" content="The evidence gate for high-risk AI conclusions before they are signed off.">
+<meta property="og:title" content="Falsify — 假绿全过，真钱只差一步">
+<meta property="og:description" content="跨厂商对抗审查 → exit code + PASS / PASS_WITH_DEBT / BLOCK。机器产物，不是 Sharpe 剧场。">
 <meta property="og:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <meta property="og:url" content="https://falsify.zjdeng.xyz/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Falsify - important AI conclusions need evidence">
-<meta name="twitter:description" content="Independent attack, cutline, verdict, and raw artifact for high-risk AI conclusions.">
+<meta name="twitter:title" content="Falsify — 假绿全过，真钱只差一步">
+<meta name="twitter:description" content="exit code + PASS / PASS_WITH_DEBT / BLOCK — machine artifact, not Sharpe theater.">
 <meta name="twitter:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,13 +28,14 @@
     <a class="brand" href="#top">Falsify</a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-i18n="nav_menu">Menu</button>
     <div class="links" id="nav-links">
-      <a href="#how" data-i18n="nav_how">How</a>
-      <a href="#proof" data-i18n="nav_proof">Proof</a>
-      <a href="#try" data-i18n="nav_try">Try</a>
+      <a href="#how" data-i18n="nav_how">如何裁决</a>
+      <a href="#proof" data-i18n="nav_proof">证据</a>
+      <a href="#cases" data-i18n="nav_cases">案例</a>
+      <a href="#try" data-i18n="nav_try">试用</a>
       <a href="/docs/" data-i18n="nav_docs">Docs</a>
       <a href="/docs/17-skills.md" data-i18n="nav_skills">Skills</a>
       <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
-      <button class="lang-btn" id="lang-btn" type="button">中文</button>
+      <button class="lang-btn" id="lang-btn" type="button">EN</button>
     </div>
   </div>
 </nav>
@@ -92,9 +93,9 @@
 <header class="hero" id="top">
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow" data-i18n="hero_eyebrow">Skills Pack v0 · workflows, not prompts</p>
-      <h1 data-i18n="h1">Looks right isn't enough.</h1>
-      <p class="sub" data-i18n="hero_sub">Install a Falsify skill in Claude Code or Cursor — BYOK — and get PASS, debt, or BLOCK before you ship.</p>
+      <p class="eyebrow" data-i18n="hero_eyebrow">证据门 · 量化 · 生产 · AI 判断</p>
+      <h1 data-i18n="h1">假绿全过，真钱只差一步。</h1>
+      <p class="sub" data-i18n="hero_sub">自己审自己看不见盲区。跨厂商对抗审查 → exit code + PASS / PASS_WITH_DEBT / BLOCK — 机器产物，不是 Sharpe 剧场。</p>
       <div class="actions">
         <a class="btn primary" href="/docs/17-skills.md" data-i18n="btn_install_skill">Install skill</a>
         <a class="btn ghost" href="#try" data-i18n="btn_run_sample_hero">Run sample</a>
@@ -170,6 +171,31 @@
   </div>
 </header>
 
+<section class="proof-strip" aria-label="Proof chips">
+  <div class="wrap">
+    <div class="proof-stats">
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev1_val">exit code</div>
+        <div class="proof-lbl" data-i18n="ev1_lbl">0 PASS · 1 debt · 2 BLOCK</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev2_val">3 种裁决</div>
+        <div class="proof-lbl" data-i18n="ev2_lbl">PASS / PASS_WITH_DEBT / BLOCK — 仅此三类</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val" data-i18n="ev3_val">不是 Sharpe 剧场</div>
+        <div class="proof-lbl" data-i18n="ev3_lbl">关过了 ≠ 证据 · 要 raw artifact</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why-now-strip" aria-label="Why now">
+  <div class="wrap">
+    <p class="why-now-line"><span class="why-now-tag" data-i18n="why_now_tag">为何现在</span> <span data-i18n="why_now">本页曾 Self-Falsify BLOCK（Sharpe hero 叙事）— 我们按协议改了 copy。不卖未过闸的故事。</span></p>
+  </div>
+</section>
+
 <section class="hero-layers section-flow" id="how">
   <div class="wrap layers-wrap">
     <p class="section-label" data-i18n="how_label">How it decides</p>
@@ -211,8 +237,8 @@
         <span class="case-domain" data-i18n="case1_domain">Strategy research</span>
         <span class="badge BLOCK case-badge">BLOCK</span>
       </div>
-      <h3 class="case-title" data-i18n="case1_title">Sharpe 4.06 · 6/7 PASS — mechanic flaw</h3>
-      <p class="case-finding" data-i18n="case1_finding">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
+      <h3 class="case-title" data-i18n="case1_title">拦住：假 Sharpe — 虚构再平衡机制</h3>
+      <p class="case-finding" data-i18n="case1_finding">6/7 关 PASS 后，第二个 AI 换机制重跑 — SR 从 4.06 崩到 ≈0.77。过关不是证据。</p>
       <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
     </article>
     <div class="proof-quote">
@@ -226,6 +252,44 @@
           <cite data-i18n="quote_cite">Chris Shi</cite>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="s alt" id="cases">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-label" data-i18n="cases_tag">案例</p>
+      <h2 data-i18n="cases_h2">真实拦住了什么</h2>
+    </div>
+    <div class="cases-grid">
+      <article class="case-card">
+        <div class="case-head">
+          <span class="case-domain" data-i18n="case1_domain">策略研究</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
+        </div>
+        <h3 class="case-title" data-i18n="case1_title">拦住：假 Sharpe — 虚构再平衡机制</h3>
+        <p class="case-finding" data-i18n="case1_finding">6/7 关 PASS 后，第二个 AI 换机制重跑 — SR 从 4.06 崩到 ≈0.77。过关不是证据。</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
+      </article>
+      <article class="case-card">
+        <div class="case-head">
+          <span class="case-domain" data-i18n="case2_domain">研究运维 · 费率表</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
+        </div>
+        <h3 class="case-title" data-i18n="case2_title">拦住：一张费率表四格全错</h3>
+        <p class="case-finding" data-i18n="case2_finding">每格无出处 — 基数错、符号反、行选错。不是算错一个数，是整张表不可信。</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/comparison-case-study/README.md" target="_blank" rel="noopener noreferrer" data-i18n="case2_link">横向对比案例 →</a>
+      </article>
+      <article class="case-card">
+        <div class="case-head">
+          <span class="case-domain" data-i18n="case3_domain">DevOps · 部署</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
+        </div>
+        <h3 class="case-title" data-i18n="case3_title">拦住：日志绿了，状态未证</h3>
+        <p class="case-finding" data-i18n="case3_finding">部署 log 当验收 — 缺 read-after-write 探针，验收链里没有 rollback 命令。</p>
+        <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/sample-block-report.json" target="_blank" rel="noopener noreferrer" data-i18n="case3_link">sample-block-report.json →</a>
+      </article>
     </div>
   </div>
 </section>
