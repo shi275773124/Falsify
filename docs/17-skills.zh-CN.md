@@ -6,14 +6,17 @@ Falsify skills 是**可重复的签收工作流**，不是提示词片段。每�
 
 线上站点：[falsify.zjdeng.xyz](https://falsify.zjdeng.xyz/)
 
-## 四个工作流 pack（v0）
+## 五个工作流 pack（v0）
 
 | Skill | 目录 | 一句话用途 |
 |---|---|---|
 | **Deployment Claim Review** | [`skills/falsify-deployment-claim/`](../skills/falsify-deployment-claim/) | 在生产签收前拦截「日志绿了」的虚假自信。 |
+| **Live Production Gate** | [`skills/falsify-live-production-gate/`](../skills/falsify-live-production-gate/) | 真钱/定时 executor 的 Production Falsify：derived freshness、事故 replay fixture、input provenance manifest。 |
 | **AI PR Review** | [`skills/falsify-ai-pr-review/`](../skills/falsify-ai-pr-review/) | 用原始 diff、测试与运行时证据审查 agent 或人工 PR 声明。 |
 | **Research Report Audit** | [`skills/falsify-research-report/`](../skills/falsify-research-report/) | 抓研究报告中的过期数据、 cherry-pick 与结论越界。 |
 | **Agent Safety Check** | [`skills/falsify-agent-safety-check/`](../skills/falsify-agent-safety-check/) | 信任前验证 agent 完成声明 — 看原始产物与副作用，不看摘要。 |
+
+匿名化 live 事故模式（derived freshness / stale panel）：[`examples/real-cases/02-derived-freshness-stale-panel.md`](../examples/real-cases/02-derived-freshness-stale-panel.md)。
 
 GitHub 浏览全部 pack：[`skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
 
