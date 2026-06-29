@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Falsify Hero — Right Column Variants B / C / D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --graphite-950: #080806;
+      --graphite-900: #10100d;
+      --graphite-850: #171713;
+      --paper-50: #f6f1e7;
+      --paper-100: #eee6d8;
+      --text-on-dark: #f6f1e7;
+      --text-muted: #a49b8d;
+      --line-dark: rgba(246, 241, 231, 0.14);
+      --line-dark-strong: rgba(246, 241, 231, 0.28);
+      --pass-green: #607b5d;
+      --critical-red: #c45c5c;
+      --radius: 8px;
+      --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: #1a1916;
+      color: var(--text-on-dark);
+      padding: 32px 24px 80px;
+    }
+
+    .doc-header {
+      max-width: 1440px;
+      margin: 0 auto 28px;
+    }
+
+    .doc-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .doc-header .diagnosis {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      max-width: 78ch;
+      margin-bottom: 16px;
+    }
+
+    .doc-header .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid var(--line-dark-strong);
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .variant-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 1440px;
+      margin: 0 auto 20px;
+    }
+
+    .variant-tab {
+      padding: 10px 18px;
+      border: 1px solid var(--line-dark-strong);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .variant-tab:hover {
+      border-color: var(--text-muted);
+      color: var(--text-on-dark);
+    }
+
+    .variant-tab.is-active {
+      background: var(--pass-green);
+      border-color: var(--pass-green);
+      color: var(--paper-50);
+    }
+
+    .variant-tab--deprecated {
+      opacity: 0.55;
+    }
+
+    .variant-panel { display: none; }
+    .variant-panel.is-active { display: block; }
+
+    .artboard-wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .artboard-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--graphite-950);
+      display: grid;
+      align-items: center;
+      width: 1440px;
+      max-width: 100%;
+      height: 900px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 64px;
+      padding: 72px 96px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 520px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .h1 {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-on-dark);
+    }
+
+    .sub {
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      max-width: 46ch;
+    }
+
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: default;
+    }
+
+    .btn--primary { background: var(--pass-green); color: var(--paper-50); }
+    .btn--secondary {
+      background: transparent;
+      color: var(--text-on-dark);
+      border-color: var(--line-dark-strong);
+      font-weight: 500;
+    }
+
+    .skill-note {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      padding: 6px 10px;
+      border: 1px solid var(--line-dark-strong);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+      min-height: 0;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Variant B: Geometry-only ── */
+    .viz-b {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viz-b__void {
+      position: absolute;
+      inset: -15%;
+      background:
+        radial-gradient(ellipse 80% 65% at 55% 45%, rgba(96, 123, 93, 0.12) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 55% at 30% 75%, rgba(246, 241, 231, 0.04) 0%, transparent 50%);
+      animation: void-breathe 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes void-breathe {
+      from { opacity: 0.85; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.03); }
+    }
+
+    .viz-b__svg {
+      position: relative;
+      width: 100%;
+      max-width: 620px;
+      height: auto;
+      z-index: 1;
+    }
+
+    .viz-b__arc-a {
+      transform-origin: 420px 280px;
+      animation: arc-drift-a 18s ease-in-out infinite alternate;
+    }
+
+    .viz-b__arc-b {
+      transform-origin: 180px 420px;
+      animation: arc-drift-b 22s ease-in-out infinite alternate;
+    }
+
+    .viz-b__dots {
+      animation: dots-pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes arc-drift-a {
+      from { transform: rotate(-2deg); }
+      to { transform: rotate(4deg); }
+    }
+
+    @keyframes arc-drift-b {
+      from { transform: rotate(3deg) translateY(0); }
+      to { transform: rotate(-1deg) translateY(-8px); }
+    }
+
+    @keyframes dots-pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.65; }
+    }
+
+    .viz-b__stamp {
+      position: absolute;
+      bottom: 12%;
+      right: 8%;
+      z-index: 3;
+      font-family: var(--font-mono);
+      font-size: clamp(72px, 9vw, 112px);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(196, 92, 92, 0.55);
+      opacity: 0.22;
+      pointer-events: none;
+      animation: stamp-glow 10s ease-in-out infinite;
+    }
+
+    @keyframes stamp-glow {
+      0%, 70%, 100% { opacity: 0.18; transform: scale(1); }
+      85% { opacity: 0.32; transform: scale(1.02); }
+    }
+
+    /* ── Variant C: Pool scene + skill card ── */
+    .viz-c {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viz-c__scene {
+      position: absolute;
+      inset: -10% -5%;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 40%, rgba(238, 230, 216, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 70% 80%, rgba(96, 123, 93, 0.1) 0%, transparent 50%),
+        linear-gradient(165deg, #0c0c0a 0%, #12110e 45%, #0a0908 100%);
+      animation: scene-shift 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes scene-shift {
+      from { filter: hue-rotate(0deg) brightness(1); }
+      to { filter: hue-rotate(8deg) brightness(1.05); }
+    }
+
+    .viz-c__orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .viz-c__orb--a {
+      width: 280px;
+      height: 280px;
+      top: 10%;
+      right: 5%;
+      background: rgba(96, 123, 93, 0.15);
+      animation: orb-float-a 14s ease-in-out infinite alternate;
+    }
+
+    .viz-c__orb--b {
+      width: 200px;
+      height: 200px;
+      bottom: 15%;
+      left: 0;
+      background: rgba(246, 241, 231, 0.06);
+      animation: orb-float-b 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes orb-float-a {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-20px, 16px); }
+    }
+
+    @keyframes orb-float-b {
+      from { transform: translate(0, 0); }
+      to { transform: translate(24px, -12px); }
+    }
+
+    .skill-card {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 380px);
+      padding: 28px 28px 24px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(246, 241, 231, 0.97) 0%, rgba(238, 230, 216, 0.92) 100%);
+      box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.45),
+        0 12px 32px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: perspective(900px) rotateY(-6deg) rotateX(3deg) translateY(0);
+      animation: card-float 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes card-float {
+      from { transform: perspective(900px) rotateY(-6deg) rotateX(3deg) translateY(0); }
+      to { transform: perspective(900px) rotateY(-4deg) rotateX(2deg) translateY(-10px); }
+    }
+
+    .skill-card__host {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .skill-card__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--graphite-950);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .skill-card__host-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--graphite-900);
+    }
+
+    .skill-card__host-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #8a8278;
+      letter-spacing: 0.04em;
+    }
+
+    .skill-card__name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--graphite-950);
+      margin-bottom: 6px;
+    }
+
+    .skill-card__action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: var(--graphite-950);
+      color: var(--paper-50);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .skill-card__action-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pass-green);
+    }
+
+    /* ── Variant D: Media slot ── */
+    .viz-d {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 640px;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .viz-d__gradient {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, #0a0a08 0%, #141210 40%, #1a1814 100%);
+    }
+
+    .viz-d__gradient::before,
+    .viz-d__gradient::after {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      opacity: 0.5;
+    }
+
+    .viz-d__gradient::before {
+      background: conic-gradient(from 200deg at 60% 40%,
+        transparent 0deg,
+        rgba(96, 123, 93, 0.25) 60deg,
+        transparent 120deg,
+        rgba(196, 92, 92, 0.12) 200deg,
+        transparent 280deg);
+      animation: gradient-spin 24s linear infinite;
+    }
+
+    .viz-d__gradient::after {
+      background: radial-gradient(circle at 30% 70%, rgba(246, 241, 231, 0.08) 0%, transparent 45%);
+      animation: gradient-pulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes gradient-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes gradient-pulse {
+      from { opacity: 0.4; transform: scale(1); }
+      to { opacity: 0.7; transform: scale(1.08); }
+    }
+
+    .viz-d__video-slot {
+      position: absolute;
+      inset: 0;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .viz-d__video-slot.has-src { opacity: 1; }
+
+    .viz-d__poster {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: rgba(8, 8, 6, 0.35);
+      transition: opacity 0.4s;
+    }
+
+    .viz-d__video-slot.has-src ~ .viz-d__poster { opacity: 0; pointer-events: none; }
+
+    .viz-d__play {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(246, 241, 231, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(246, 241, 231, 0.06);
+      backdrop-filter: blur(8px);
+    }
+
+    .viz-d__play::after {
+      content: "";
+      margin-left: 4px;
+      border-style: solid;
+      border-width: 10px 0 10px 16px;
+      border-color: transparent transparent transparent var(--paper-50);
+    }
+
+    .viz-d__overlay-title {
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-on-dark);
+      text-align: center;
+    }
+
+    .viz-d__overlay-title em {
+      font-style: normal;
+      color: var(--critical-red);
+    }
+
+    .viz-d__overlay-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .viz-d__drop-note {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 3;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: rgba(16, 16, 13, 0.85);
+      border: 1px dashed var(--line-dark-strong);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .viz-b__void, .viz-b__arc-a, .viz-b__arc-b, .viz-b__dots, .viz-b__stamp,
+      .viz-c__scene, .viz-c__orb--a, .viz-c__orb--b, .skill-card,
+      .viz-d__gradient::before, .viz-d__gradient::after {
+        animation: none !important;
+      }
+    }
+
+    @media (max-width: 1500px) {
+      .hero {
+        width: min(1440px, 100%);
+        height: auto;
+        min-height: 720px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="doc-header">
+    <h1>Hero right column — pick B, C, or D</h1>
+    <p class="diagnosis">
+      The fake GitHub Check screenshot fails not because the CSS shell is weak, but because the focal object is still a dashboard — a UI capture that reads as dev tool / PPT, not beauty or ToC skills. Polishing drop-shadow around a PNG cannot change what the eye parses first. Left column is <strong>locked</strong>; pick a right-column direction below.
+    </p>
+    <span class="tag">Chris A/B/C gate · 2026-06-28 · left column locked</span>
+  </header>
+
+  <nav class="variant-tabs" role="tablist" aria-label="Hero right column variants">
+    <button type="button" class="variant-tab variant-tab--deprecated" data-variant="a" role="tab" aria-selected="false">
+      A (deprecated) · screenshot
+    </button>
+    <button type="button" class="variant-tab is-active" data-variant="b" role="tab" aria-selected="true">
+      B · Geometry-only
+    </button>
+    <button type="button" class="variant-tab" data-variant="c" role="tab" aria-selected="false">
+      C · Pool scene + skill card
+    </button>
+    <button type="button" class="variant-tab" data-variant="d" role="tab" aria-selected="false">
+      D · Real media slot
+    </button>
+  </nav>
+
+  <!-- Variant B -->
+  <section class="variant-panel is-active" id="panel-b" role="tabpanel" aria-labelledby="tab-b">
+    <div class="artboard-wrap">
+      <span class="artboard-label">Variant B · Geometry-only · Desktop 1440 × 900</span>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Adversarial sign-off · Skills</p>
+          <h2 class="h1">Looks right isn't enough.</h2>
+          <p class="sub">Falsify attacks high-risk AI conclusions — then cuts a PASS, debt, or BLOCK before you ship.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/docs/17-skills.md">Install skill</a>
+            <a class="btn btn--secondary" href="#try">Run sample</a>
+          </div>
+          <p class="skill-note">Claude Code · BYOK · no Falsify key</p>
+          <div class="chips">
+            <span class="chip">GitHub</span>
+            <span class="chip">MIT</span>
+            <span class="chip">BYOK</span>
+            <span class="chip">falsify.review.v1</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="viz-b" aria-hidden="true">
+            <div class="viz-b__void"></div>
+            <svg class="viz-b__svg" viewBox="0 0 620 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle class="viz-b__arc-a" cx="420" cy="280" r="220" stroke="rgba(246,241,231,0.12)" stroke-width="1.5" fill="none" stroke-dasharray="8 12"/>
+              <circle class="viz-b__arc-b" cx="180" cy="420" r="160" stroke="rgba(246,241,231,0.08)" stroke-width="1" fill="none"/>
+              <path d="M 40 520 Q 200 380 380 340 T 580 180" stroke="rgba(96,123,93,0.2)" stroke-width="1.5" fill="none"/>
+              <line x1="120" y1="120" x2="320" y2="200" stroke="rgba(246,241,231,0.06)" stroke-width="1"/>
+              <g class="viz-b__dots">
+                <circle cx="480" cy="140" r="4" fill="rgba(246,241,231,0.25)"/>
+                <circle cx="510" cy="160" r="2.5" fill="rgba(246,241,231,0.15)"/>
+                <circle cx="90" cy="300" r="3" fill="rgba(96,123,93,0.35)"/>
+                <circle cx="110" cy="330" r="2" fill="rgba(96,123,93,0.2)"/>
+                <circle cx="300" cy="480" r="5" fill="rgba(246,241,231,0.12)"/>
+              </g>
+              <rect x="200" y="240" width="220" height="220" rx="110" stroke="rgba(246,241,231,0.05)" stroke-width="1" fill="none" transform="rotate(-15 310 350)"/>
+            </svg>
+            <span class="viz-b__stamp">BLOCK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Variant C -->
+  <section class="variant-panel" id="panel-c" role="tabpanel" aria-labelledby="tab-c" hidden>
+    <div class="artboard-wrap">
+      <span class="artboard-label">Variant C · Pool scene + skill card · Desktop 1440 × 900</span>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Adversarial sign-off · Skills</p>
+          <h2 class="h1">Looks right isn't enough.</h2>
+          <p class="sub">Falsify attacks high-risk AI conclusions — then cuts a PASS, debt, or BLOCK before you ship.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/docs/17-skills.md">Install skill</a>
+            <a class="btn btn--secondary" href="#try">Run sample</a>
+          </div>
+          <p class="skill-note">Claude Code · BYOK · no Falsify key</p>
+          <div class="chips">
+            <span class="chip">GitHub</span>
+            <span class="chip">MIT</span>
+            <span class="chip">BYOK</span>
+            <span class="chip">falsify.review.v1</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="viz-c">
+            <div class="viz-c__scene" aria-hidden="true"></div>
+            <div class="viz-c__orb viz-c__orb--a" aria-hidden="true"></div>
+            <div class="viz-c__orb viz-c__orb--b" aria-hidden="true"></div>
+            <article class="skill-card">
+              <div class="skill-card__host">
+                <div class="skill-card__icon" aria-hidden="true">⌘</div>
+                <div>
+                  <div class="skill-card__host-label">Claude Code</div>
+                  <div class="skill-card__host-sub">Install skill</div>
+                </div>
+              </div>
+              <h3 class="skill-card__name">Falsify</h3>
+              <div class="skill-card__action">
+                <span class="skill-card__action-dot" aria-hidden="true"></span>
+                Add to workspace
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Variant D -->
+  <section class="variant-panel" id="panel-d" role="tabpanel" aria-labelledby="tab-d" hidden>
+    <div class="artboard-wrap">
+      <span class="artboard-label">Variant D · Real media slot · Desktop 1440 × 900</span>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Adversarial sign-off · Skills</p>
+          <h2 class="h1">Looks right isn't enough.</h2>
+          <p class="sub">Falsify attacks high-risk AI conclusions — then cuts a PASS, debt, or BLOCK before you ship.</p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/docs/17-skills.md">Install skill</a>
+            <a class="btn btn--secondary" href="#try">Run sample</a>
+          </div>
+          <p class="skill-note">Claude Code · BYOK · no Falsify key</p>
+          <div class="chips">
+            <span class="chip">GitHub</span>
+            <span class="chip">MIT</span>
+            <span class="chip">BYOK</span>
+            <span class="chip">falsify.review.v1</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="viz-d">
+            <div class="viz-d__gradient" aria-hidden="true"></div>
+            <!-- Drop hero-demo.mp4 in design/ and uncomment src to enable -->
+            <video class="viz-d__video-slot" muted loop playsinline poster=""
+              aria-label="Falsify demo — attack to BLOCK"></video>
+            <div class="viz-d__poster">
+              <div class="viz-d__play" aria-hidden="true"></div>
+              <p class="viz-d__overlay-title">Watch it <em>BLOCK</em></p>
+              <p class="viz-d__overlay-sub">15s screen recording · coming soon</p>
+            </div>
+            <p class="viz-d__drop-note">
+              Chris: drop <code>design/hero-demo.mp4</code> + set video src → poster hides automatically.
+              Until then, animated gradient serves as static poster frame.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll(".variant-tab");
+      var panels = document.querySelectorAll(".variant-panel");
+
+      function showVariant(id) {
+        if (id === "a") {
+          window.location.href = "hero-v1-ab-comp.html";
+          return;
+        }
+        if (!["b", "c", "d"].includes(id)) id = "b";
+        tabs.forEach(function (t) {
+          var active = t.getAttribute("data-variant") === id;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        panels.forEach(function (p) {
+          var show = p.id === "panel-" + id;
+          p.classList.toggle("is-active", show);
+          p.hidden = !show;
+        });
+        if (location.hash !== "#" + id) {
+          history.replaceState(null, "", "#" + id);
+        }
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          showVariant(tab.getAttribute("data-variant"));
+        });
+      });
+
+      var hash = (location.hash || "#b").slice(1);
+      showVariant(hash);
+    })();
+  </script>
+</body>
+</html>

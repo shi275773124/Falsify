@@ -17,24 +17,39 @@ Falsify asks: **"Is this decision defensible?"**
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[Chinese](./README.zh-CN.md) · [Getting started](./docs/00-getting-started.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[Chinese](./README.zh-CN.md) · [Live site](https://falsify.zjdeng.xyz/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+
+## Table of contents
+
+- [Entry path](#entry-path)
+- [Skills (4 workflows)](#skills-4-workflows)
+- [Audit Sprint / Design Partner / Team path](#audit-sprint--design-partner--team-path)
+- [What problem it solves](#what-problem-it-solves)
+- [The framework](#the-framework)
+- [Quick start](#quick-start)
+- [Docs](#docs)
+- [OSS PR gate (self-hosted)](#oss-pr-gate-self-hosted)
 
 ## Entry path
 
-1. Install the CLI or [GitHub Action](./docs/14-github-action-install.md).
-2. Run a sample review with `python falsify.py demo` or the homepage workbench.
-3. Download a repeatable workflow from [`skills/`](./skills/).
+1. **Install a skill** in [Claude Code or Cursor](./docs/17-skills.md) — copy a folder from [`skills/`](./skills/) (BYOK; no Falsify API key).
+2. Run a sample review with `python falsify.py demo` or the [homepage workbench](https://falsify.zjdeng.xyz/#try).
+3. Install the [GitHub Action](./docs/14-github-action-install.md) when PR docs need a gate.
 4. Use Falsify on one high-risk artifact before the decision ships.
 5. If the workflow repeats or becomes high-stakes, discuss an Audit Sprint or Design Partner pilot.
 
-## Skills are workflows, not prompts
+## Skills (4 workflows)
 
-The v0 skills pack packages evidence discipline into reusable sign-off workflows. Each skill includes an input contract, raw artifact requirements, verdict schema, BLOCK sample, PASS_WITH_DEBT sample, pitfalls, and minimal action examples.
+The v0 skills pack packages evidence discipline into reusable sign-off workflows — not prompts. Each skill includes an input contract, raw artifact requirements, verdict schema, BLOCK sample, PASS_WITH_DEBT sample, pitfalls, and minimal action examples.
 
-- [Deployment Claim Review](./skills/falsify-deployment-claim/) blocks "logs green" false confidence.
-- [AI PR Review](./skills/falsify-ai-pr-review/) reviews agent-written or human-written PR claims against raw evidence.
-- [Research Report Audit](./skills/falsify-research-report/) catches stale data, cherry-picking, and conclusion overreach.
-- [Agent Safety Check](./skills/falsify-agent-safety-check/) verifies agent completion claims before trust.
+| Workflow | Path | Purpose |
+|---|---|---|
+| Deployment Claim Review | [`skills/falsify-deployment-claim/`](./skills/falsify-deployment-claim/) | Block "logs green" false confidence. |
+| AI PR Review | [`skills/falsify-ai-pr-review/`](./skills/falsify-ai-pr-review/) | Review agent-written or human-written PR claims against raw evidence. |
+| Research Report Audit | [`skills/falsify-research-report/`](./skills/falsify-research-report/) | Catch stale data, cherry-picking, and conclusion overreach. |
+| Agent Safety Check | [`skills/falsify-agent-safety-check/`](./skills/falsify-agent-safety-check/) | Verify agent completion claims before trust. |
+
+**Install:** [Skills guide (Claude Code / Cursor / BYOK)](./docs/17-skills.md) · [Browse `skills/` on GitHub](https://github.com/shi275773124/Falsify/tree/main/skills)
 
 ## Audit Sprint / Design Partner / Team path
 
@@ -161,6 +176,7 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 ## Docs
 
 - [Getting Started](./docs/00-getting-started.md)
+- [Skills install (Claude Code / Cursor)](./docs/17-skills.md)
 - [Brooks-Lint](./docs/09-brooks-lint.md)
 - [Adversarial Review](./docs/05-adversarial-review.md)
 - [Cutline / 风险裁刀 / Cutline](./docs/06-risk-scalpel.md)
