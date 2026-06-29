@@ -6,14 +6,17 @@ Falsify skills are **repeatable sign-off workflows**, not prompt snippets. Each 
 
 Live site: [falsify.zjdeng.xyz](https://falsify.zjdeng.xyz/)
 
-## Four workflow packs (v0)
+## Five workflow packs (v0)
 
 | Skill | Directory | One-line purpose |
 |---|---|---|
 | **Deployment Claim Review** | [`skills/falsify-deployment-claim/`](../skills/falsify-deployment-claim/) | Block "logs green" false confidence before production sign-off. |
+| **Live Production Gate** | [`skills/falsify-live-production-gate/`](../skills/falsify-live-production-gate/) | Production Falsify for live executors: derived freshness, incident replay fixtures, input provenance manifest. |
 | **AI PR Review** | [`skills/falsify-ai-pr-review/`](../skills/falsify-ai-pr-review/) | Review agent-written or human-written PR claims against raw diff, tests, and runtime evidence. |
 | **Research Report Audit** | [`skills/falsify-research-report/`](../skills/falsify-research-report/) | Catch stale data, cherry-picking, and conclusion overreach in memos. |
 | **Agent Safety Check** | [`skills/falsify-agent-safety-check/`](../skills/falsify-agent-safety-check/) | Verify agent completion claims before trust — raw artifacts and side effects, not summaries. |
+
+Anonymized live incident pattern (derived freshness / stale panel): [`examples/real-cases/02-derived-freshness-stale-panel.md`](../examples/real-cases/02-derived-freshness-stale-panel.md).
 
 Browse all packs on GitHub: [`skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
 
