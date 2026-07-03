@@ -60,3 +60,5 @@ Skills are the **editor-first** entry. You can also:
 ## Upgrade path
 
 Starter skills are MIT open core. When one artifact controls money, production, or a customer commitment, consider an **Audit Sprint** or **Design Partner** pilot — see [Team delivery blueprint](./10-team-delivery-and-business-model.md).
+
+See also: [Pro vs OSS — three-layer boundary](./18-pro-vs-oss.md).

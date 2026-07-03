@@ -60,3 +60,5 @@ Skills 是**编辑器优先**入口。你也可以：
 ## 升级路径
 
 Starter skills 属于 MIT 开放核心。当一个产物控制资金、生产或客户承诺时，考虑 **Audit Sprint** 或 **Design Partner** pilot — 见 [Team delivery blueprint](./10-team-delivery-and-business-model.md)。
+
+另见：[Pro vs OSS — 三层边界](./18-pro-vs-oss.zh-CN.md)。
