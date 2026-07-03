@@ -8,6 +8,8 @@ Core principle:
 
 **Protocol open, workflow system paid.**
 
+For the OSS / Pro / Team three-layer map (naming, export policy, moat), see [Pro vs OSS](./18-pro-vs-oss.md).
+
 ## Positioning
 
 Falsify is not an "AI code reviewer".  

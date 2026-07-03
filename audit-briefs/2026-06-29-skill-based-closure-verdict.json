@@ -1,0 +1,53 @@
+{
+  "schema_version": "falsify.review.v1",
+  "target": "xsmomo-a-stale-panel-20260629 incident documentation closure loop",
+  "scenario": "production-doc-closure (NOT live restore / NOT RISK_FREEZE lift)",
+  "verdict": "PASS_WITH_DEBT",
+  "confidence": "local-first-hand file reads [实测 2026-06-29]",
+  "summary": "Canonical incident doc, closure index, OSS live-production-gate pack, and Must Fix evidence pointers are structurally complete and locally verified. Skill-based self-Falsify (Brooks-Lint + Adversarial + Cutline); no external falsify.py dual-model.",
+  "must_fix": [],
+  "known_debt": [
+    "RISK_FREEZE still active — restore ≠ freeze lift; upgrade when Chris explicitly lifts in 驾驶舱",
+    "P0a live on old fact_sheet metric — STRATEGY_CHANGE registered; upgrade when attempting metric switch",
+    "PM stale-panel fixture PASS archived 2026-06-29T11:54Z, not re-run this session; upgrade when wrapper/gate code changes or PASS >7d",
+    "Scheduler-context dry-run not re-verified; upgrade when cron schedule or wrapper path changes",
+    "fact_sheet.json mtime 2026-05-30 approaching STALE_FACT_SHEET boundary",
+    "Self-Falsify boundary: not independent final judgment for live-money authority (out of this doc-closure scope)"
+  ],
+  "delete": [
+    "Prior Must Fix requiring falsify.py dual-model (DEEPSEEK_API_KEY) — superseded by Chris skill-based audit directive"
+  ],
+  "findings": [
+    {
+      "cutline": "Delete",
+      "issue": "Dual-model CLI audit blocked on missing API keys",
+      "evidence": "Chris clarified: use Cursor falsify skill stack only, not external falsify.py",
+      "minimal_action": "None — superseded"
+    },
+    {
+      "cutline": "Known Debt",
+      "issue": "Fixture PASS not re-run on PM this session",
+      "evidence": "Archived exit 0 at 2026-06-29T11:54Z in mustfix closure; vault record consistent",
+      "minimal_action": "Re-run tests/test_stale_panel_fixture.py before next scheduled auto window or after gate code change",
+      "upgrade_trigger": "Wrapper/panel gate code change or PASS timestamp >7d old"
+    }
+  ],
+  "minimal_action": "Treat doc closure loop as institutionally written; commit vault files when Chris says 推. Do NOT infer RISK_FREEZE lift.",
+  "next_evidence": "Optional: fresh PM fixture UTC stamp; independent profile review only if live re-authorization requested",
+  "audit_method": {
+    "timestamp_utc": "2026-06-29T14:30:00Z",
+    "skills_loaded": [
+      "C:\\Users\\CHRIS\\.cursor\\skills\\falsify\\SKILL.md",
+      "references/incident-replay-negative-fixtures.md",
+      "references/post-incident-trading-rootfix-final-judgment.md",
+      "Falsify/skills/falsify-live-production-gate/SKILL.md"
+    ],
+    "checks_run": [
+      "vault artifact existence + JSON field verification",
+      "wikilink resolution D1/D2",
+      "OSS/vault rule ID grep (4 gates)",
+      "docs/17-skills fifth pack @ main 4501fe8",
+      "pytest tests/ -q (52 passed; temp cleanup PermissionError non-fail)"
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 
 > **Review first. Trust after.**
 
-> **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md).
+> **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md) and [Pro vs OSS](./docs/18-pro-vs-oss.md).
 
 Falsify is an **adversarial sign-off layer for high-risk AI work**: PRs, deployments, research reports, and agent outputs are reviewed against raw evidence before a team ships the decision.
 
