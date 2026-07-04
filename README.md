@@ -126,6 +126,10 @@ A strategy family showed PBO=0.9991 — "certain overfitting, reject." But 0.999
 python -m pytest tests/quant/ -v
 ```
 
+### Hermes gate6 divergence
+
+The hermes deployment of Falsify runs an additional `gate6_harness_boundary.deployment_parity` gate (research/live contract hash + Jaccard selection similarity + universe/weights/normalization consistency; default `min_selected_jaccard=0.8`). This gate is **not** in the OSS repo: it depends on a live execution context and a production-guard concept that OSS does not ship. OSS users who need research/live parity checking should design a separate OSS-appropriate reproducibility gate rather than port hermes gate6.
+
 ## Quick start
 
 ```bash

@@ -20,7 +20,18 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-quant = ["numpy>=1.24", "scipy>=1.10", "pandas>=2.0"]
+# empyrical-reloaded (not upstream `empyrical`): upstream 0.5.5 is unmaintained
+# since 2020 — its versioneer uses configparser.SafeConfigParser (removed in
+# Py3.12) so `pip install empyrical` fails on 3.12, and its code uses np.NINF
+# (removed in NumPy 2.0). The stefan-jansen/empyrical-reloaded fork fixes both
+# and installs as the `empyrical` module. quant.py still has a defensive skip
+# (止血) so missing/broken empyrical degrades metrics to None rather than crashing.
+quant = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pandas>=2.0",
+  "empyrical-reloaded>=0.5.12",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
