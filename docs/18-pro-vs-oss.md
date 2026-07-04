@@ -9,7 +9,7 @@ One-page map of what ships on GitHub (MIT), what stays in the closed Pro skill/r
 | Layer | What it is | Source / delivery | You pay for |
 |---|---|---|---|
 | **OSS (MIT)** | Protocol, CLI, five workflow packs, templates, examples | [GitHub](https://github.com/shi275773124/Falsify) — self-host, BYOK | Nothing (your model keys) |
-| **Pro (closed source)** | Umbrella Falsify skill + Production enforcement + fixture library updates | Private canonical (`~/.cursor/skills/falsify`, vault Hermes runtime) — not a full public copy | Skill/runtime updates, incident antibody library, Production cutline enforcement |
+| **Pro (closed source)** | Umbrella Falsify skill + Production enforcement + fixture library updates | Private canonical (your private skill directory) — not a full public copy | Skill/runtime updates, incident antibody library, Production cutline enforcement |
 | **Team (paid product)** | Org governance, retention, integrations, rollout | Hosted or contracted workspace path — spec in [Team edition](./13-team-edition-spec.md) | Seats / workspace fee (BYOK hybrid per [business model](./10-team-delivery-and-business-model.md)) |
 
 **Naming:** Pro ≠ Team. Pro is the umbrella skill stack and Production gate discipline. Team is the paid workspace product (policy at org scale, artifact history, integrations) — see [docs/13](./13-team-edition-spec.md).
@@ -55,7 +55,7 @@ canonical (private umbrella + vault runtime)
 OSS  skills/falsify-live-production-gate/
 ```
 
-- **Canonical** = private umbrella skill + vault `hermes-skills-runtime` falsify skill
+- **Canonical** = private umbrella skill + private runtime
 - **Export target** = [`skills/falsify-live-production-gate/`](../skills/falsify-live-production-gate/) only (not the other four packs from Pro internals)
 - **Direction** = Pro → OSS only; OSS PRs do not become the source of truth for Production enforcement
 

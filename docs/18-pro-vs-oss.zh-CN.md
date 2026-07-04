@@ -9,7 +9,7 @@
 | 层 | 是什么 | 来源 / 交付 | 付费点 |
 |---|---|---|---|
 | **OSS (MIT)** | 协议、CLI、五个 workflow pack、模板、示例 | [GitHub](https://github.com/shi275773124/Falsify) — 自托管、BYOK | 无（自备模型 key） |
-| **Pro（闭源）** | 伞形 Falsify skill + Production  enforcement + fixture 库更新 | 私有 canonical（`~/.cursor/skills/falsify`、vault Hermes runtime）— 无完整公开副本 | skill/runtime 更新、事故抗体库、Production cutline 执行 |
+| **Pro（闭源）** | 伞形 Falsify skill + Production  enforcement + fixture 库更新 | 私有 canonical（你的私有 skill 目录）— 无完整公开副本 | skill/runtime 更新、事故抗体库、Production cutline 执行 |
 | **Team（付费产品）** | 组织治理、留存、集成、rollout | 托管或合同 workspace — 见 [Team 版 spec](./13-team-edition-spec.md) | 席位 / workspace 费（BYOK 混合，见 [商业模式](./10-team-delivery-and-business-model.md)） |
 
 **命名：** Pro ≠ Team。Pro = 伞形 skill 栈 + Production 闸门纪律。Team = 付费 workspace（组织级 policy、产物历史、集成）— 见 [docs/13](./13-team-edition-spec.md)。
@@ -55,7 +55,7 @@ canonical（私有伞形 + vault runtime）
 OSS  skills/falsify-live-production-gate/
 ```
 
-- **Canonical** = 私有伞形 skill + vault `hermes-skills-runtime` falsify skill
+- **Canonical** = 私有伞形 skill + 私有 runtime
 - **导出目标** = [`skills/falsify-live-production-gate/`](../skills/falsify-live-production-gate/) 仅此 pack
 - **方向** = 仅 Pro → OSS；OSS PR 不是 Production enforcement 的 source of truth
 

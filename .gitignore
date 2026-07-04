@@ -21,3 +21,6 @@ __pycache__/
 
 # falsify local config (may hold a key)
 .falsify
+
+# opsec: never commit audit briefs
+audit-briefs/
