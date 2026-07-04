@@ -794,8 +794,10 @@ with tempfile.TemporaryDirectory() as _tmpdir:
         _rets = np.random.randn(365) * 0.01 + 0.003
         pd.DataFrame({"ret_log": _rets}).to_csv(_daily, index=False)
         pd.DataFrame({"a": _rets, "b": _rets + np.random.randn(365) * 0.001, "c": _rets * 0.8 + np.random.randn(365) * 0.004, "d": np.random.randn(365) * 0.01 + 0.001}).to_csv(_matrix, index=False)
-        _gate_script = str(Path(__file__).resolve().parent / "quant_falsify_gate.py")
-        _cmd = [sys.executable, _gate_script,
+        # quant_falsify_gate.py moved to falsify/quant_gate.py in the package
+        # restructure. Invoke via -m so it resolves the package path correctly
+        # (matches README: python -m falsify.quant_gate ...).
+        _cmd = [sys.executable, "-m", "falsify.quant_gate",
                 "--script", str(Path(__file__).resolve()),  # any .py as placeholder
                 "--results-dir", str(_tmp),
                 "--returns-matrix", str(_matrix), "--matrix-columns", "a,b,c,d",
