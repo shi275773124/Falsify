@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import math
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -29,10 +30,16 @@ try:
     import empyrical
 except Exception as _empyrical_err:
     # [止血] empyrical missing (not in [quant] extra) OR broken (0.5.5 on
-    # numpy 2.0 / py3.12). 治本 is empyrical-reloaded declared in [quant].
-    import sys as _sys
-    print(f"[falsify.quant] empyrical import FAILED: {type(_empyrical_err).__name__}: {_empyrical_err}", file=_sys.stderr)
-    print(f"[falsify.quant]   numpy={np.__version__}, pandas={pd.__version__}, python={_sys.version_info[:3]}", file=_sys.stderr)
+    # numpy 2.0 / py3.12). 治本 is empyrical-reloaded declared in [quant]
+    # (plus pytz — empyrical-reloaded imports it but doesn't declare it).
+    warnings.warn(
+        f"empyrical import failed ({type(_empyrical_err).__name__}: "
+        f"{_empyrical_err}); quant metrics will degrade to None "
+        f"(numpy={np.__version__}, pandas={pd.__version__}, "
+        f"python={sys.version_info[:3]})",
+        RuntimeWarning,
+        stacklevel=2,
+    )
     empyrical = None
 
 # empyrical 0.5.5 uses np.NINF which was removed in NumPy 2.0.

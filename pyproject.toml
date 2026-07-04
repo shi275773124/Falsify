@@ -31,6 +31,12 @@ quant = [
   "scipy>=1.10",
   "pandas>=2.0",
   "empyrical-reloaded>=0.5.12",
+  # empyrical-reloaded 0.5.12 imports pytz at load time but does NOT declare
+  # it in its own install_requires (verified via PyPI requires_dist). pandas
+  # <2.0 used to pull pytz transitively; pandas 3.x dropped that dep, so a
+  # fresh install no longer has pytz and `import empyrical` raises
+  # ModuleNotFoundError: No module named 'pytz'. Declare it here.
+  "pytz>=2022.7",
 ]
 
 [tool.pytest.ini_options]
