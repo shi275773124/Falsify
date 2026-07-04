@@ -1,13 +1,13 @@
 {
   "generated": "2026-06-25",
-  "source": "vault audit — C:\\Users\\CHRIS\\.vault + Falsify/examples",
+  "source": "internal audit cases (anonymized)",
   "recommended_for_homepage": ["sharpe-406-fictional-horizon", "horizontal-fee-comparison-4-errors"],
   "cases": [
     {
       "id": "sharpe-406-fictional-horizon",
       "title": "Sharpe 4.06 策略：6/7 关通过后在双 AI 五轮对抗审查中被判 NOT_VIABLE",
       "source": "Falsify/examples/real-cases/01-fictional-horizon-quant-audit.zh-CN.md",
-      "vault_pointer": "当前真相/breakout20 switched_kill lookahead 修复与 live-equivalent verdict 当前真相.md",
+      "vault_pointer": "(internal — anonymized)",
       "scenario": "research",
       "verdict": "BLOCK / NOT_VIABLE / NO_LIVE",
       "must_fix": "成本摊销到策略从未真正持有的虚构持仓期；PBO=0 不能当 live-safe",
@@ -30,7 +30,7 @@
       "id": "logs-not-state-deploy",
       "title": "部署验收：把日志当状态证明 → BLOCK",
       "source": "Falsify/examples/sample-block-report.json",
-      "vault_pointer": "变更记录/2026-06-25 Falsify homepage +1 polish PR12.md",
+      "vault_pointer": "(internal — anonymized)",
       "scenario": "deploy",
       "verdict": "BLOCK",
       "must_fix": "加 read-after-write probe，附 post-deploy 输出；移除「另一个 AI 审过」当证据",
@@ -39,10 +39,10 @@
       "sensitivity": "public_ok"
     },
     {
-      "id": "tradexyz-cron-false-alive",
+      "id": "cron-false-alive",
       "title": "Live cron：schedule 元数据被误报为 automation 健康",
-      "source": "事故记录/2026-06-21 trade.xyz 07e48531c87a automation health false-alive.md",
-      "vault_pointer": "方法论/双bot审议/2026-06-21-tradexyz-rebalance-import-fix/AUDIT_HANDOFF.md",
+      "source": "(internal incident record — anonymized)",
+      "vault_pointer": "(internal — anonymized)",
       "scenario": "cron",
       "verdict": "DOWN / FAIL_CLOSED",
       "must_fix": "order-capable cron 在 last_status=error 且缺同路径 green tick 前不得标 ALIVE",
@@ -51,9 +51,9 @@
       "sensitivity": "anonymize"
     },
     {
-      "id": "glossopetrae-n1-empty-response",
+      "id": "api-probe-empty-response",
       "title": "API 探针 n=1 空响应误诊为模型盲 → 跨 profile 防御全回滚",
-      "source": "事故记录/2026-06-21 GLOSSOPETRAE 假盲点 — n1 + max_tokens 截断误诊.md",
+      "source": "(internal incident record — anonymized)",
       "scenario": "research",
       "verdict": "RETRACTED / self-falsify 推翻",
       "must_fix": "n=1 + 空响应 = UNDETERMINED；必抓 finish_reason 与 completion_tokens",
@@ -64,18 +64,18 @@
     {
       "id": "cron-chain-silent-failure",
       "title": "多步 cron 链：写 ABORT 文件 = exit 0，产物缺失无人知",
-      "source": "事故记录/2026-06-02-多步cron链silent-failure.md",
+      "source": "(internal incident record — anonymized)",
       "scenario": "cron",
       "verdict": "silent failure（后补 verify 守卫）",
       "must_fix": "每步 cron 收尾必须 verify 产物存在、≥min_bytes、非 ABORT 前缀",
       "homepage_usable": false,
-      "homepage_reason": "好案例但 Hermes/dragon-v2 内部语境重；需抽象成 generic pipeline",
+      "homepage_reason": "好案例但内部语境重；需抽象成 generic pipeline",
       "sensitivity": "anonymize"
     },
     {
-      "id": "falsify-vps-deploy-drift",
+      "id": "vps-deploy-drift",
       "title": "Falsify 营销站：本地已 merge，VPS 仍跑旧 HEAD + 无 Caddy 路由",
-      "source": "变更记录/2026-06-24 Falsify VPS 营销站部署更新.md",
+      "source": "(internal changelog — anonymized)",
       "scenario": "deploy",
       "verdict": "fixed（git pull + systemd + Caddy）",
       "must_fix": "部署 claim 必须对 live URL read-after-write，不能只看 git log",
@@ -84,21 +84,15 @@
       "sensitivity": "public_ok"
     },
     {
-      "id": "zhaojian-webhook-44h-silence",
+      "id": "webhook-44h-silence",
       "title": "支付 webhook 44h 静默：进程在 ≠ 事件在到达",
-      "source": "事故记录/2026-06-21 照见心灯 webhook listener 44h 静默与诊断.md",
+      "source": "(internal incident record — anonymized)",
       "scenario": "deploy",
       "verdict": "self-falsify 后重写诊断",
       "must_fix": "监控看 webhook_events.max(created_at)，不看 listener_online 或进程 PID",
       "homepage_usable": false,
-      "homepage_reason": "Falsify 对抗审查过程精彩，但照见心灯/微信收款业务细节不宜上 Falsify 首页",
+      "homepage_reason": "Falsify 对抗审查过程精彩，但业务细节不宜上 Falsify 首页",
       "sensitivity": "do_not_use"
     }
-  ],
-  "subagent_cd84e5ef_status": {
-    "id": "cd84e5ef-b44e-499d-8184-4b69dc6dd950",
-    "task": "Falsify homepage layout fix (BLOCK badge overflow + trust-band orphan box)",
-    "status": "incomplete",
-    "evidence": "transcript has 2 lines only — read screenshot/CSS, no PR/merge/deploy output"
-  }
+  ]
 }

@@ -53,7 +53,7 @@ for _s in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
-VERSION = "0.5.0"
+from falsify import VERSION
 
 # provider -> (base_url, default_model, key_env). model None = user must set one.
 PRESETS = {

@@ -1,6 +1,6 @@
 # Homepage case copy drafts (artifact-first, 4 lines each)
 
-> Generated 2026-06-25 from vault mining. Do not paste into `home.html` until Chris approves.
+> Generated 2026-06-25 from anonymized internal audit cases. Do not paste into `home.html` until Chris approves.
 
 ---
 

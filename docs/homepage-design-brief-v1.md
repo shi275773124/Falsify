@@ -316,7 +316,7 @@ All signed **2026-06-28 · Chris 全过**:
 - Anti-AI workflow: `.vault/前端工作流deep-research-report.md`
 - Wireframe: `docs/homepage-wireframe-v1.md`
 - Teardown: `docs/16-homepage-redesign-teardown.md`
-- Marketing PDF: `C:\Users\CHRIS\Desktop\Falsify_营销学白皮书_2026.pdf` — **not ingested** (see blockers)
+- Marketing PDF: (external — not ingested, see blockers)
 
 ---
 
