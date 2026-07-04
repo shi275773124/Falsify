@@ -27,9 +27,12 @@ import pandas as pd
 from scipy import stats as sp_stats
 try:
     import empyrical
-except Exception:
+except Exception as _empyrical_err:
     # [止血] empyrical missing (not in [quant] extra) OR broken (0.5.5 on
     # numpy 2.0 / py3.12). 治本 is empyrical-reloaded declared in [quant].
+    import sys as _sys
+    print(f"[falsify.quant] empyrical import FAILED: {type(_empyrical_err).__name__}: {_empyrical_err}", file=_sys.stderr)
+    print(f"[falsify.quant]   numpy={np.__version__}, pandas={pd.__version__}, python={_sys.version_info[:3]}", file=_sys.stderr)
     empyrical = None
 
 # empyrical 0.5.5 uses np.NINF which was removed in NumPy 2.0.
