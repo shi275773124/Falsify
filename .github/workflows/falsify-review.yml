@@ -114,10 +114,15 @@ jobs:
       - name: Comment on PR (idempotent)
         if: ${{ github.event_name == 'pull_request' }}
         uses: actions/github-script@v7
+        env:
+          # Pass the multi-line body via env to avoid JS template-literal
+          # escaping issues: the body contains literal backticks (e.g.
+          # `tier=auto`, `falsify gate`) that would break `${{ }}` interpolation.
+          COMMENT_BODY: ${{ steps.body.outputs.body }}
         with:
           script: |
             const marker = '<!-- falsify-pr-review -->';
-            const body = `${{ steps.body.outputs.body }}`;
+            const body = process.env.COMMENT_BODY;
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
