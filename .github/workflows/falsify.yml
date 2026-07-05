@@ -37,28 +37,28 @@ jobs:
         run: python -m pytest tests -q
 
       - name: falsify --version
-        run: python falsify.py --version
+        run: python -m falsify --version
 
       - name: review dry-run must resolve without an API call
-        run: python falsify.py review --dry-run -p deepseek examples/comparison-case-study/05-final-excerpt.md
+        run: python -m falsify review --dry-run -p deepseek examples/comparison-case-study/05-final-excerpt.md
 
       - name: run exposes independent drafter/reviewer flags
-        run: python falsify.py run --help | grep -E -- '--drafter|--reviewer'
+        run: python -m falsify run --help | grep -E -- '--drafter|--reviewer'
 
       - name: unknown provider must fail closed
         run: |
-          if python falsify.py review --dry-run -p nosuchprovider examples/comparison-case-study/05-final-excerpt.md; then
+          if python -m falsify review --dry-run -p nosuchprovider examples/comparison-case-study/05-final-excerpt.md; then
             echo "::error::unknown provider unexpectedly passed"
             exit 1
           fi
           echo "OK — unknown provider correctly failed"
 
       - name: A shippable doc must PASS lint
-        run: python falsify.py lint examples/comparison-case-study/05-final-excerpt.md
+        run: python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
       - name: A draft with open issues must be BLOCKED
         run: |
-          if python falsify.py lint examples/comparison-case-study/01-agent-a-draft-excerpt.md; then
+          if python -m falsify lint examples/comparison-case-study/01-agent-a-draft-excerpt.md; then
             echo "::error::lint should have blocked the draft, but it passed"
             exit 1
           fi
