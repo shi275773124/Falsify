@@ -252,6 +252,26 @@ The workflow defaults to strict debt hygiene in JSON mode:
 
 **Boundary:** Hosted Team features (org policy UI, retention store, managed GitHub App) are separate from this OSS template. See [Open Core boundary](./docs/12-open-core-boundary.md).
 
+## Eating our own dog food — `falsify-review.yml`
+
+This repo runs Falsify on itself. Every PR triggers [`.github/workflows/falsify-review.yml`](./.github/workflows/falsify-review.yml), which calls the `falsify gate` subcommand:
+
+```bash
+python -m falsify gate \
+  --base "origin/${{ github.base_ref }}" \
+  --tier "${FALSIFY_TIER:-auto}" \
+  --glob 'demo-vault/research/**/*.md' \
+  --json falsify-out.json
+```
+
+The workflow then posts an idempotent PR comment (`<!-- falsify-pr-review -->` marker — re-pushes update the same comment, no spam) with the verdict, and fails the CI check on `BLOCK` / `KILL`. Output JSON is uploaded as the `falsify-gate-out` artifact for audit.
+
+`falsify gate` is an **honest L2 stub**: it aggregates `falsify lint` over the changed decision-doc files in the PR diff. It never fake-reports `BLOCK` on clean input and never fake-reports `PASS` on dirty input. The stub scope is documented in its JSON output (`schema_version: falsify.gate.v0.1`, `stub: true`). v1.1 will route `--tier quant` through `quant_falsify_gate` (gate0–gate6) per the [risk-contract schema](https://github.com/shi275773124/Falsify/blob/main/docs/06-risk-scalpel.md). For model-backed adversarial review of a single draft, use `falsify review <file> --json`.
+
+To tune the gate for a PR:
+- `FALSIFY_TIER` repo variable: `auto` (default) / `normal` / `production` / `quant`
+- `FALSIFY_GLOBS` in the workflow `env`: which changed `.md` paths to lint
+
 ## Follow the work
 
 Falsify is evolving with real AI-agent, code review, and production-risk workflows. If you are working on similar problems, feel free to follow along or reach out.
