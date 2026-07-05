@@ -1,0 +1,48 @@
+---
+description: 国内网络代理规则——mihomo 跑在 127.0.0.1:7890 (HTTP)，涉及外网操作时必须走代理
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
+# 国内网络代理（mihomo）
+
+## 背景
+
+国内直连 GitHub/PyPI/npm 不稳定——会 429 / connection reset / DNS 失败。
+mihomo 跑在 `127.0.0.1:7890` (HTTP)。worker / agent 默认走直连，导致 git/pip/npm 失败被误判为"provider 错误"或"网络抖动"。
+
+## 适用场景
+
+涉及以下操作时必须注入代理：
+- `git clone/fetch/push` 到 github.com
+- `pip install` 从 PyPI
+- `npm install` 从 npm registry
+- 任何走外网的 HTTP 请求（包括 curl、Invoke-WebRequest、subprocess 调用上述）
+
+不适用：
+- 纯本地操作（read/write file、本地 pytest、local lint）
+- 访问 localhost / 127.0.0.1（直连即可）
+
+## 注入方式
+
+PowerShell 环境：
+```powershell
+$env:HTTP_PROXY="http://127.0.0.1:7890"
+$env:HTTPS_PROXY="http://127.0.0.1:7890"
+git -c http.proxy=http://127.0.0.1:7890 clone https://github.com/...
+pip install --proxy http://127.0.0.1:7890 -r requirements.txt
+npm config set proxy http://127.0.0.1:7890
+npm config set https-proxy http://127.0.0.1:7890
+```
+
+## 429 / connection reset 处理
+
+遇到以下错误，先检查是否设了代理：
+- `Connection was reset`
+- `Could not connect to github.com:443`
+- `Could not resolve host: github.com`
+- HTTP 429
+- DNS resolution failed
+
+**默认假设**：429 / 网络抖动 = 重试同一操作 2-3 次（不要立刻重派 worker）。配额耗尽 ≠ 网络问题，要区分。
