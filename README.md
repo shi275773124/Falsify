@@ -4,7 +4,7 @@
 
 > **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md) and [Pro vs OSS](./docs/18-pro-vs-oss.md).
 
-Falsify is an **adversarial sign-off layer for high-risk AI work**: PRs, deployments, research reports, and agent outputs are reviewed against raw evidence before a team ships the decision.
+Falsify is an **adversarial sign-off layer for high-risk AI work**: PRs, deployments, research reports, agent outputs, and **quant backtests** are reviewed against raw evidence before a team ships the decision.
 
 It is still a decision gate: it turns raw evidence into `PASS`, `PASS_WITH_DEBT`, or `BLOCK` before a high-risk decision ships.
 
@@ -90,12 +90,55 @@ Final decision:
 - `PASS_WITH_DEBT`: no current blocker remains, and every Known Debt item has an upgrade trigger.
 - `BLOCK`: at least one Must Fix remains, evidence is missing for the current decision, or the audit cannot be parsed.
 
+## Quant Gate — backtest audit
+
+Falsify's quant layer catches what backtests hide: overfitting, lookahead bias, and cost optimism.
+
+```bash
+pip install falsify[quant]  # numpy, scipy, pandas
+python -m falsify.quant_gate --script strategy.py --contract contract.yaml --results-dir results/
+```
+
+**Gates 0–5:** contract validation → PIT/survivorship → static code scan (gate4 lookahead) → numeric recompute (PSR/DSR) → robustness (PBO/walk-forward/regime/multi-objective Calmar/per-trade edge-vs-cost) → live reconciliation.
+
+### The PBO=0.99 story
+
+A strategy family showed PBO=0.9991 — "certain overfitting, reject." But 0.9991 is suspiciously high. Investigation found the PBO function subtracted the mean before computing Sharpe, zeroing all Sharpes and making "IS-best" pure noise. PBO was measuring noise mean-reversion, not overfitting. After fixing: **PBO=0.09**. The strategy was actually robust.
+
+**Lesson:** PBO ≈ 1.0 is a red flag for the *implementation*, not just the strategy. Always verify with synthetic data.
+
+### What gate4 catches (lookahead bias)
+
+| Pattern | Severity | Example |
+|---|---|---|
+| `shift(-N)` | CRITICAL | `df["close"].shift(-5)` — brings future into present |
+| `rolling(VAR).std()` without `shift(1)` | WARN | vol includes current bar's return |
+| `rolling(20).std()` without `shift(1)` | WARN | same, with literal window |
+| Hand-written for-loop with `iloc[i+N]` | WARN | gate4 cannot statically verify — manual review required |
+
+### Credibility assets
+
+- **85 green-light fixtures** — known-answer tests for every statistical function (PBO, DSR, PSR, walk-forward, regime, cost realism, execution realism). Run nightly.
+- **6 red-light poisons** — deliberate bugs injected into formulas (PSR kurtosis, PBO rank, DSR formula, gate4 shift/rolling/for-loop). If a poison passes, the check is dead — alert immediately.
+
+```bash
+# Run the credibility suite
+python -m pytest tests/quant/ -v
+```
+
+### Hermes gate6 divergence
+
+The hermes deployment of Falsify runs an additional `gate6_harness_boundary.deployment_parity` gate (research/live contract hash + Jaccard selection similarity + universe/weights/normalization consistency; default `min_selected_jaccard=0.8`). This gate is **not** in the OSS repo: it depends on a live execution context and a production-guard concept that OSS does not ship. OSS users who need research/live parity checking should design a separate OSS-appropriate reproducibility gate rather than port hermes gate6.
+
 ## Quick start
 
 ```bash
 git clone https://github.com/shi275773124/Falsify.git
 cd Falsify
 python -m pip install -e .[dev]
+
+# For quant backtest auditing (PBO/DSR/gate4):
+python -m pip install -e .[quant]  # adds numpy, scipy, pandas
 
 # No API key: deterministic local fixture demo.
 python falsify.py demo

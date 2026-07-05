@@ -20,7 +20,24 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-quant = ["numpy>=1.24", "scipy>=1.10", "pandas>=2.0"]
+# empyrical-reloaded (not upstream `empyrical`): upstream 0.5.5 is unmaintained
+# since 2020 — its versioneer uses configparser.SafeConfigParser (removed in
+# Py3.12) so `pip install empyrical` fails on 3.12, and its code uses np.NINF
+# (removed in NumPy 2.0). The stefan-jansen/empyrical-reloaded fork fixes both
+# and installs as the `empyrical` module. quant.py still has a defensive skip
+# (止血) so missing/broken empyrical degrades metrics to None rather than crashing.
+quant = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pandas>=2.0",
+  "empyrical-reloaded>=0.5.12",
+  # empyrical-reloaded 0.5.12 imports pytz at load time but does NOT declare
+  # it in its own install_requires (verified via PyPI requires_dist). pandas
+  # <2.0 used to pull pytz transitively; pandas 3.x dropped that dep, so a
+  # fresh install no longer has pytz and `import empyrical` raises
+  # ModuleNotFoundError: No module named 'pytz'. Declare it here.
+  "pytz>=2022.7",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

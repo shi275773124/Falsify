@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import math
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -27,10 +28,22 @@ import pandas as pd
 from scipy import stats as sp_stats
 try:
     import empyrical
-except ImportError:
-    empyrical = None  # Optional — only needed by L3 stats functions
+except Exception as _empyrical_err:
+    # [止血] empyrical missing (not in [quant] extra) OR broken (0.5.5 on
+    # numpy 2.0 / py3.12). 治本 is empyrical-reloaded declared in [quant]
+    # (plus pytz — empyrical-reloaded imports it but doesn't declare it).
+    warnings.warn(
+        f"empyrical import failed ({type(_empyrical_err).__name__}: "
+        f"{_empyrical_err}); quant metrics will degrade to None "
+        f"(numpy={np.__version__}, pandas={pd.__version__}, "
+        f"python={sys.version_info[:3]})",
+        RuntimeWarning,
+        stacklevel=2,
+    )
+    empyrical = None
 
-# empyrical 0.5.5 uses np.NINF which was removed in NumPy 2.0
+# empyrical 0.5.5 uses np.NINF which was removed in NumPy 2.0.
+# Harmless when empyrical-reloaded is used; keeps 0.5.5 alive if installed.
 if not hasattr(np, 'NINF'):
     np.NINF = -np.inf
 
@@ -725,13 +738,19 @@ def _compute_stats(returns: np.ndarray, periods_per_year: int = 365) -> dict:
     # Sharpe — use the native return basis (log for ret_log, simple otherwise)
     sr = float(returns.mean() / returns.std(ddof=1) * math.sqrt(periods_per_year))
 
-    # MaxDD — empyrical returns negative fraction, convert to positive %
-    emp_dd = float(empyrical.max_drawdown(simple_series))
-    max_dd = abs(emp_dd) if not math.isnan(emp_dd) else 0.0
+    # [止血] empyrical missing — MaxDD/Sortino degrade to None instead of crashing.
+    # 治本 is a working empyrical install (empyrical-reloaded in [quant] extra).
+    if empyrical is None:
+        max_dd = None
+        sortino = None
+    else:
+        # MaxDD — empyrical returns negative fraction, convert to positive %
+        emp_dd = float(empyrical.max_drawdown(simple_series))
+        max_dd = abs(emp_dd) if not math.isnan(emp_dd) else 0.0
 
-    # Sortino — empyrical on simple returns for downside compounding semantics
-    emp_sortino = float(empyrical.sortino_ratio(simple_series, period='daily', annualization=periods_per_year))
-    sortino = emp_sortino if not math.isnan(emp_sortino) else None
+        # Sortino — empyrical on simple returns for downside compounding semantics
+        emp_sortino = float(empyrical.sortino_ratio(simple_series, period='daily', annualization=periods_per_year))
+        sortino = emp_sortino if not math.isnan(emp_sortino) else None
 
     return {
         "n": n,
@@ -743,7 +762,7 @@ def _compute_stats(returns: np.ndarray, periods_per_year: int = 365) -> dict:
         "skew": round(skew, 4),
         "kurtosis_excess": round(kurt, 4),
         "cum_return_pct": round(cum * 100, 2),
-        "max_drawdown_pct": round(max_dd * 100, 2),
+        "max_drawdown_pct": round(max_dd * 100, 2) if max_dd is not None else None,
     }
 
 
@@ -1238,6 +1257,8 @@ def _exec_sharpe(arr, periods_per_year: int = 365) -> float | None:
     arr = arr[~np.isnan(arr)]
     if len(arr) < 30:
         return None
+    if empyrical is None:  # [止血] empyrical missing — caller must handle None
+        return None
     sr = float(empyrical.sharpe_ratio(
         pd.Series(arr), period='daily', annualization=periods_per_year))
     return sr if not math.isnan(sr) else 0.0
@@ -1417,10 +1438,13 @@ def execution_realism_check(returns: np.ndarray,
                 "Sharpe is undefined, cost stress is not meaningful."}
 
     rets_series = pd.Series(returns)
-    sr_base = float(empyrical.sharpe_ratio(
-        rets_series, period='daily', annualization=periods_per_year))
-    if math.isnan(sr_base):
+    if empyrical is None:  # [止血] empyrical missing — sr_base=0 triggers cost SKIP
         sr_base = 0.0
+    else:
+        sr_base = float(empyrical.sharpe_ratio(
+            rets_series, period='daily', annualization=periods_per_year))
+        if math.isnan(sr_base):
+            sr_base = 0.0
 
     # E: Delay sensitivity
     delay_results = _exec_delay_test(returns, n, strategy_type)
