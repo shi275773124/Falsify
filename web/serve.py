@@ -34,6 +34,8 @@ STATIC_CTYPE = {
     ".webm": "video/webm",
 }
 PROVIDER = os.environ.get("FALSIFY_PROVIDER")
+_RELEASE_VERSION_RAW = os.environ.get("FALSIFY_RELEASE_SHA", "dev")
+RELEASE_ASSET_VERSION = re.sub(r"[^A-Za-z0-9._-]", "-", _RELEASE_VERSION_RAW).strip("-.") or "dev"
 
 SCENARIOS = {
     "general": "General AI-generated work. Attack false confidence and missing evidence.",
@@ -151,6 +153,8 @@ def safe_design_path(url_path):
         target.relative_to((ROOT / "design").resolve())
     except ValueError:
         return None
+    if target.is_dir():
+        return target
     allowed = {".html", ".png", ".css", ".js", ".svg", ".webp", ".ico", ".mp4", ".webm", ".md"}
     if target.suffix.lower() not in allowed:
         return None
@@ -301,6 +305,90 @@ def docs_nav_html(current=None, lang="en"):
                 f"<ul>{''.join(items)}</ul></section>"
             )
     return "".join(blocks)
+
+
+FLOW_HOME_DIR = ROOT / "design" / "falsify-flow-candidate"
+FLOW_DOCS_DIR = ROOT / "design" / "falsify-flow-docs"
+
+FLOW_DOCS_ZH = {
+    "skip": "\u8df3\u5230\u6b63\u6587",
+    "nav_docs": "\u6587\u6863",
+    "menu_open": "\u6253\u5f00\u83dc\u5355",
+    "menu_close": "\u5173\u95ed\u83dc\u5355",
+    "language": "\u5207\u6362\u5230\u82f1\u6587",
+    "eyebrow": "Falsify \u6587\u6863",
+    "index_title": "Falsify \u6587\u6863",
+    "index_h1": "\u5ba1\u67e5\u4e0d\u662f\u66ff\u4f60\u505a\u51b3\u5b9a\u3002\u5b83\u5148\u628a\u4f9d\u636e\u6446\u51fa\u6765\u3002",
+    "index_lead": "\u4ece\u672c\u5730 CLI \u5f00\u59cb\uff0c\u4e86\u89e3\u56de\u6267\u7ed3\u6784\u3001\u5ba1\u67e5\u6df1\u5ea6\u548c\u5404\u9886\u57df\u7684\u6269\u5c55\u8fb9\u754c\u3002",
+    "card_open": "\u67e5\u770b\u6307\u5357",
+    "untranslated": "\u9875\u9762\u6682\u65f6\u6ca1\u6709\u4e2d\u6587\u7248\uff0c\u4ee5\u4e0b\u663e\u793a\u82f1\u6587\u539f\u6587\u3002",
+}
+
+FLOW_DOCS_ZH_SECTION_LABELS = {
+    "Start": "\u5f00\u59cb\u4f7f\u7528",
+    "Framework": "\u6838\u5fc3\u6982\u5ff5",
+    "Product": "\u9886\u57df\u6307\u5357",
+    "Ops": "\u53c2\u8003",
+}
+
+
+def flow_docs_href(stem, lang, canonical=False):
+    prefix = "/docs" if canonical else "/design/falsify-flow-docs"
+    href = f"{prefix}/{stem}.html"
+    return f"{href}?lang=zh" if lang == "zh" else href
+
+def flow_docs_nav_html(current=None, lang="en", canonical=False):
+    labels = FLOW_DOCS_ZH_SECTION_LABELS if lang == "zh" else DOC_SECTION_LABELS["en"]
+    blocks = []
+    for section, stems in DOC_SECTIONS:
+        links = []
+        for stem in stems:
+            if stem in doc_files():
+                active = ' class="active" aria-current="page"' if stem == current else ""
+                links.append(f'<li><a{active} href="{flow_docs_href(stem, lang, canonical)}">{html_escape(doc_title(stem, lang))}</a></li>')
+        if links:
+            blocks.append(f'<section><h2>{html_escape(labels.get(section, section))}</h2><ul>{"".join(links)}</ul></section>')
+    return "".join(blocks)
+
+def flow_docs_shell(title, body, current=None, lang="en", canonical=False):
+    is_zh = lang == "zh"
+    lang_query = "?lang=zh" if is_zh else ""
+    button = "EN" if is_zh else "\u4e2d\u6587"
+    skip = FLOW_DOCS_ZH["skip"] if is_zh else "Skip to content"
+    docs_label = FLOW_DOCS_ZH["nav_docs"] if is_zh else "Docs"
+    docs_prefix = "/docs/" if canonical else "/design/falsify-flow-docs/"
+    flow_prefix = "/" if canonical else "/design/falsify-flow-candidate/"
+    docs_href = f"{docs_prefix}{lang_query}"
+    flow_href = f"{flow_prefix}{lang_query}"
+    menu_label = FLOW_DOCS_ZH["menu_open"] if is_zh else "Menu"
+    language_label = FLOW_DOCS_ZH["language"] if is_zh else "Switch to Chinese"
+    menu_close = FLOW_DOCS_ZH["menu_close"] if is_zh else "Menu"
+    return f"""<!doctype html><html lang="{'zh-CN' if is_zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#020914"><title>{html_escape(title)} \u2014 Falsify Flow Docs</title><link rel="stylesheet" href="/design/falsify-flow-docs/candidate.css"></head><body><a class="skip" href="#main">{html_escape(skip)}</a><header class="flow-docs-header"><a class="flow-brand" href="{docs_prefix}{lang_query}">Falsify<span></span></a><div class="flow-header-actions"><a href="{flow_href}">Flow</a><a href="{docs_href}" aria-current="page">{html_escape(docs_label)}</a><button id="flow-lang" type="button" aria-label="{html_escape(language_label)}">{button}</button><button id="docs-menu" type="button" aria-expanded="false" aria-controls="flow-sidebar" data-open-label="{html_escape(menu_label)}" data-close-label="{html_escape(menu_close)}">{html_escape(menu_label)}</button></div></header><div class="flow-docs-layout"><aside id="flow-sidebar" class="flow-docs-sidebar"><p class="sidebar-kicker">FLOW / DOCS</p>{flow_docs_nav_html(current, lang, canonical)}</aside><main id="main" class="flow-docs-main">{body}</main></div><script src="/design/falsify-flow-docs/candidate.js"></script></body></html>"""
+
+
+def flow_docs_index(lang="en", canonical=False):
+    is_zh = lang == "zh"
+    chrome = FLOW_DOCS_ZH if is_zh else DOCS_CHROME["en"]
+    labels = FLOW_DOCS_ZH_SECTION_LABELS if is_zh else DOC_SECTION_LABELS["en"]
+    cards=[]
+    for section, stems in DOC_SECTIONS:
+        for stem in stems:
+            if stem in doc_files():
+                card_meta = chrome["card_open"] if is_zh else stem.replace("-", " ")
+                cards.append(f'<a class="flow-doc-card" href="{flow_docs_href(stem, lang, canonical)}"><span>{html_escape(labels.get(section, section))}</span><h2>{html_escape(doc_title(stem, lang))}</h2><p>{html_escape(card_meta)} <b>\u2192</b></p></a>')
+    eyebrow = chrome["eyebrow"] if is_zh else "FLOW / KNOWLEDGE BASE"
+    body=f'<section class="flow-doc-hero"><p class="eyebrow">{html_escape(eyebrow)}</p><h1>{html_escape(chrome["index_h1"])}</h1><p>{html_escape(chrome["index_lead"])}</p></section><section class="flow-doc-grid">{"".join(cards)}</section>'
+    return flow_docs_shell(chrome["index_title"], body, lang=lang, canonical=canonical)
+
+def flow_docs_page(stem, lang="en", canonical=False):
+    text, untranslated=resolve_doc_markdown(stem, lang)
+    if not text: return None
+    rendered=render_markdown(text, doc_title(stem, lang), lang=lang, untranslated=False)
+    article=rendered.split('<main class="docs-main">',1)[1].split('</main>',1)[0]
+    if untranslated:
+        notice = FLOW_DOCS_ZH["untranslated"]
+        article = f'<p class="doc-untranslated"><strong>\u63d0\u793a</strong>{html_escape(notice)}</p>{article}'
+    return flow_docs_shell(doc_title(stem, lang), article, current=stem, lang=lang, canonical=canonical)
 
 
 def load_docs_js():
@@ -475,120 +563,149 @@ def docs_index(lang="en"):
     return docs_shell(chrome["index_title"], body, lang=lang)
 
 
-PAGE = load_homepage()
+def load_flow_homepage():
+    """Mount the immutable candidate at root with explicit asset URLs."""
+    html = (FLOW_HOME_DIR / "index.html").read_text(encoding="utf-8-sig")
+    asset_urls = {
+        'href="candidate.css"': f'href="/assets/flow/home.css?v={RELEASE_ASSET_VERSION}"',
+        'href="./candidate.css"': f'href="/assets/flow/home.css?v={RELEASE_ASSET_VERSION}"',
+        'src="candidate.js"': f'src="/assets/flow/home.js?v={RELEASE_ASSET_VERSION}"',
+        'src="./candidate.js"': f'src="/assets/flow/home.js?v={RELEASE_ASSET_VERSION}"',
+        'src="flow-canvas.js"': f'src="/assets/flow/flow-canvas.js?v={RELEASE_ASSET_VERSION}"',
+        'src="./flow-canvas.js"': f'src="/assets/flow/flow-canvas.js?v={RELEASE_ASSET_VERSION}"',
+    }
+    for source, mounted in asset_urls.items():
+        html = html.replace(source, mounted)
+    return html
+
+
+PAGE = load_flow_homepage()
 
 class H(BaseHTTPRequestHandler):
-    def _send(self, code, body, ctype="application/json"):
+    SECURITY_HEADERS = {
+        "Content-Security-Policy": (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' data:; connect-src 'self'; font-src 'self'; "
+            "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; "
+            "form-action 'self'"
+        ),
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+    }
+
+    def _send(self, code, body=b"", ctype="application/json", head=False):
         b = body if isinstance(body, bytes) else body.encode("utf-8")
+        if ctype.startswith("text/") or ctype in {"application/json", "application/javascript"}:
+            if "charset=" not in ctype:
+                ctype += "; charset=utf-8"
         self.send_response(code)
-        self.send_header("Content-Type", ctype + "; charset=utf-8")
+        self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(b)))
+        for name, value in self.SECURITY_HEADERS.items():
+            self.send_header(name, value)
         self.end_headers()
-        self.wfile.write(b)
+        if not head:
+            self.wfile.write(b)
 
-    def _file_response_body(self, parsed, target):
-        if target.suffix.lower() == ".md":
-            lang = parse_lang(parsed.query)
-            stem = target.stem
-            if stem.endswith(".zh-CN"):
-                stem = stem[: -len(".zh-CN")]
-            text, untranslated = resolve_doc_markdown(stem, lang)
-            html = render_markdown(
-                text,
-                doc_title(stem, lang),
-                current_path=parsed.path,
-                lang=lang,
-                untranslated=untranslated,
-            )
-            return html.encode("utf-8"), "text/html; charset=utf-8"
-        suffix = target.suffix.lower()
-        return target.read_bytes(), STATIC_CTYPE[suffix]
+    def _json_error(self, code, error_code, message, head=False):
+        payload = {"error": {"code": error_code, "message": message}}
+        return self._send(code, json.dumps(payload), head=head)
 
-    def serve_static(self):
+    def _flow_asset(self, parsed):
+        prefix = "/assets/flow/"
+        if not parsed.path.startswith(prefix):
+            return None
+        rel = posixpath.normpath(unquote(parsed.path[len(prefix):])).lstrip("/")
+        aliases = {
+            "home.css": "candidate.css",
+            "home.js": "candidate.js",
+            "flow-canvas.js": "flow-canvas.js",
+        }
+        filename = aliases.get(rel)
+        return _safe_under(FLOW_HOME_DIR, filename) if filename else None
+
+    def _route(self, head=False):
         parsed = urlparse(self.path)
         lang = parse_lang(parsed.query)
-        if parsed.path == "/docs/":
-            return self._send(200, docs_index(lang), "text/html")
-        target = safe_web_static(self.path) or safe_examples_path(self.path) or safe_design_path(self.path) or safe_repo_path(self.path)
-        if not target or not target.is_file():
-            return self._send(404, json.dumps({"error": "not found"}))
-        if target.suffix.lower() == ".md":
-            stem = target.stem
-            if stem.endswith(".zh-CN"):
-                stem = stem[: -len(".zh-CN")]
-            text, untranslated = resolve_doc_markdown(stem, lang)
-            html = render_markdown(
-                text,
-                doc_title(stem, lang),
-                current_path=parsed.path,
-                lang=lang,
-                untranslated=untranslated,
-            )
-            return self._send(200, html, "text/html")
-        return self._send(200, target.read_bytes(), STATIC_CTYPE[target.suffix.lower()])
+        path = parsed.path
+
+        if path in {"/", "/index.html"}:
+            return self._send(200, PAGE, "text/html", head=head)
+
+        if path in {"/docs", "/docs/", "/docs/index.html"}:
+            return self._send(200, flow_docs_index(lang, canonical=True), "text/html", head=head)
+
+        if path.startswith("/docs/"):
+            name = Path(path).name
+            stem = name
+            if name.endswith(".zh-CN.md"):
+                lang = "zh"
+            for suffix in (".zh-CN.md", ".html", ".md"):
+                if stem.endswith(suffix):
+                    stem = stem[:-len(suffix)]
+                    break
+            page = flow_docs_page(stem, lang, canonical=True)
+            if page:
+                return self._send(200, page, "text/html", head=head)
+            return self._json_error(404, "not_found", "Resource not found.", head=head)
+
+        if path in {"/design/falsify-flow-docs/", "/design/falsify-flow-docs/index.html"}:
+            return self._send(200, flow_docs_index(lang), "text/html", head=head)
+        if path.startswith("/design/falsify-flow-docs/") and path.endswith(".html"):
+            page = flow_docs_page(Path(path).stem, lang)
+            if page:
+                return self._send(200, page, "text/html", head=head)
+            return self._json_error(404, "not_found", "Resource not found.", head=head)
+
+        target = self._flow_asset(parsed)
+        if not target:
+            target = safe_web_static(self.path) or safe_examples_path(self.path) or safe_design_path(self.path)
+        if not target and path.startswith("/assets/"):
+            target = safe_repo_path(self.path)
+        if target and target.is_dir() and path.startswith("/design/"):
+            target = target / "index.html"
+        if target and target.is_file():
+            suffix = target.suffix.lower()
+            ctype = STATIC_CTYPE.get(suffix)
+            if ctype:
+                return self._send(200, target.read_bytes(), ctype, head=head)
+        return self._json_error(404, "not_found", "Resource not found.", head=head)
 
     def do_HEAD(self):
-        parsed = urlparse(self.path)
-        if parsed.path in ("/", "/index.html"):
-            body = PAGE.encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            return
-        target = None
-        if parsed.path.startswith("/static/"):
-            target = safe_web_static(self.path)
-        elif parsed.path.startswith("/examples/"):
-            target = safe_examples_path(self.path)
-        elif parsed.path.startswith("/design/"):
-            target = safe_design_path(self.path)
-        elif parsed.path.startswith("/docs/") or parsed.path.startswith("/assets/"):
-            target = safe_repo_path(self.path)
-        if target and target.is_file():
-            body, ctype = self._file_response_body(parsed, target)
-            self.send_response(200)
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            return
-        self.send_response(404)
-        self.end_headers()
+        self._route(head=True)
 
     def do_GET(self):
-        parsed = urlparse(self.path)
-        if parsed.path in ("/", "/index.html"):
-            self._send(200, PAGE, "text/html")
-        elif (
-            parsed.path.startswith("/docs/")
-            or parsed.path.startswith("/assets/")
-            or parsed.path.startswith("/static/")
-            or parsed.path.startswith("/examples/")
-            or parsed.path.startswith("/design/")
-        ):
-            self.serve_static()
-        else:
-            self._send(404, json.dumps({"error": "not found"}))
+        self._route()
 
     def do_POST(self):
         if urlparse(self.path).path != "/review":
-            return self._send(404, json.dumps({"error": "not found"}))
+            return self._json_error(404, "not_found", "Resource not found.")
         try:
-            n = int(self.headers.get("Content-Length", 0))
-            req = json.loads(self.rfile.read(n) or b"{}")
-            text = (req.get("text") or "").strip()
-            if not text:
-                return self._send(400, json.dumps({"error": "empty text"}))
-            result = review(text, req.get("scenario", "general"))
-            self._send(200, json.dumps(result))
-        except falsify.FalsifyError as e:
-            self._send(200, json.dumps({"error": str(e)}))
-        except Exception as e:  # noqa: BLE001
-            self._send(200, json.dumps({"error": f"server error: {e}"}))
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                req = json.loads(self.rfile.read(n) or b"{}")
+            except (TypeError, ValueError, json.JSONDecodeError):
+                return self._json_error(400, "invalid_json", "Request body must be valid JSON.")
+            if not isinstance(req, dict):
+                return self._json_error(400, "invalid_request", "Request body must be a JSON object.")
+            text = req.get("text")
+            if not isinstance(text, str) or not text.strip():
+                return self._json_error(400, "empty_text", "Text is required.")
+            scenario = req.get("scenario", "general")
+            if scenario not in SCENARIOS:
+                return self._json_error(400, "invalid_scenario", "Scenario is not supported.")
+            result = review(text.strip(), scenario)
+            return self._send(200, json.dumps(result))
+        except falsify.FalsifyError as exc:
+            detail = str(exc).lower()
+            if detail.startswith(("no endpoint", "no api key", "no model", "unknown provider")):
+                return self._json_error(503, "provider_unavailable", "Review provider is not configured.")
+            return self._json_error(502, "upstream_failure", "Review provider request failed.")
+        except Exception:  # noqa: BLE001
+            return self._json_error(500, "internal_error", "Review failed unexpectedly.")
 
-    def log_message(self, *a):
+    def log_message(self, *args):
         pass
-
 
 def main():
     port = int(os.environ.get("PORT", "8000"))
