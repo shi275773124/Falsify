@@ -33,6 +33,15 @@ def test_root_serves_v2_flow_candidate_and_versioned_assets():
     assert "The deploy never happened" in body
 
 
+def test_canonical_docs_versions_css_and_js_with_release_marker():
+    with patch.object(serve, "RELEASE_ASSET_VERSION", "release-marker-123"):
+        docs = request("/docs/?lang=zh")
+    body = body_text(docs)
+    assert docs.status_code == 200
+    assert 'href="/design/falsify-flow-docs/candidate.css?v=release-marker-123"' in body
+    assert 'src="/design/falsify-flow-docs/candidate.js?v=release-marker-123"' in body
+
+
 def test_same_origin_flow_assets_are_served():
     for path, marker in (("/assets/flow/home.css", b".hero"), ("/assets/flow/home.js", b"FalsifyFlow"), ("/assets/flow/flow-canvas.js", b"IntersectionObserver")):
         response = request(path)
