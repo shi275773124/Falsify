@@ -11,13 +11,13 @@ def test_flow_candidate_has_v2_narrative_and_boundaries():
     for marker in ('id="top"', 'id="demo"', 'id="proof"', 'id="difference"', 'id="how"', 'id="try"'):
         assert marker in html
     assert "PASS, PASS_WITH_DEBT, or BLOCK" in html
-    assert "Don't let ?done?" in js
+    assert "Don't let &quot;done&quot;" in js
     assert "ILLUSTRATIVE DEMO" in html
     assert "flow-canvas.js" in html
 
 def test_signature_demo_is_user_triggered_and_reduced_motion_safe():
     html, css, js, flow = source("index.html"), source("candidate.css"), source("candidate.js"), source("flow-canvas.js")
-    for text in ("Deployment complete", "CI passed", "Logs complete", "AI review passed", "Target state unchanged", "BLOCK", "Must fix"):
+    for text in ("Deployment completed successfully", "CI passed", "Logs complete", "AI review passed", "Target state: unchanged", "BLOCK", "Must fix"):
         assert text in html or text in js
     assert 'class="demo-toggle"' in html
     assert "prefers-reduced-motion: reduce" in css
@@ -49,3 +49,11 @@ def test_three_direct_inspectable_case_sources():
     html = source("index.html")
     for link in ("/examples/real-cases/02-derived-freshness-stale-panel.md", "/examples/real-cases/04-round3b-evidence-integrity-reversal.md", "/examples/real-cases/05-second-runtime-v068-sync-false-green.md"):
         assert link in html
+
+
+def test_flow_candidate_uses_a_shared_semantic_brand_mark_and_verdict_icons():
+    html, css = source("index.html"), source("candidate.css")
+    assert html.count('class="brand-mark"') == 2
+    assert "Unified Falsify icon system" in css
+    assert 'aria-hidden="true">✓</i>' in html
+    assert "state-readback b::before" in css

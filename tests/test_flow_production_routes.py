@@ -30,7 +30,7 @@ def test_root_serves_v2_flow_candidate_and_versioned_assets():
     assert "/assets/flow/home.css?v=" in body
     assert "/assets/flow/home.js?v=" in body
     assert "/assets/flow/flow-canvas.js?v=" in body
-    assert "The deploy never happened" in body
+    assert "The deployment never took effect" in body
 
 
 def test_canonical_docs_versions_css_and_js_with_release_marker():

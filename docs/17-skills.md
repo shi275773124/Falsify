@@ -1,8 +1,8 @@
-# 17. Falsify Skills (install)
+# 17. Install Falsify Skills
 
 [Back to README](../README.md) · [Getting Started](./00-getting-started.md) · [BYOK + Policy](./11-byok-and-policy.md)
 
-Falsify skills are **repeatable sign-off workflows**, not prompt snippets. Each pack includes an input contract, raw artifact requirements, verdict schema (`falsify.review.v1`), sample BLOCK / PASS_WITH_DEBT outputs, pitfalls, and minimal actions.
+Falsify skills are **repeatable review workflows**, not reusable prompt snippets. Each pack includes an input contract, raw artifact requirements, verdict schema (`falsify.review.v1`), sample BLOCK / PASS_WITH_DEBT outputs, pitfalls, and minimal actions.
 
 Live site: [falsify.zjdeng.xyz](https://falsify.zjdeng.xyz/)
 
