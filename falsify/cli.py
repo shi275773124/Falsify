@@ -604,12 +604,21 @@ def cmd_demo(args):
     finish(format_cutline_audit(verdict, findings))
 
 
-def cmd_lint(args):
-    text = read_input(args.file)
+def lint_findings(text):
+    """Static L2 check core: untagged prose blocks + open ship-blocker tags.
+
+    Returns (untagged_first_lines, blocker_pairs). Shared by `lint` (human
+    pretty-print + exit) and `gate` (aggregate over a PR diff)."""
     untagged = [b.strip().splitlines()[0][:60]
                 for b, fence in iter_blocks(text)
                 if not fence and is_prose(b) and not TAG_RE.match(b)]
     blockers = [(m, text.count(m)) for m in SHIP_BLOCKERS if text.count(m)]
+    return untagged, blockers
+
+
+def cmd_lint(args):
+    text = read_input(args.file)
+    untagged, blockers = lint_findings(text)
 
     print(f"falsify lint · {args.file}")
     if untagged:
@@ -707,6 +716,110 @@ def cmd_init(args):
     print(f"wrote {target}. Set your key in the environment, then: falsify review <file>")
 
 
+def _changed_md_files(base):
+    """List .md files changed between base and HEAD. Tries --merge-base first
+    (correct for divergent branches), falls back to triple-dot range for
+    older git."""
+    for spec in (["git", "diff", "--name-only", "--merge-base", base, "HEAD"],
+                 ["git", "diff", "--name-only", f"{base}...HEAD"]):
+        r = subprocess.run(spec, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace")
+        if r.returncode == 0:
+            return [line.strip() for line in r.stdout.splitlines()
+                    if line.strip().endswith(".md")]
+    raise FalsifyError(f"git diff vs {base} failed: {r.stderr.strip()[:200]}")
+
+
+def cmd_gate(args):
+    """`falsify gate` — PR-diff risk gate. HONEST STUB: L2 static check only.
+
+    Aggregates `lint` over every changed .md file vs --base. Emits a verdict:
+      PASS_WITH_DEBT  all changed docs lint-clean (stub can't prove deeper)
+      BLOCK           any changed doc has untagged prose or open ship-blockers
+    No model-backed review, no quant gate0–gate6. v1.1 will route --tier quant
+    through quant_falsify_gate. The stub never fake-reports BLOCK on clean input
+    and never fake-reports PASS on dirty input.
+
+    --glob restricts which changed .md files are linted (fnmatch, repeatable).
+    Default: lint every changed .md. Use --glob to scope to decision-doc paths
+    so the gate doesn't BLOCK on plain README/doc edits.
+    """
+    files = _changed_md_files(args.base)
+    if args.glob:
+        import fnmatch
+        kept = []
+        for f in files:
+            if any(fnmatch.fnmatch(f, pat) or fnmatch.fnmatch("/" + f, pat)
+                   for pat in args.glob):
+                kept.append(f)
+        files = kept
+    file_results = []
+    for f in files:
+        try:
+            text = Path(f).read_text(encoding="utf-8")
+        except OSError as e:
+            file_results.append({"path": f, "error": f"unreadable: {e}"})
+            continue
+        untagged, blockers = lint_findings(text)
+        file_results.append({
+            "path": f,
+            "untagged_blocks": len(untagged),
+            "untagged_examples": untagged[:5],
+            "ship_blockers": [{"tag": m, "count": n} for m, n in blockers],
+            "lint_ok": not untagged and not blockers,
+        })
+
+    any_block = any((not r.get("lint_ok", True)) for r in file_results)
+    verdict = "BLOCK" if any_block else "PASS_WITH_DEBT"
+
+    lines = [
+        f"**Falsify gate (L2 stub)** — tier=`{args.tier}`, base=`{args.base}`",
+        f"Changed .md files: {len(files)}",
+        "",
+    ]
+    for r in file_results:
+        if "error" in r:
+            lines.append(f"- ⚠️ `{r['path']}` — {r['error']}")
+            continue
+        icon = "✅" if r["lint_ok"] else "🛑"
+        extras = []
+        if r["untagged_blocks"]:
+            extras.append(f"{r['untagged_blocks']} untagged")
+        if r["ship_blockers"]:
+            extras.append("blockers: " + ", ".join(f"{b['tag']}×{b['count']}" for b in r["ship_blockers"]))
+        tail = f" ({'; '.join(extras)})" if extras else ""
+        lines.append(f"- {icon} `{r['path']}`{tail}")
+    if not files:
+        lines.append("_No changed .md files in this PR._")
+    lines.append("")
+    lines.append(
+        "_Stub: L2 static check (lint) only. Model-backed adversarial review "
+        "(`falsify review <file>`) and quant gate0–gate6 are not wired into "
+        "this subcommand yet. v1.1 routes `--tier quant` through "
+        "`quant_falsify_gate`._"
+    )
+    summary = "\n".join(lines)
+
+    result = {
+        "schema_version": "falsify.gate.v0.1",
+        "verdict": verdict,
+        "tier_used": args.tier,
+        "base": args.base,
+        "summary": summary,
+        "files": file_results,
+        "stub": True,
+        "stub_scope": "L2 static check (lint) only; no model review, no quant gate",
+    }
+    if args.json:
+        Path(args.json).write_text(
+            json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+        print(f"[gate output written to {args.json}]", file=sys.stderr)
+    print(f"VERDICT = {verdict}")
+    print(summary)
+    sys.exit(0 if verdict in ("PASS", "PASS_WITH_DEBT") else 1)
+
+
 def main():
     p = argparse.ArgumentParser(prog="falsify",
                                 description="证伪 — give AI output a verdict before you trust it.")
@@ -763,6 +876,22 @@ def main():
     pi = sub.add_parser("init", help="write a .falsify config template")
     pi.add_argument("--force", action="store_true")
     pi.set_defaults(func=cmd_init)
+
+    pg = sub.add_parser(
+        "gate",
+        help="L2 stub: gate a PR diff (lint changed .md files) -> verdict + JSON")
+    pg.add_argument("--base", required=True,
+                    help="git base ref, e.g. origin/main or HEAD~1")
+    pg.add_argument("--tier", default="auto",
+                    choices=["auto", "normal", "production", "quant"],
+                    help="risk tier (stub honors normal/production; quant "
+                         "falls back to L2 with a note until v1.1)")
+    pg.add_argument("--json", metavar="PATH",
+                    help="write JSON result (schema falsify.gate.v0.1) to PATH")
+    pg.add_argument("--glob", action="append", default=None, metavar="PATTERN",
+                    help="fnmatch pattern to restrict changed .md files "
+                         "(repeatable). Default: all changed .md.")
+    pg.set_defaults(func=cmd_gate)
 
     args = p.parse_args()
     try:
