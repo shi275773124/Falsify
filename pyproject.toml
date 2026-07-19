@@ -51,5 +51,8 @@ falsify = "falsify:main"
 [tool.setuptools.packages.find]
 include = ["falsify*"]
 
+[tool.setuptools.package-data]
+falsify = ["audit_backtest_fixtures/**/*"]
+
 [tool.setuptools.dynamic]
 version = { attr = "falsify.VERSION" }

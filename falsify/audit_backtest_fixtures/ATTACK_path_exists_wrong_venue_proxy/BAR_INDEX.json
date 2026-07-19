@@ -1,0 +1,9 @@
+{
+  "timestamp_column": "timestamp",
+  "timezone": "UTC",
+  "label": "close",
+  "join_direction": "backward",
+  "alignment_shift_bars": 0,
+  "feature_timestamp_relation": "lte_decision",
+  "signal_return_alignment": "close_to_next_open"
+}

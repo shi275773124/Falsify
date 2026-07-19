@@ -1,7 +1,8 @@
 name: falsify
 
 # Canonical CI gate for this repo. Require this check on main before merge/tag.
-# Smoke test: shippable doc passes, draft with open issues is blocked. No API key needed.
+# Smoke test: L2-clean tagged doc exits 0; draft with open blocker markers exits nonzero.
+# Lint is static only (not claim-bearing). No API key needed.
 # (Drop-in PR gate for your own repo: templates/github-action-pr-review-prototype.yml)
 
 on:
@@ -33,6 +34,15 @@ jobs:
         # falsify/quant.py — which hides real metric regressions.
         run: python -m pip install -e '.[dev,quant]'
 
+      - name: Authority wiring anti-rot (kernel bypass scanner)
+        # Structural decay detector: claim-bearing sys.exit must use
+        # exit_code_for_decision; no parse_verdict→EXIT; no SHIPPABLE lint.
+        # Does not grant capital_authority — only blocks wiring rot.
+        run: python tools/check_authority_wiring.py
+
+      - name: Authority kernel + anti-rot tests
+        run: python -m pytest tests/test_authority_kernel.py tests/test_authority_antirot.py tests/test_falsify_core.py -q
+
       - name: Run unit tests
         run: python -m pytest tests -q
 
@@ -53,13 +63,13 @@ jobs:
           fi
           echo "OK — unknown provider correctly failed"
 
-      - name: A shippable doc must PASS lint
+      - name: A clean tagged doc must exit 0 on L2 lint
         run: python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
-      - name: A draft with open issues must be BLOCKED
+      - name: A draft with open issues must fail L2 lint (nonzero)
         run: |
           if python -m falsify lint examples/comparison-case-study/01-agent-a-draft-excerpt.md; then
-            echo "::error::lint should have blocked the draft, but it passed"
+            echo "::error::lint should have been L2_DIRTY, but exited 0"
             exit 1
           fi
-          echo "OK — draft correctly blocked (non-zero exit)"
+          echo "OK — draft correctly L2_DIRTY (non-zero exit; not claim-bearing)"

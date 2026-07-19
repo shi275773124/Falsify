@@ -1,0 +1,5 @@
+{
+  "missing_bars": 12,
+  "max_hole_bars": 12,
+  "policy": "ffill"
+}

@@ -554,7 +554,12 @@ def _gate3_scan_expm1(results_dir: str) -> list:
     findings = []
     script_dir = Path(results_dir).parent
     for py in script_dir.glob("*.py"):
-        source = py.read_text(encoding="utf-8")
+        try:
+            source = py.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            # A sibling script with a non-UTF-8 encoding is not evidence of an
+            # expm1 pattern; skip it rather than aborting the entire gate.
+            continue
         for line_num, line in enumerate(source.splitlines(), 1):
             if "expm1" in line and ("mean" in line or "sum" in line):
                 findings.append({
@@ -852,12 +857,15 @@ def _gate5_run_l4(returns, returns_matrix_path: str, target_csv, stats: dict,
     from falsify.quant import (pbo as pbo_fn, walk_forward_predictive_power,
                                 pnl_regime_analysis, cost_realism_check,
                                 execution_realism_check, _load_returns_matrix,
-                                multi_objective_pbo_calmar, per_trade_edge_vs_cost)
+                                multi_objective_pbo_calmar, per_trade_edge_vs_cost,
+                                cpcv_split)
     import pandas as _pd
     import numpy as _np
     findings = {}
 
-    # PBO + walk-forward (+ multi-objective PBO+Calmar if requested)
+    # PBO + CPCV + walk-forward (+ multi-objective PBO+Calmar if requested)
+    # CPCV added 2026-07-07 per Exp3: WF PBO=0.25 vs CPCV PBO=1.0
+    # CPCV is now primary OOS validation layer; WF kept as supplementary diagnostic
     if returns_matrix_path and Path(returns_matrix_path).exists():
         try:
             rm, _matrix_cols = _load_returns_matrix(returns_matrix_path, matrix_columns)
@@ -867,6 +875,39 @@ def _gate5_run_l4(returns, returns_matrix_path: str, target_csv, stats: dict,
                     findings["multi_objective_pbo_calmar"] = multi_objective_pbo_calmar(
                         rm.values, n_bins=16, calmar_floor=calmar_floor)
                 findings["walk_forward"] = walk_forward_predictive_power(rm.values)
+
+                # CPCV: combinatorial purged cross-validation (Exp3: catches overfit WF misses)
+                try:
+                    T_cpcv = rm.shape[0]
+                    n_groups = min(6, T_cpcv // 4) if T_cpcv >= 16 else 0
+                    if n_groups >= 4:
+                        splits = cpcv_split(T_cpcv, n_groups=n_groups,
+                                           n_test_groups=2, purge=5, embargo=5)
+                        cpcv_pbo_values = []
+                        for train_idx, test_idx in splits[:20]:  # cap at 20 splits for tractability
+                            if len(train_idx) < 20 or len(test_idx) < 10:
+                                continue
+                            oos_returns = rm.values[test_idx, :]
+                            is_returns = rm.values[train_idx, :]
+                            is_sr = is_returns.mean(axis=0) / (is_returns.std(axis=0, ddof=1) + 1e-10)
+                            oos_sr = oos_returns.mean(axis=0) / (oos_returns.std(axis=0, ddof=1) + 1e-10)
+                            is_best = int(_np.argmax(is_sr))
+                            from scipy.stats import rankdata
+                            oos_rank = rankdata(oos_sr)[is_best] - 1
+                            median_rank = (rm.shape[1] - 1) / 2.0
+                            cpcv_pbo_values.append(1 if oos_rank <= median_rank else 0)
+                        if cpcv_pbo_values:
+                            cpcv_pbo = float(_np.mean(cpcv_pbo_values))
+                            findings["cpcv_pbo"] = {
+                                "pbo": round(cpcv_pbo, 4),
+                                "n_splits": len(cpcv_pbo_values),
+                                "n_groups": n_groups,
+                                "verdict": "REJECT" if cpcv_pbo >= 0.50 else
+                                          ("WARN" if cpcv_pbo >= 0.30 else "PASS"),
+                            }
+                except Exception as e:
+                    findings["cpcv_pbo"] = {"pbo": None, "error": str(e)[:200]}
+
                 findings["returns_matrix_manifest"] = {
                     "path": returns_matrix_path,
                     "columns": _matrix_cols,
@@ -930,6 +971,40 @@ def _gate5_run_l4(returns, returns_matrix_path: str, target_csv, stats: dict,
     except Exception as e:
         findings["execution_realism"] = {"error": str(e)[:200]}
 
+    # CTA/trend regime sub-gate (Exp4: range regime SR=-0.42, skew=-0.80)
+    # Linear SR/DSR averages out regime-dependent structure
+    _strategy_type = getattr(gate5_statistical, '_strategy_type', '')
+    if _strategy_type in ("cta", "trend", "trend_following"):
+        try:
+            import numpy as _np2
+            rets = _np2.asarray(returns, dtype=float)
+            rets = rets[_np2.isfinite(rets)]
+            if len(rets) > 30:
+                from scipy.stats import skew as _skew
+                skew_val = float(_skew(rets))
+                ann_ret = float(_np2.mean(rets) * 365)
+                cum = _np2.cumprod(1 + rets)
+                peak = _np2.maximum.accumulate(cum)
+                dd = (cum - peak) / peak
+                mdd = float(_np2.min(dd))
+                calmar = ann_ret / abs(mdd) if mdd < 0 else ann_ret
+                crisis_threshold = float(_np2.percentile(rets, 25))
+                crisis_rets = rets[rets <= crisis_threshold]
+                crisis_alpha = float(_np2.mean(crisis_rets)) if len(crisis_rets) > 0 else 0.0
+
+                cta_pass = (skew_val > 0 and calmar > 0.3 and crisis_alpha > 0)
+                cta_warn = (not cta_pass and
+                            (skew_val > -0.5 or calmar > 0.1 or crisis_alpha > -0.01))
+                findings["cta_regime_subgate"] = {
+                    "skew": round(skew_val, 4),
+                    "calmar": round(calmar, 4),
+                    "crisis_alpha": round(crisis_alpha, 6),
+                    "verdict": "PASS" if cta_pass else ("WARN" if cta_warn else "FAIL"),
+                    "note": "Exp4: range regime SR=-0.42 skew=-0.80; linear SR averages out regime structure",
+                }
+        except Exception as e:
+            findings["cta_regime_subgate"] = {"error": str(e)[:200]}
+
     return findings
 
 
@@ -969,12 +1044,28 @@ def _gate5_status(findings: dict, dsr_result: dict, perm_result: dict) -> tuple:
         blockers.append(f"Execution realism WARN: {findings.get('execution_realism', {}).get('recommendation', '')[:150]}")
 
     # L4 sub-check errors must not pass silently (false-green prevention)
-    _L4_KEYS = ["pbo", "regime_analysis", "cost_realism", "execution_realism",
-                "multi_objective_pbo_calmar", "per_trade_edge_vs_cost"]
+    _L4_KEYS = ["pbo", "cpcv_pbo", "regime_analysis", "cost_realism", "execution_realism",
+                "multi_objective_pbo_calmar", "per_trade_edge_vs_cost", "cta_regime_subgate"]
     for _key in _L4_KEYS:
         _sub = findings.get(_key)
         if isinstance(_sub, dict) and "error" in _sub and "verdict" not in _sub:
             blockers.append(f"L4 {_key} check ERROR: {_sub['error'][:120]}")
+
+    # CPCV PBO (Exp3: WF PBO=0.25 vs CPCV PBO=1.0 — WF misses overfit)
+    _cpcv = findings.get("cpcv_pbo", {})
+    _cpcv_pbo = _cpcv.get("pbo")
+    if _cpcv_pbo is not None and _cpcv_pbo >= 0.50:
+        blockers.append(f"CPCV PBO={_cpcv_pbo} >= 0.50 (reject strategy family — WF missed this)")
+    elif _cpcv_pbo is not None and _cpcv_pbo >= 0.30:
+        blockers.append(f"CPCV PBO={_cpcv_pbo} >= 0.30 (high overfitting risk — WF missed this)")
+
+    # CTA regime sub-gate (Exp4: range regime SR=-0.42, skew=-0.80)
+    _cta = findings.get("cta_regime_subgate", {})
+    _cta_verdict = _cta.get("verdict", "")
+    if _cta_verdict == "FAIL":
+        blockers.append(f"CTA regime sub-gate FAIL: skew={_cta.get('skew')}, calmar={_cta.get('calmar')}, crisis_alpha={_cta.get('crisis_alpha')}")
+    elif _cta_verdict == "WARN":
+        blockers.append(f"CTA regime sub-gate WARN: skew={_cta.get('skew')}, calmar={_cta.get('calmar')}")
 
     # Multi-objective PBO+Calmar (Balaena #1)
     _mo = findings.get("multi_objective_pbo_calmar", {})
@@ -1246,7 +1337,9 @@ def main():
     if contract_path and Path(contract_path).exists():
         try:
             ct = Path(contract_path).read_text(encoding="utf-8").lower()
-            if "momentum" in ct:
+            if "trend" in ct or "cta" in ct or "breakout" in ct:
+                _strategy_type = "cta"
+            elif "momentum" in ct or "continuation" in ct:
                 _strategy_type = "momentum"
             elif "reversion" in ct or "mean_revert" in ct:
                 _strategy_type = "reversion"
