@@ -1,63 +1,65 @@
-# 11. BYOK + Policy (Team MVP)
+# Use Locally & BYOK
 
-[Back to README](../README.md)
+Falsify is a local toolchain. It does not provide a hosted model gateway or hold your provider keys. You choose the provider, credentials, and machine that runs a review.
 
-This doc explains how to deploy Falsify as a PR gate without the vendor paying model tokens.
+## What works without a key
 
-## BYOK (Bring Your Own Key)
+These commands make no model call:
 
-Falsify has **no Falsify API key**. You bring your own model provider key, or route through an agent CLI you are already logged into (which may still require that provider's subscription).
-
-Falsify is designed to run in two modes:
-
-- **Advisory mode (default)**: no model call. Lint runs, sample/demo runs, PR comment still posts.
-- **Live review mode (BYOK)**: the PR gate calls an OpenAI-compatible endpoint using your secret.
-
-In GitHub:
-
-1. Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
-2. Add:
-   - `FALSIFY_API_BASE` (example: `https://api.deepseek.com/v1`)
-   - `FALSIFY_API_KEY`
-   - `FALSIFY_MODEL` (example: `deepseek-chat`)
-
-If `FALSIFY_API_KEY` is missing, the workflow must **skip** live review and never burn tokens.
-
-## Policy file
-
-Put a policy file in the target repo:
-
-```text
-.falsify/policy.yml
+```bash
+falsify demo
+falsify lint report.md
 ```
 
-Start from:
+Use them to verify installation and local structural checks. The demo is not a substitute for a model review; it proves only that the local check path works.
 
-```text
-templates/falsify-policy.yml
+## What needs your credentials
+
+A live `falsify review` needs one of:
+
+- a provider key you configure for an OpenAI-compatible endpoint; or
+- a compatible agent CLI already authenticated on your machine.
+
+DeepSeek example:
+
+```bash
+export DEEPSEEK_API_KEY=sk-...
+falsify review report.md --provider deepseek --json
 ```
 
-### What policy controls
+For GitHub Actions, add these as repository secrets:
 
-- **targets.globs**: what files are considered “decision artifacts”
-- **limits**: caps to prevent token blowups (bytes per file, number of files)
-- **gates.lint**: always-on tag / ship-blocker conventions
-- **gates.live_review**: whether the BYOK review is enforced when a key exists
-- **output**: whether to upload JSON/Markdown artifacts and comment on PR
+- `FALSIFY_API_BASE`
+- `FALSIFY_API_KEY`
+- `FALSIFY_MODEL`
 
-## What “sellable” means in Team MVP
+When `FALSIFY_API_KEY` is absent, the supplied workflow stays in lint-only advisory mode and does not spend model tokens.
 
-The sellable unit is not the website. It’s the workflow output:
+## Local configuration and data boundary
 
-- a PR comment that surfaces the verdict
-- machine-readable JSON artifact for downstream integrations
-- a consistent policy file that an org can standardize
-- a report that is auditable (who/when/what changed/what evidence is missing)
+Use environment variables or the local template from `falsify init` to avoid repeating configuration. Do not commit configuration files or environment variables that contain secrets.
 
-## Recommended rollout path
+Falsify does not:
 
-1. Advisory mode for 1 week (comment only)
-2. Tighten `targets.globs` (only real decision docs)
-3. Turn on required check in branch protection
-4. Expand to more repos / add integrations
+- host your organization, project, or review history;
+- share receipts or reports between users;
+- automatically connect to or read an authority system you have not explicitly supplied;
+- deploy, merge, or perform production actions on your behalf.
 
+If a claim depends on external state, include inspectable output, a link, command result, or a clear verification path in the review input and artifact.
+
+## What the policy file does today
+
+The template supports `.falsify/policy.yml` as a repository-owned description of:
+
+- which paths contain decision artifacts;
+- file-count and size limits;
+- intended lint, live-review, and artifact behavior.
+
+The current GitHub Action template reads `TARGET_GLOBS` from workflow configuration. Keep it aligned with the policy targets; do not treat the file as an implemented general policy engine.
+
+## Next
+
+- [Getting Started](./00-getting-started.md)
+- [GitHub Action template](./14-github-action-install.md)
+- [CLI & Artifact Reference](./20-cli-and-artifacts.md)

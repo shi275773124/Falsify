@@ -3,6 +3,18 @@
 > Anonymized from a 2026-06 production incident. Venue, account, host, and
 > strategy names are sanitized; failure shape and Falsify gates are real.
 
+## Share card
+
+| | |
+|--|--|
+| **Apparent green** | Cron OK, today's signal timestamp, executor `--verify` PASS |
+| **Real failure** | Underlying panel CSVs stopped updating weeks earlier |
+| **Authority / Falsify** | Refresh + coverage before signal; incident replay via real production wrapper; provenance manifest |
+| **Verdict** | Derived freshness false-green → **BLOCK** until gates close |
+| **Public URL** | https://falsify.site/examples/real-cases/02-derived-freshness-stale-panel |
+
+All three cards: [SHARE-CARDS.md](./SHARE-CARDS.md) · Install gate: [GitHub Action share pack](../../docs/github-action-share-pack.md)
+
 ## TL;DR
 
 A daily scheduled momentum bot looked healthy:

@@ -4,6 +4,8 @@
 
 One-page map of what ships on GitHub (MIT), what stays in the closed Pro skill/runtime, and what Team sells as a workspace product. Use this when linking from the README, footer, or onboarding — not as a pitch deck.
 
+**Policy (2026-07-10):** Falsify is **open core, not full open source**. Default is to keep production enforcement private. Opening more code is an explicit product decision — never an automatic sync from Pro → GitHub.
+
 ## Three layers
 
 | Layer | What it is | Source / delivery | You pay for |

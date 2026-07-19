@@ -9,7 +9,7 @@ def handler(path, method="GET"):
     return h
 
 def test_production_root_is_formal_console():
-    assert "Falsify | Evidence gate for AI claims on GitHub" in serve.PAGE
+    assert "Falsify | Challenge the claim. Verify the authority. Gate the action." in serve.PAGE
     assert "/docs/" in serve.PAGE
     assert "/review" in Path(serve.FLOW_HOME_DIR / "candidate.js").read_text(encoding="utf-8")
     assert "<form" not in serve.PAGE

@@ -27,8 +27,9 @@
 
   function initLenis() {
     if (typeof Lenis === "undefined") return null;
+    // Snappier than default marketing Lenis — still smooth, not floaty (Emil: perceived speed).
     const lenis = new Lenis({
-      duration: 1.05,
+      duration: 0.85,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       touchMultiplier: 1.6,
@@ -56,7 +57,7 @@
         const el = document.querySelector(id);
         if (!el) return;
         e.preventDefault();
-        lenis.scrollTo(el, { offset: -72, duration: 1.1 });
+        lenis.scrollTo(el, { offset: -72, duration: 0.85 });
       });
     });
 
@@ -81,25 +82,25 @@
             : null;
           if (kids && kids.length > 1) {
             el.classList.add("is-in");
-            gsap.set(kids, { opacity: 0, y: 14 });
+            gsap.set(kids, { opacity: 0, y: 10 });
             gsap.to(kids, {
               opacity: 1,
               y: 0,
-              duration: 0.55,
+              duration: 0.32,
               ease: "power2.out",
-              stagger: 0.055,
-              scrollTrigger: { trigger: el, start: "top 86%", once: true },
+              stagger: 0.045,
+              scrollTrigger: { trigger: el, start: "top 88%", once: true },
             });
           } else {
             gsap.fromTo(
               el,
-              { opacity: 0, y: 16 },
+              { opacity: 0, y: 10 },
               {
                 opacity: 1,
                 y: 0,
-                duration: 0.6,
+                duration: 0.32,
                 ease: "power2.out",
-                scrollTrigger: { trigger: el, start: "top 88%", once: true },
+                scrollTrigger: { trigger: el, start: "top 90%", once: true },
               }
             );
           }
@@ -148,8 +149,9 @@
     if (reduce.matches || !finePointer.matches) return;
 
     const tick = () => {
-      mx += (tx - mx) * 0.08;
-      my += (ty - my) * 0.08;
+      // Slightly snappier spring-ish follow (decorative only).
+      mx += (tx - mx) * 0.12;
+      my += (ty - my) * 0.12;
       set();
       raf = requestAnimationFrame(tick);
     };
@@ -177,5 +179,5 @@
     void raf;
   }
 
-  window.FalsifyFlowMotion = { version: "bc-1" };
+  window.FalsifyFlowMotion = { version: "emil-1" };
 })();

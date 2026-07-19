@@ -30,13 +30,14 @@ def test_review_remains_user_triggered_and_fail_closed():
 def test_chinese_font_stack_and_utf8_document():
     html, js, css = source("index.html"), source("candidate.js"), source("candidate.css")
     assert '<meta charset="utf-8">' in html
-    for codepoints in ((0x5148, 0x6838, 0x5bf9, 0x6743, 0x5a01, 0x6765, 0x6e90), (0x518d, 0x8ba9, 0x9ad8, 0x540e, 0x679c, 0x20, 0x41, 0x49, 0x20, 0x8f93, 0x51fa)):
+    for codepoints in ((0x5148, 0x653b, 0x51fb, 0x58f0, 0x660e), (0x6700, 0x540e, 0x51b3, 0x5b9a, 0x80fd, 0x4e0d, 0x80fd, 0x653e, 0x884c)):
         assert ''.join(map(chr, codepoints)) in js
     for font in ('-apple-system', 'BlinkMacSystemFont', '"SF Pro SC"', '"PingFang SC"', '"Microsoft YaHei UI"', '"Noto Sans SC"'):
         assert font in css
     assert 'html[lang="zh-CN"]' in css
 
 
-def test_mobile_menu_and_tier_controls_are_preserved():
+def test_mobile_menu_and_delivery_section_are_preserved():
     html, js, css = source("index.html"), source("candidate.js"), source("candidate.css")
-    assert 'aria-expanded="false"' in html and 'nav.classList.toggle("open")' in js and 'nav.open' in css and 'document.querySelectorAll(".tier")' in js
+    assert 'aria-expanded="false"' in html and 'nav.classList.toggle("open")' in js and 'nav.open' in css
+    assert 'id="delivery"' in html and "delivery-list" in html and ".status-badge" in css

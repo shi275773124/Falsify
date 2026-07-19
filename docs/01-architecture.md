@@ -2,38 +2,61 @@
 
 [中文](./01-architecture.zh-CN.md) · [Back to README](../README.md)
 
+## Product definition (single source of truth)
+
+**Falsify is an evidence-driven decision gate.**
+
+It tries to **disprove** high-risk claims made by AI or humans, then emits a **scoped** verdict (`PASS`, `PASS_WITH_DEBT`, or `BLOCK`) from:
+
+- an explicit **authority path** (what system/state is final),
+- **raw artifacts** (not summaries alone),
+- and an explicit **policy version**.
+
+Multi-model / multi-agent review is an **optional attacker**, never the trust root.
+
+> Models may propose charges. They may not manufacture facts. Hard `BLOCK` should prefer deterministic policy, missing evidence, or verifiable state conflict.
+
+**Current public MVP surface:** GitHub workflows that gate **claims surrounding a change** (PR narrative, deploy plan, decision docs)—not “full automatic verification of every cloud deployment.”
+
 ## The problem
 
-Single-agent AI research fails silently. The agent confidently writes a fee schedule, a config snippet, an API contract — and 30% of the time some specific number is wrong. Without a second pair of eyes, the error ships.
+AI systems report completion with confident prose:
 
-Human review catches a lot, but humans don't scale to every paragraph and don't have the patience to chase every cited URL.
+- CI green, logs complete, “another AI reviewed it”
+- yet the target state never changed
+- or the evidence surface was already biased before the metric gates ran
 
-A second agent does.
+Code review and lint ask: *does the diff look right?*  
+Falsify asks: *is this claim defensible against the authority path?*
 
-## The pattern
+## The gate pattern (public core)
 
-Run two agents with **different prompts, different models (ideally), independent contexts** — but pointed at the **same writeable knowledge base**. They take turns:
+One inspectable loop:
 
-1. Agent A writes a draft.
-2. Agent B reads, audits, comments inline, fixes errors.
-3. Agent A reviews B's fixes, accepts or pushes back.
-4. Conflicts that survive both passes → resolved against first-hand sources.
+1. **Frame** — name the claim, owner, authority path, and claim ceiling  
+2. **Attack** — seek the cheapest counterproof (deterministic checks first)  
+3. **Recompute / re-read** — hit the real state, calculation, command, or raw source  
+4. **Cutline** — Must Fix / Known Debt / Delete  
+5. **Receipt** — preserve verdict, evidence path, policy/tool versions, and freshness limits  
 
-The shared knowledge base is an **Obsidian vault** because:
-- Plain markdown files (diff-able, git-friendly)
-- Wikilinks for cross-references
-- Local-first (no cloud dependency)
-- Free desktop app for the human reader
+`PASS` is not permanent. Receipts expire when environment, artifacts, policy, freshness, or authority path change.
 
-The sync substrate is **git** because:
-- Already universal among developers
-- Author identity per commit (audit trail)
-- Branching/merging if you want it
-- GitHub gives free private repos
+## What multi-agent review is (and is not)
 
-The auto-sync to your laptop is **Obsidian Git plugin** (community, free) which polls and pushes/pulls on a timer.
+Historically this repo also documented a **two-agent drafting pattern** (Agent A writes, Agent B audits into a shared Obsidian vault over git). That pattern remains a **useful collaboration adapter** for research write-ups.
 
-## Topology
+It is **not** the product’s root of trust:
+
+| Role | Trust? |
+|------|--------|
+| Deterministic probes + policy | Yes — primary |
+| Raw artifact hashes / authority reads | Yes — primary |
+| Second model / second agent | Optional attacker only |
+| “Two models rarely share the same error” | **Not claimed** — unmeasured slogans were removed |
+
+If both agents agree on a false assumption, the gate still fails unless the authority path is checked.
+
+## Optional topology: shared vault collaboration
 
 ```
             ┌──────────────────────────────────┐
@@ -41,53 +64,37 @@ The auto-sync to your laptop is **Obsidian Git plugin** (community, free) which 
             │   = single source of truth        │
             └──────────────────────────────────┘
               ▲          ▲           ▲
-              │          │           │
-       git    │   git    │   Obsidian Git plugin
-       push   │   push   │   (auto pull/push)
+       git push│   git push│   Obsidian Git
               │          │           │
        ┌──────┴──┐  ┌────┴────┐  ┌───┴────────┐
        │ Agent A │  │ Agent B │  │ Your laptop │
-       │ (VPS 1) │  │ (VPS 2) │  │ Obsidian    │
+       │ (draft) │  │ (attack)│  │ human read  │
        └─────────┘  └─────────┘  └─────────────┘
 ```
 
-Three writers, one truth. Each writer has its own git author identity, so `git log` is a complete provenance record.
+Three writers can share one truth for research. The **gate** still bottoms out in authority path + artifacts + policy—not in agent consensus.
 
-## Why this beats Obsidian Sync, Notion, Google Docs
+## Why git + plain markdown still matter
 
-| Concern | This pattern | Obsidian Sync | Notion | Google Docs |
-|---|---|---|---|---|
-| Multi-agent write access | ✓ | ✗ (paid, single-user) | partial (API limits) | partial (heavy auth) |
-| Per-paragraph authorship | ✓ (tags + git blame) | ✗ | comments only | suggestions only |
-| Diffable history | ✓ (git) | versions only | partial | suggestions |
-| Offline-first | ✓ | ✓ | ✗ | ✗ |
-| Free | ✓ | ✗ ($4-8/mo) | freemium | free |
-| Self-hostable | ✓ | ✗ | ✗ | ✗ |
+| Concern | Why it helps the gate |
+|---------|------------------------|
+| Diffable history | Receipts and claims are reviewable |
+| Author identity | Provenance for who asserted what |
+| Local-first vault | Human can open the same files agents attacked |
+| GitHub Action surface | Where the MVP ships first |
 
-The killer feature is **diffable per-author history**. When something goes wrong, `git blame` plus the `[AGENT-X]` tag tells you exactly who wrote it and when.
+## Failure modes the gate targets
 
-## Why it works (the boring reason)
+- **Logs ≠ state** — “deploy succeeded” with unchanged target  
+- **Derived freshness** — today’s signal timestamp over stale inputs  
+- **Mirror drift** — docs/runtime disagree  
+- **Metric theater** — gates run after an already-shaped evidence surface  
+- **Opinion stacking** — second AI agreement treated as evidence  
 
-Two agents disagreeing about a fact creates a **structured conflict** that's easy to resolve. The resolution rule — go to first-hand source — turns "agent vibes" into "what does the official doc say."
+## Related docs
 
-Single agents have no such forcing function. They smooth over their own uncertainty with confident prose.
-
-## Failure modes this pattern handles
-
-- **Hallucinated fee tiers** → caught by the other agent reading the same source
-- **Stale cached info** → caught when the other agent fetches fresh
-- **Wrong unit conventions** (bps vs %, daily vs annualized) → caught by per-paragraph audit
-- **Outdated API endpoints** → caught when the other agent actually hits the URL
-
-## Failure modes this pattern doesn't handle
-
-- Both agents share a wrong assumption (rare, but possible — e.g. both trained on the same outdated docs)
-- Both agents skip the first-hand check (mitigated by the rule, not the pattern)
-- The shared knowledge base itself becomes corrupt (mitigated by git history)
-
-For the first one, add a third agent or a human spot-check. For the second, the rule has to be enforced at prompt level — see [03-collaboration.md](./03-collaboration.md).
-
-## Next
-
-- [Setup](./02-setup.md) — get it running in 30 minutes
-- [Collaboration rules](./03-collaboration.md) — the tagging + conflict protocol
+- [Getting Started](./00-getting-started.md)
+- [GitHub Action install](./14-github-action-install.md)
+- [Adversarial Review](./05-adversarial-review.md) (optional attacker layer)
+- [Cutline / 风险裁刀](./06-risk-scalpel.md)
+- [Open Core boundary](./12-open-core-boundary.md)

@@ -3,35 +3,37 @@
   const copyCommand = "curl -sS https://falsify.site/examples/sample-block-report.json | python -m json.tool";
   const translations = {
     en: {
-      menuLabel:"Menu",navProof:"Real cases",navDifference:"What it is",navHow:"How it works",navTry:"Try",navDocs:"Docs",
-      heroTitle:"Check the authority.<br><em>Before consequential AI output passes.</em>",
-      heroEyebrow:"EVIDENCE GATE · GITHUB FIRST",
-      heroPrimary:"Install GitHub Action",heroSecondary:"Run the authority check",
-      heroNote:"Format demo only — not live data, not a full gate, not permission to ship.",
-      brandThesis:"Agents say \"trust me.\" Falsify turns that into a reproducible verdict.",
-      heroLead:"A completion message is a claim, not a fact. Falsify frames the claim, reads the system that holds the truth, and returns a scoped PASS, PASS_WITH_DEBT, or BLOCK receipt.",
+      menuLabel:"Menu",navProof:"Real cases",navDifference:"What it is",navHow:"How it works",navDelivery:"Get it",navTry:"Try",navDocs:"Docs",
+      heroTitle:"Challenge the claim. Verify the authority.<br><em>Gate the action.</em>",
+      heroEyebrow:"ADVERSARIAL REVIEW · BOUNDED VERDICTS",
+      heroPrimary:"Install GitHub Action",heroSecondary:"Watch a claim get blocked",
+      heroNote:"Format demo only — not live data. An OSS verdict is epistemic: it bounds what was proven and does not authorize an action.",
+      brandThesis:"Agents say \"trust me.\" Falsify signs only what was actually proven.",
+      heroLead:"Falsify uses adversarial AI to uncover what existing checks missed, turns findings into executable evidence checks, and issues a verdict bounded to what was actually proven.",
       receiptExample:"FALSIFY RECEIPT #0482",receiptPhase:"01 CLAIM",
       proofHeadline:"Agents say \"trust me.\"",
       demoPause:"Reset",demoPlay:"Run example",
       deployBot:"DEPLOY BOT",successPill:"SUCCESS",
       demoClaim:"Deployment completed successfully.",
       envLabel:"ENVIRONMENT",envValue:"production",commitLabel:"COMMIT",
-      authorityLine:"AUTHORITY CHECK · GET /v2/projects/.../services/payment-api",
+      authorityLine:"EVIDENCE CHECK · ADAPTER PROBE · GET /v2/projects/.../services/payment-api",
       claimedCommit:"CLAIMED COMMIT",prodCommit:"PRODUCTION COMMIT",
       conflictLabel:"EVIDENCE CONFLICT",
       conflictText:"Live revision does not match the claimed commit.",
       findingLabel:"FINDING",findingText:"Deployed revision does not match claimed commit.",
-      authorityLabel:"AUTHORITY",authorityText:"Cloud Run API / payment-api",
-      reproduceLabel:"REPRODUCE",
-      demoCaption:"Format demo only. Same false-green shape as the product film: claim → frame → authority read → cutline → receipt. Not live data.",
+      scopeLabel:"CLAIM SCOPE",scopeValue:"deployment_revision",
+      ceilingLabel:"AUTHORITY CEILING",ceilingValue:"EPISTEMIC_ONLY — no action authorized",
+      capitalLabel:"CAPITAL AUTHORITY",capitalValue:"NONE",
+      reproduceLabel:"REPRODUCE LOCALLY",
+      demoCaption:"Format demo only: claim → attack → evidence check → verdict with scope and ceiling. Not live data — the local fixture demo reproduces this false green deterministically.",
       cutlineKicker:"04 CUTLINE",
       cutlineTitle:"NO EVIDENCE.<br><em>NO PASS.</em>",
-      cutlineLead:"A deployment claim is not a production fact. Falsify compares the claim with the authoritative system.",
-      stripClaim:"CLAIM",stripAuth:"AUTHORITY",
-      clarityUser:"USER",clarityUserText:"Teams shipping AI-written PRs, deploys, and decision docs",
-      clarityTrigger:"TRIGGER",clarityTriggerText:"Before you merge, pay, or ship on an AI claim of \"done\"",
-      clarityAction:"ACTION",clarityActionText:"Challenge the claim against real state and artifacts",
-      clarityArtifact:"ARTIFACT",clarityArtifactText:"Reproducible PASS / BLOCK receipt",
+      cutlineLead:"A deployment claim is not a production fact. Falsify checks the claim against executable evidence — not against another summary.",
+      stripClaim:"CLAIM",stripAuth:"EVIDENCE",
+      clarityUser:"WHO",clarityUserText:"Teams shipping AI-written PRs, deploys, and decision docs",
+      clarityTrigger:"WHEN",clarityTriggerText:"Before you merge or ship on an AI claim of \"done\"",
+      clarityAction:"WHAT",clarityActionText:"Attack the claim, then verify it against executable evidence",
+      clarityArtifact:"OUTPUT",clarityArtifactText:"A verdict receipt with claim scope and authority ceiling",
       proofLabel:"THREE DOCUMENTED FALSE-GREENS",proofTitle:"Start with proof, not process.",
       proofLead:"Each case looked green at the surface. Each failed when the claim met its real evidence or authority path.",
       apparentGreen:"APPARENT GREEN",realFailure:"REAL FAILURE",falsifyRequired:"FALSIFY REQUIRED",
@@ -48,63 +50,72 @@
       caseThreeFail:"The actual second-profile runtime still executed the old version.",
       caseThreeReq:"Read and test the real runtime path, then verify runtime and mirror together.",
       inspectSource:"Inspect source ↗",inspectRepoContext:"Inspect repository context ↗",inspectArchitecture:"Inspect the runtime evidence ↗",
-      differenceLabel:"THE CATEGORY LINE",differenceTitle:"A gate for high-stakes claims - not another model.",
-      bugScanner:"Bug scanner",bugScannerText:"Checks a diff for defects",eval:"Eval",evalText:"Measures model behavior on a test set",
-      secondAi:"Second model",secondAiText:"Optional help attacking a claim-never the source of truth",
-      falsifyText:"A bounded claim checked against real state, raw artifacts, and explicit policy",
-      stepFrameTitle:"Claim",stepAttackTitle:"Frame",stepRecomputeTitle:"Verify",stepCutlineTitle:"Cutline",stepReceiptTitle:"Receipt",
-      tierNormal:"Normal",tierProduction:"Production",tierQuant:"Quant",
-      howLabel:"HOW THE GATE WORKS",howTitle:"Claim. Frame. Verify. Cutline. Receipt.",
-      howLead:"One inspectable decision contract: PASS, PASS_WITH_DEBT, or BLOCK — with an authority path you can re-read.",
-      stepFrame:"Surface the AI or bot statement as a claim, not a fact.",
-      stepAttack:"Capture scope, assumptions, and the authority that can prove it.",
-      stepRecompute:"Read the system that actually holds the truth.",
-      stepCutline:"No evidence, no pass — separate Must Fix from Known Debt.",
-      stepReceipt:"Leave finding, authority, evidence, and a reproduce command.",
+      differenceLabel:"THE CATEGORY LINE",differenceTitle:"Not another model opinion — a verdict with a boundary.",
+      differenceLead:"The LLM attacks the claim and signs a bounded verdict. An authority adapter checks physical facts. The unified kernel decides what that verdict may authorize.",
+      bugScanner:"Bug scanner",bugScannerText:"checks a diff for defects",eval:"Eval",evalText:"measures model behavior on a test set",
+      secondAi:"Second model",secondAiText:"attacks the claim — never the source of truth",
+      falsifyText:"turns attacks into executable evidence checks and signs a verdict bounded to what was proven",
+      stepAttackTitle:"Attack",stepFrameTitle:"Frame",stepCheckTitle:"Check",stepVerdictTitle:"Verdict",stepGateTitle:"Gate",
+      howLabel:"HOW IT WORKS",howTitle:"Three jobs. One decision contract.",
+      howLead:"Adversarial AI attacks the claim, an authority adapter checks the facts, and the kernel bounds what the verdict can do — PASS, PASS_WITH_DEBT, or BLOCK, always with its scope on the receipt.",
+      stepAttack:"Adversarial AI attacks the claim and surfaces the failures existing checks missed.",
+      stepFrame:"Bind the claim's scope, assumptions, and the authority that could prove it.",
+      stepCheck:"Turn findings into executable evidence checks — an adapter can run them against the real system.",
+      stepVerdict:"The kernel signs PASS, PASS_WITH_DEBT, or BLOCK, bounded to what was actually proven.",
+      stepGate:"No adapter, no action: without an authority adapter the verdict stays epistemic.",
+      deliveryLabel:"WHAT YOU CAN GET TODAY",deliveryTitle:"Same kernel. Different authority levels.",
+      deliveryLead:"Every offer states its status. Nothing here turns a review into a production or payment gate.",
+      d1Name:"Falsify Review",d1Status:"AVAILABLE · OSS",d1Text:"Adversarial LLM review with a bounded epistemic verdict. CLI, local demo, skills, and the GitHub Action template.",
+      d2Name:"Falsify Authority Gate",d2Status:"ADAPTER REQUIRED",d2Text:"Runs executable evidence checks against a real authority path. Only then can a PASS bear action. No public adapter ships today.",
+      d3Name:"Audit Sprint",d3Status:"AVAILABLE · SERVICE",d3Text:"Claim manifest, kill-shots, evidence pack, and a signed verdict receipt for one high-risk artifact.",
+      d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · PRIVATE",d4Text:"Integrated per concrete authority path — deploy, data, or execution. Scoped pilots, not self-serve.",
+      d5Name:"Team / Enterprise",d5Status:"TARGET · NOT SHIPPED",d5Text:"Dashboard, SSO, RBAC, retention. Roadmap targets — not delivered features.",
       resultLabel:"FORMAT DEMO ONLY",footerDocs:"Docs",footerContact:"Contact",footerSample:"Sample receipt",contactKicker:"CONTACT THE FOUNDER",contactLead:"Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.",contactTwitter:"X / Twitter",contactEmail:"Email",contactGithub:"GitHub",contactEmailLabel:"Email",contactSecurity:"Security reporting",
-      tryLabel:"FORMAT DEMO ONLY",tryTitle:"Preview the receipt shape - not full verification",
+      tryLabel:"FORMAT DEMO ONLY",tryTitle:"Preview the receipt shape — not full verification",
       tryLead:"This is a format demo only. It does not run a full Falsify gate, a cloud review, or a live state probe. Do not treat it as proof of product capability.",
       runExample:"Run example",copyArtifact:"Copy reproduction command",
       resultTitle:"Ready to preview a format sample.",
-      resultLead:"Run the example to see the verdict shape only - not evidence-backed verification.",
+      resultLead:"Run the example to see the verdict shape only — not evidence-backed verification.",
       installLabel:"START HERE",installTitle:"Start by gating claims on GitHub.",
-      installLead:"Best first step: a GitHub Action on PR claims and decision docs. CLI and skills stay open-core. Production and quant enforcement stay in Pro.",
+      installLead:"Best first step: the GitHub Action reviews PR claims and decision docs and posts a bounded verdict. It gates review — never payments, deploys, or other live actions.",
       actionLink:"Install GitHub Action →",skillsLink:"Install a skill →",verdictLink:"Verdict contract →",
-      ctaTitle:"Turn \"trust me\" into a reproducible verdict.",
-      ctaLead:"Before consequential AI output passes — check the authority and keep the receipt.",
-      ctaPrimary:"Install GitHub Action",ctaSecondary:"Format demo",
-      footer:"Evidence-driven decision gate. Multi-model review is optional. We classify risk-we do not authorize action."
+      ctaTitle:"Turn \"trust me\" into a bounded verdict.",
+      ctaLead:"Challenge the claim. Verify the authority. Keep the receipt — scope and ceiling included.",
+      ctaPrimary:"Install GitHub Action",ctaSecondary:"Format demo only",
+      footer:"Adversarial review with a bounded verdict. OSS receipts are epistemic: an action-bearing PASS requires an authority adapter and the unified kernel."
     },
     zh: {
-      menuLabel:"菜单",navProof:"真实案例",navDifference:"它是什么",navHow:"如何把关",navTry:"试一试",navDocs:"文档",
-      heroTitle:"先核对权威来源。<br><em>再让高后果 AI 输出过关。</em>",
-      heroEyebrow:"证据闸门 · 从 GitHub 起步",
-      heroPrimary:"安装 GitHub Action",heroSecondary:"跑一遍权威核对",
-      heroNote:"仅格式演示 — 不是实时数据，不是完整门禁，也不是上线许可。",
-      brandThesis:"Agent 说「信我」。Falsify 把它变成可复现的判定。",
-      heroLead:"完成提示只是声明，不是事实。Falsify 界定声明、回读真正持有真相的系统，并返回有范围的 PASS、PASS_WITH_DEBT 或 BLOCK 回执。",
+      menuLabel:"菜单",navProof:"真实案例",navDifference:"它是什么",navHow:"工作原理",navDelivery:"如何获取",navTry:"试一试",navDocs:"文档",
+      heroTitle:"先攻击声明，再核对权威，<br><em>最后决定能不能放行。</em>",
+      heroEyebrow:"对抗式审查 · 有边界的裁决",
+      heroPrimary:"安装 GitHub Action",heroSecondary:"看一条声明被拦下",
+      heroNote:"仅为格式演示，不是实时数据。开源版裁决只界定已证明的范围，不授权任何动作。",
+      brandThesis:"Agent 说「信我」。Falsify 只对真正证明过的范围签发裁决。",
+      heroLead:"Falsify 用对抗式 AI 找出既有测试没覆盖到的失败方式，把质疑变成可执行的证据检查，并只对真正证明过的范围签发裁决。",
       receiptExample:"FALSIFY 回执 #0482",receiptPhase:"01 声明",
       proofHeadline:"Agent 说「信我」。",
       demoPause:"重置",demoPlay:"运行示例",
       deployBot:"部署机器人",successPill:"SUCCESS",
       demoClaim:"部署已成功完成。",
       envLabel:"环境",envValue:"production",commitLabel:"提交",
-      authorityLine:"权威核对 · GET /v2/projects/.../services/payment-api",
+      authorityLine:"证据检查 · ADAPTER 探针 · GET /v2/projects/.../services/payment-api",
       claimedCommit:"声称提交",prodCommit:"生产提交",
       conflictLabel:"证据冲突",
       conflictText:"线上版本与声称的提交不一致。",
       findingLabel:"发现",findingText:"已部署版本与声称提交不一致。",
-      authorityLabel:"权威来源",authorityText:"Cloud Run API / payment-api",
-      reproduceLabel:"复现",
-      demoCaption:"仅格式演示。与产品片同构：声明 → 界定 → 权威回读 → 分级 → 回执。不是实时数据。",
+      scopeLabel:"声明范围",scopeValue:"deployment_revision",
+      ceilingLabel:"权威上限",ceilingValue:"EPISTEMIC_ONLY — 不授权任何动作",
+      capitalLabel:"资金权限",capitalValue:"NONE",
+      reproduceLabel:"本地复现",
+      demoCaption:"仅为格式演示：声明 → 攻击 → 证据检查 → 带范围与上限的裁决。不是实时数据——本地 fixture demo 可确定性复现这个假绿。",
       cutlineKicker:"04 分级",
       cutlineTitle:"没有证据。<br><em>就不能 PASS。</em>",
-      cutlineLead:"部署声明不等于生产事实。Falsify 把声明与权威系统对照。",
-      stripClaim:"声明",stripAuth:"权威",
-      clarityUser:"谁会用",clarityUserText:"用 AI 写 PR、部署与决策文档的团队",
-      clarityTrigger:"什么时候",clarityTriggerText:"在合并、付款或上线前，面对 AI 的「已完成」",
-      clarityAction:"它做什么",clarityActionText:"对照真实状态与原始材料反查声明",
-      clarityArtifact:"留下什么",clarityArtifactText:"一份能复查的 PASS / BLOCK 回执",
+      cutlineLead:"部署声明不等于生产事实。Falsify 用可执行的证据检查核对声明，而不是再看一份摘要。",
+      stripClaim:"声明",stripAuth:"证据",
+      clarityUser:"谁在用",clarityUserText:"用 AI 写 PR、部署与决策文档的团队",
+      clarityTrigger:"什么时候用",clarityTriggerText:"在合并或上线前，面对 AI 的「已完成」",
+      clarityAction:"它做什么",clarityActionText:"先攻击声明，再用可执行的证据核对它",
+      clarityArtifact:"留下什么",clarityArtifactText:"一份带声明范围与权威上限的裁决回执",
       proofLabel:"三个有据可查的假绿",proofTitle:"先看证据，再谈框架。",
       proofLead:"表面检查全部通过；一旦沿实际生效路径核对原始记录，假绿就暴露了。",
       apparentGreen:"表面全绿",realFailure:"真实失败",falsifyRequired:"核验要求",
@@ -121,37 +132,44 @@
       caseThreeFail:"真正生效的环境仍在运行旧版本。",
       caseThreeReq:"直接读取并测试实际生效路径，再核对部署版本与留存副本是否一致。",
       inspectSource:"查看案例原文 ↗",inspectRepoContext:"查看案例原文 ↗",inspectArchitecture:"查看案例原文 ↗",
-      differenceLabel:"它到底是什么",differenceTitle:"决策闸门，不是又一个模型。",
-      bugScanner:"缺陷扫描器",bugScannerText:"看代码改动里有没有 bug",eval:"模型评测",evalText:"看模型在测试题里表现怎样",
-      secondAi:"第二个模型",secondAiText:"可选的挑刺手段--不是真相来源",
-      falsifyText:"把有限声明放到真实状态、原始材料和明确策略上核对",
-      stepFrameTitle:"声明",stepAttackTitle:"界定",stepRecomputeTitle:"核对",stepCutlineTitle:"分级",stepReceiptTitle:"回执",
-      tierNormal:"常规",tierProduction:"生产",tierQuant:"量化",
-      howLabel:"Falsify 怎么做",howTitle:"声明 · 界定 · 核对 · 分级 · 回执",
-      howLead:"公开核心只有三种可检查的判定：PASS、PASS_WITH_DEBT、BLOCK——并且能回读权威路径。",
-      stepFrame:"把 AI 或机器人的表述先当成声明，而不是事实。",
-      stepAttack:"写清范围、假设，以及能证明它的权威来源。",
-      stepRecompute:"回读真正持有真相的系统。",
-      stepCutline:"没有证据就不能 PASS——把必须修复与已知欠账分开。",
-      stepReceipt:"留下发现、权威、证据与复现命令。",
-      resultLabel:"仅格式演示",footerDocs:"文档",footerContact:"联系",footerSample:"示例回执",contactKicker:"联系创始人",contactLead:"设计合作、集成、研究协作或产品问题 — 直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
-      tryLabel:"仅格式演示",tryTitle:"预览回执长什么样--不是完整核验",
+      differenceLabel:"它到底是什么",differenceTitle:"不是又一个模型意见，而是有边界的裁决。",
+      differenceLead:"LLM 负责攻击声明并签署边界内裁决；authority adapter 负责核对物理事实；统一 kernel 决定该裁决能否授权动作。",
+      bugScanner:"缺陷扫描器",bugScannerText:"检查 diff 里有没有缺陷",eval:"模型评测",evalText:"衡量模型在测试集上的表现",
+      secondAi:"第二个模型",secondAiText:"负责攻击声明，永远不是真相来源",
+      falsifyText:"把攻击变成可执行的证据检查，并只对真正证明过的范围签发裁决",
+      stepAttackTitle:"攻击",stepFrameTitle:"界定",stepCheckTitle:"核对",stepVerdictTitle:"裁决",stepGateTitle:"放行",
+      howLabel:"工作原理",howTitle:"三方分工，一份决策契约。",
+      howLead:"对抗式 AI 攻击声明，authority adapter 核对事实，kernel 界定裁决能做什么——PASS、PASS_WITH_DEBT 或 BLOCK，回执上永远写明范围。",
+      stepAttack:"对抗式 AI 攻击声明，找出既有检查没覆盖到的失败方式。",
+      stepFrame:"锁定声明的范围、假设，以及能证明它的权威来源。",
+      stepCheck:"把质疑变成可执行的证据检查——adapter 可以对真实系统跑这些检查。",
+      stepVerdict:"kernel 签发 PASS、PASS_WITH_DEBT 或 BLOCK，且只对真正证明过的范围生效。",
+      stepGate:"没有 adapter 就没有动作：缺少 authority adapter 时，裁决只停留在认知层。",
+      deliveryLabel:"今天能拿到什么",deliveryTitle:"同一个 kernel，不同的权威级别。",
+      deliveryLead:"每个交付物都标明状态。这里没有任何东西会把一次审查悄悄变成生产或付款闸门。",
+      d1Name:"Falsify Review",d1Status:"AVAILABLE · 开源",d1Text:"对抗式 LLM 审查，签发边界内的认知层裁决。含 CLI、本地 demo、skills 与 GitHub Action 模板。",
+      d2Name:"Falsify Authority Gate",d2Status:"需要 ADAPTER",d2Text:"对真实权威路径执行可执行的证据检查；只有这样 PASS 才能承载动作。目前没有公开的 adapter。",
+      d3Name:"Audit Sprint",d3Status:"AVAILABLE · 服务",d3Text:"针对一个高风险产物：声明清单、kill-shots、证据包，以及签署的裁决回执。",
+      d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · 私有",d4Text:"按具体权威路径集成——部署、数据或执行。小规模试点，不自助开放。",
+      d5Name:"Team / Enterprise",d5Status:"TARGET · 未交付",d5Text:"Dashboard、SSO、RBAC、留存。路线图目标，不是已交付功能。",
+      resultLabel:"仅格式演示",footerDocs:"文档",footerContact:"联系",footerSample:"示例回执",contactKicker:"联系创始人",contactLead:"设计合作、集成、研究协作或产品问题——直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
+      tryLabel:"仅格式演示",tryTitle:"预览回执长什么样——不是完整核验",
       tryLead:"这只是格式演示，不会跑完整 Falsify 门禁、云端审查或实时状态探测。请别把它当成产品能力证明。",
       runExample:"运行示例",copyArtifact:"复制复现命令",
       resultTitle:"可以预览格式样例",
-      resultLead:"运行示例只看判定长什么样--不是有证据背书的核验。",
-      installLabel:"从这里开始",installTitle:"先从 GitHub 拦住声明",
-      installLead:"最稳的第一步：用 GitHub Action 卡住 PR 声明与决策文档。CLI 与 skill 仍属公开版；生产与量化强制仍在 Pro。",
+      resultLead:"运行示例只看判定长什么样——不是有证据背书的核验。",
+      installLabel:"从这里开始",installTitle:"先从 GitHub 拦住声明。",
+      installLead:"最稳的第一步：GitHub Action 审查 PR 声明与决策文档并给出有边界的裁决。它管的是审查——永远不管付款、部署或其他实时动作。",
       actionLink:"安装 GitHub Action →",skillsLink:"安装 Skill →",verdictLink:"查看判定约定 →",
-      ctaTitle:"把「信我」变成可复现的判定。",
-      ctaLead:"高后果 AI 输出过关前——先核对权威来源，并留下回执。",
+      ctaTitle:"把「信我」变成有边界的裁决。",
+      ctaLead:"先攻击声明，再核对权威，最后留下带范围与上限的回执。",
       ctaPrimary:"安装 GitHub Action",ctaSecondary:"格式演示",
-      footer:"证据驱动的决策闸门。多模型审查可选。我们只给风险分类--不替你批准行动。"
+      footer:"对抗式审查，签发有边界的裁决。开源回执只到认知层：能授权动作的 PASS 需要 authority adapter 与统一 kernel。"
     }
   };
   const phaseLabels = {
-    en: ["01 CLAIM", "02 FRAME", "03 VERIFY", "03 VERIFY", "04 CUTLINE", "05 RECEIPT"],
-    zh: ["01 声明", "02 界定", "03 核对", "03 核对", "04 分级", "05 回执"]
+    en: ["01 CLAIM", "02 FRAME", "03 CHECK", "03 CHECK", "04 VERDICT", "05 RECEIPT"],
+    zh: ["01 声明", "02 界定", "03 核对", "03 核对", "04 裁决", "05 回执"]
   };
   const readStoredLanguage = () => { try { return localStorage.getItem("falsify-flow-language"); } catch { return null; } };
   const storeLanguage = (value) => { try { localStorage.setItem("falsify-flow-language", value); } catch {} };
@@ -213,7 +231,6 @@
     if (language === "zh") url.searchParams.set("lang", "zh"); else url.searchParams.delete("lang");
     history.replaceState(null, "", url);
     render();
-    syncTierCopy();
     setStage(stageIndex);
     const demoActive = stageIndex > 0 || demoTimer;
     toggle.setAttribute("aria-pressed", demoActive ? "true" : "false");
@@ -231,38 +248,17 @@
     nav.classList.remove("open");
     menu.setAttribute("aria-expanded", "false");
   }));
-  const tierCopy = {
-    en: {
-      normal: "Core receipt and reproducible evidence for a bounded claim.",
-      production: "Add state verification, rollback, and accountable operational evidence.",
-      quant: "Add data semantics, execution mechanics, and an explicit claim ceiling."
-    },
-    zh: {
-      normal: "针对范围明确的判断，保留回执和可复现记录。",
-      production: "增加状态核验、回滚方案和责任明确的运行记录。",
-      quant: "增加数据定义、执行方式和明确的适用范围。"
-    }
-  };
-  const syncTierCopy = () => {
-    const active = document.querySelector(".tier.active");
-    document.getElementById("tier-copy").textContent = tierCopy[language][active.dataset.tier];
-  };
-  document.querySelectorAll(".tier").forEach((button) => button.addEventListener("click", () => {
-    document.querySelectorAll(".tier").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-pressed", "false"); });
-    button.classList.add("active");
-    button.setAttribute("aria-pressed", "true");
-    syncTierCopy();
-  }));
-  syncTierCopy();
 
   const receipt = document.querySelector(".demo-receipt");
   const toggle = document.querySelector(".demo-toggle");
   const phaseEl = document.querySelector(".receipt-phase");
   // claim → success card → frame/compare intro → commits lit → conflict → block+receipt
   const stages = ["claim", "success", "compare", "mismatch", "conflict", "block"];
+  // Per-stage dwell (ms): open fast, hold conflict slightly longer, then stamp BLOCK.
+  const stageDelays = [0, 260, 280, 300, 340, 0];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let demoTimer = 0, stageIndex = 0;
-  const stopDemo = () => { if (demoTimer) window.clearInterval(demoTimer); demoTimer = 0; };
+  const stopDemo = () => { if (demoTimer) window.clearTimeout(demoTimer); demoTimer = 0; };
   const setStage = (index) => {
     stageIndex = Math.min(index, stages.length - 1);
     receipt.dataset.demoState = stages[stageIndex];
@@ -273,6 +269,18 @@
     setStage(0);
     toggle.setAttribute("aria-pressed", "false");
     toggle.textContent = translations[language].demoPlay;
+  };
+  const advanceDemo = () => {
+    if (stageIndex >= stages.length - 1) {
+      stopDemo();
+      return;
+    }
+    setStage(stageIndex + 1);
+    if (stageIndex >= stages.length - 1) {
+      stopDemo();
+      return;
+    }
+    demoTimer = window.setTimeout(advanceDemo, stageDelays[stageIndex] || 280);
   };
   const startDemo = () => {
     stopDemo();
@@ -285,10 +293,7 @@
     setStage(1);
     toggle.setAttribute("aria-pressed", "true");
     toggle.textContent = translations[language].demoPause;
-    demoTimer = window.setInterval(() => {
-      if (stageIndex >= stages.length - 1) { stopDemo(); return; }
-      setStage(stageIndex + 1);
-    }, 480);
+    demoTimer = window.setTimeout(advanceDemo, stageDelays[1] || 260);
   };
   toggle.addEventListener("click", () => {
     if (stageIndex > 0 || demoTimer) resetDemo(); else startDemo();
@@ -298,10 +303,17 @@
 
   document.getElementById("copy-artifact").addEventListener("click", async () => {
     const status = document.getElementById("copy-status");
+    const flash = () => {
+      status.classList.remove("is-flash");
+      void status.offsetWidth;
+      status.classList.add("is-flash");
+      window.setTimeout(() => status.classList.remove("is-flash"), 900);
+    };
     try {
       if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.writeText !== "function") throw new Error("clipboard unavailable");
       await navigator.clipboard.writeText(copyCommand);
       status.textContent = language === "zh" ? "复现命令已复制。" : "Reproduce command copied.";
+      flash();
     } catch {
       status.textContent = (language === "zh" ? "剪贴板不可用，请手动复制：" : "Clipboard unavailable. Copy manually: ") + copyCommand;
     }

@@ -32,7 +32,7 @@ def test_public_copy_is_native_bounded_and_avoids_old_slogan():
     html, js = _source("index.html"), _source("candidate.js")
     for forbidden in ("Candidate only", "\u8fd9\u662f\u5019\u9009\u9875\u9762", "\u5148\u628a\u8bc1\u636e\u6446\u51fa\u6765\u3002", "\u518d\u8c08\u7ed3\u8bba\u3002"):
         assert forbidden not in html + js
-    for copy in ("\u5148\u6838\u5bf9\u6743\u5a01\u6765\u6e90", "\u8bc1\u636e\u95f8\u95e8", "\u5b89\u88c5 GitHub Action"):
+    for copy in ("\u5148\u653b\u51fb\u58f0\u660e", "\u5bf9\u6297\u5f0f\u5ba1\u67e5", "\u5b89\u88c5 GitHub Action"):
         assert copy in js
 
 def test_chinese_interactive_states_are_native_and_complete():

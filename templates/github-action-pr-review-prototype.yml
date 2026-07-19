@@ -96,9 +96,9 @@ jobs:
               else:
                   review_obj = {
                       "schema_version": "falsify.review.v1",
-                      "verdict": "PASS",
+                      "verdict": "BLOCK",
                       "findings": [],
-                      "raw_review": "live review skipped: set FALSIFY_API_KEY for model-backed review (lint-only mode)",
+                      "raw_review": "claim blocked: live review/evidence unavailable; set FALSIFY_API_KEY for model-backed review. Lint-only output is advisory and cannot issue PASS.",
                       "meta": {
                           "provider": "",
                           "model": "",
@@ -106,9 +106,10 @@ jobs:
                           "reviewed_at": "",
                           "review_skipped": True,
                           "skip_reason": "missing FALSIFY_API_KEY",
+                          "authority_scope": "none",
                       },
                   }
-                  review_ok = True
+                  review_ok = False
 
               verdict = review_obj.get("verdict", "BLOCK")
               report["files"].append({
@@ -163,7 +164,10 @@ jobs:
           lines.append("### Final")
           v = report["overall"]["verdict"]
           if v == "BLOCK":
-              lines.append("Merge blocked until Must Fix items are resolved.")
+              if any((x["review"].get("meta") or {}).get("review_skipped") for x in report["files"]):
+                  lines.append("Merge blocked: authority evidence is unavailable; lint-only output cannot issue PASS.")
+              else:
+                  lines.append("Merge blocked until Must Fix items are resolved.")
           elif v == "PASS_WITH_DEBT":
               lines.append("Gate passed with debt. Track upgrade triggers.")
           else:

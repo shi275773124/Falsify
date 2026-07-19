@@ -26,7 +26,7 @@ def test_root_serves_v2_flow_candidate_and_versioned_assets():
     root = request("/")
     body = body_text(root)
     assert root.status_code == 200
-    assert "Falsify | Evidence gate for AI claims on GitHub" in body
+    assert "Falsify | Challenge the claim. Verify the authority. Gate the action." in body
     assert "/assets/flow/home.css?v=" in body
     assert "/assets/flow/home.js?v=" in body
     assert "/assets/flow/flow-canvas.js?v=" in body
