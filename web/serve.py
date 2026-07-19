@@ -110,10 +110,19 @@ def review(text, scenario):
     try:
         data = extract_json(raw)
     except (ValueError, json.JSONDecodeError):
-        return {"verdict": "BLOCK", "risks": [], "raw": raw,
-                "note": "model did not return clean JSON; showing raw output"}
-    data["verdict"] = normalize_verdict(data.get("verdict"))
-    data["risks"] = (data.get("risks") or [])[:6]
+        data = {
+            "verdict": "BLOCK",
+            "risks": [],
+            "raw": raw,
+            "note": "model did not return clean JSON; showing raw output",
+        }
+    else:
+        data["verdict"] = normalize_verdict(data.get("verdict"))
+        data["risks"] = (data.get("risks") or [])[:6]
+    # Paste-review is epistemic demo only — never imply claim-bearing / capital authority.
+    data.setdefault("claim_scope", "paste_review_demo")
+    data.setdefault("authority_ceiling", "EPISTEMIC_ONLY")
+    data.setdefault("capital_authority", "NONE")
     return data
 
 
@@ -166,7 +175,8 @@ def safe_design_path(url_path):
         return None
     if target.is_dir():
         return target
-    allowed = {".html", ".png", ".css", ".js", ".svg", ".webp", ".ico", ".mp4", ".webm", ".md"}
+    # Design mirrors are product preview assets only — never ship internal .md drafts.
+    allowed = {".html", ".png", ".css", ".js", ".svg", ".webp", ".ico", ".mp4", ".webm"}
     if target.suffix.lower() not in allowed:
         return None
     return target
@@ -273,11 +283,14 @@ DOC_SECTIONS = [
 ]
 
 # Public HTML surface for sitemap / GEO citation (not design-candidate mirrors).
+# Only these stems are routable HTML readers; other files under examples/real-cases/
+# remain on disk for raw .md download or internal drafts but must not get a case shell.
 SITEMAP_CASE_STEMS = (
     "02-derived-freshness-stale-panel",
     "04-round3b-evidence-integrity-reversal",
     "05-second-runtime-v068-sync-false-green",
 )
+CASE_ALLOWLIST = set(SITEMAP_CASE_STEMS)
 
 DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-install", "01-architecture"]
 
@@ -646,6 +659,8 @@ def flow_docs_page(stem, lang="en", canonical=False):
 
 def case_source_path(stem, lang="en"):
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", stem):
+        return None
+    if stem not in CASE_ALLOWLIST:
         return None
     localized = CASE_DIR / f"{stem}.zh-CN.md"
     source = localized if lang == "zh" and localized.is_file() else CASE_DIR / f"{stem}.md"

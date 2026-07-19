@@ -22,7 +22,8 @@ def test_root_assets_are_versioned_and_brand_assets_are_served():
         assert "/static/favicon.svg" in body
         assert 'class="brand-mark"' in body
         assert 'class="brand-wordmark"' in body or "Falsify" in body
-    for asset_path in ("/static/favicon.svg", "/static/img/falsify-logo-dark.png"):
+    # Public brand surface is brand-mark/wordmark + favicon (not legacy logo-dark).
+    for asset_path in ("/static/favicon.svg", "/static/favicon.png"):
         asset=handler(asset_path); asset.do_GET(); assert asset.status_code==200 and asset.wfile.getvalue()
 
 def test_docs_routes_use_current_flow_shell():
@@ -83,6 +84,22 @@ def test_options_is_explicitly_rejected_without_cors():
 def test_static_traversal_rejected():
     assert serve.safe_repo_path("/docs/../LICENSE") is None
     assert serve.safe_web_static("/static/../serve.py") is None
+
+
+def test_design_path_rejects_markdown_drafts():
+    """Design mirrors serve product assets only — never internal .md drafts."""
+    assert serve.safe_design_path("/design/falsify-flow-docs/notes.md") is None
+    assert serve.safe_design_path("/design/any/internal-draft.md") is None
+    h = handler("/design/falsify-flow-docs/notes.md")
+    h.do_GET()
+    assert h.status_code == 404
+
+
+def test_case_reader_allowlist_blocks_non_public_stems():
+    # On-disk drafts outside CASE_ALLOWLIST must not get an HTML reader shell.
+    h = handler("/examples/real-cases/03-cron-wrapper-refresh-gate-rootfix")
+    h.do_GET()
+    assert h.status_code == 404
 
 
 def test_github_action_markdown_renders_semantic_emphasis_and_table():
