@@ -126,6 +126,15 @@ backtest_btc_fair_price/
 /docs/seo-geo-hygiene.md
 /docs/falsify-skill-shell-contract.md
 
+# Local design dumps / legacy brand sources / unused console prototype
+/web/console/
+/web/static/vendor/
+/web/static/img/falsify-logo-dark.png
+/web/static/img/falsify-logo-user-source-light.png
+/examples/real-cases/03-cron-wrapper-refresh-gate-rootfix.md
+/scripts/inspect_gate.py
+/设计资产/
+
 # Local package backups
 *.bak_*
 falsify/*.bak_*
