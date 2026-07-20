@@ -4,7 +4,7 @@
       "asset_id": "VALID-ASSET",
       "source_id": "VALID-SOURCE",
       "archive_physical_path": "data/panel.csv",
-      "binding_data_sha256": "15ee762498452ca51f6ff980bc670c5a09635f13f821487dd9ea197edf2917f8",
+      "binding_data_sha256": "35fe5f6a10a0c714f4555892cb0647d9d893c765bafb5a2a7947e7c54b992e06",
       "coverage_start": "2026-01-01T00:00:00Z",
       "coverage_end": "2026-01-02T00:00:00Z"
     }

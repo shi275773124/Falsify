@@ -293,6 +293,10 @@ def _markdown_to_html(text: str, title: str = "", untranslated: bool = False) ->
     md = _safe_markdown if not title else _safe_markdown_no_toc
     rendered = md.convert(text)
     md.reset()
+    # Markdown tables extension emits plain <th>; the docs CSS expects scope="col"
+    # for header cells and scope="row" for leading row cells (keeps style contract).
+    rendered = re.sub(r"<th>", '<th scope="col">', rendered)
+    rendered = re.sub(r"<td>(?=<td)", '<td scope="row">', rendered)
     return rendered
 
 
