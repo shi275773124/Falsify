@@ -12,7 +12,7 @@
 | **Verdict** | Statistical PASS withdrawn → **BLOCK** / no live authority |
 | **Public URL** | https://falsify.site/examples/real-cases/04-round3b-evidence-integrity-reversal |
 
-All three cards: [SHARE-CARDS.md](./SHARE-CARDS.md) · Install gate: [GitHub Action share pack](../../docs/github-action-share-pack.md)
+All three cards: [SHARE-CARDS.md](https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/SHARE-CARDS.md) · Install gate: [GitHub Action install guide](/docs/14-github-action-install.html)
 
 ## Apparent green
 

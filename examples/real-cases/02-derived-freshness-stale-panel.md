@@ -13,7 +13,7 @@
 | **Verdict** | Derived freshness false-green → **BLOCK** until gates close |
 | **Public URL** | https://falsify.site/examples/real-cases/02-derived-freshness-stale-panel |
 
-All three cards: [SHARE-CARDS.md](./SHARE-CARDS.md) · Install gate: [GitHub Action share pack](../../docs/github-action-share-pack.md)
+All three cards: [SHARE-CARDS.md](https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/SHARE-CARDS.md) · Install gate: [GitHub Action install guide](/docs/14-github-action-install.html)
 
 ## TL;DR
 
@@ -95,7 +95,7 @@ does not prove panel CSVs refreshed.
 
 ## Skill pack
 
-Open-core workflow: [`skills/falsify-live-production-gate/`](../../skills/falsify-live-production-gate/SKILL.md)
+Open-core workflow: [`skills/falsify-live-production-gate/`](https://github.com/shi275773124/Falsify/tree/main/skills/falsify-live-production-gate)
 
 Rule IDs: `FALSIFY_LIVE_NEGATIVE_FIXTURE_V1`, `FALSIFY_INCIDENT_REPLAY_V1`,
 input provenance manifest gate, replacement semantics gate.
@@ -107,4 +107,4 @@ input provenance manifest gate, replacement semantics gate.
 - Live restore: separate gate from data rootfix; requires explicit authorization
 - Remaining debt: structural book beta, metric replacement registered as strategy change
 
-See also: [fictional-horizon quant audit](./01-fictional-horizon-quant-audit.md) for research-side Falsify.
+See also: [fictional-horizon quant audit](/examples/real-cases/01-fictional-horizon-quant-audit) for research-side Falsify.

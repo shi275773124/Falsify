@@ -17,6 +17,8 @@ from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlparse
 
+import markdown as _markdown
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import falsify  # noqa: E402
 
@@ -222,6 +224,89 @@ def _safe_md_href(href: str):
     return None
 
 
+class _MarkdownLinkTreeprocessor(_markdown.treeprocessors.Treeprocessor):
+    """Post-process links so only safe hrefs survive; drop bad links entirely."""
+
+    def run(self, root):
+        for anchor in root.iter("a"):
+            href = anchor.get("href", "")
+            safe = _safe_md_href(href)
+            if safe is None:
+                # Unwrap anchor, keep its text
+                parent = self.parent_map.get(anchor)
+                if parent is not None:
+                    idx = list(parent).index(anchor)
+                    anchor.tail = (anchor.text or "") + (anchor.tail or "")
+                    parent.remove(anchor)
+                    if anchor.tail:
+                        if idx == 0:
+                            parent.text = (parent.text or "") + anchor.tail
+                        else:
+                            prev = list(parent)[idx - 1]
+                            prev.tail = (prev.tail or "") + anchor.tail
+                anchor.tag = "span"
+                for k in list(anchor.attrib):
+                    del anchor.attrib[k]
+            else:
+                anchor.set("href", safe)
+        return root
+
+
+class _LinkUnwrapInlineProcessor(_markdown.inlinepatterns.InlineProcessor):
+    """Make markdown's auto-link/URL inline patterns harmless by rendering plain text."""
+
+    def handleMatch(self, m, data):
+        text = m.group(1)
+        return text, m.start(0), m.end(0)
+
+
+class _SafeMarkdown(_markdown.Markdown):
+    """markdown.Markdown subclass that swaps in a safe link treeprocessor."""
+
+    def build_parser(self):
+        super().build_parser()
+        # Attach a parent map to the InlineProcessor so the link unwrapper
+        # can replace bad anchors with their text content.
+        inline = self.treeprocessors["inline"]
+        inline.parent_map = {}
+        original_run = inline.run
+
+        def run_with_map(root):
+            inline.parent_map = {c: p for p in root.iter() for c in p}
+            return original_run(root)
+
+        inline.run = run_with_map
+        # Replace the default link treeprocessor with our safe one.
+        safe_links = _MarkdownLinkTreeprocessor(self)
+        if "links" in self.treeprocessors:
+            self.treeprocessors.deregister("links")
+        self.treeprocessors.register(safe_links, "safe_links", 0)
+
+
+MD_EXTENSIONS = ["tables", "fenced_code", "toc"]
+_safe_markdown = _SafeMarkdown(extensions=MD_EXTENSIONS, output_format="html")
+_safe_markdown_no_toc = _SafeMarkdown(extensions=MD_EXTENSIONS, output_format="html")
+
+
+def _markdown_to_html(text: str, title: str = "", untranslated: bool = False) -> str:
+    """Render Markdown with safe links and no executable code."""
+    md = _safe_markdown if not title else _safe_markdown_no_toc
+    rendered = md.convert(text)
+    md.reset()
+    return rendered
+
+
+def render_markdown(text, title="Falsify docs", current_path=None, lang="en", untranslated=False):
+    """Render a Markdown document into the docs shell."""
+    notice_html = ""
+    if untranslated:
+        notice = DOCS_CHROME.get(lang, DOCS_CHROME["en"])["untranslated"]
+        notice_html = f'<p class="doc-untranslated" data-i18n="untranslated">{html_escape(notice)}</p>'
+    body = f'<article class="doc-body">{notice_html}{_markdown_to_html(text)}</article>'
+    return docs_shell(title, body, current_path, lang)
+
+
+# Legacy helpers kept for compatibility; inline_md is no longer used for body rendering.
 def inline_md(text):
     """Render the deliberately supported inline Markdown subset safely."""
     out = html_escape(text)
@@ -286,6 +371,7 @@ DOC_SECTIONS = [
 # Only these stems are routable HTML readers; other files under examples/real-cases/
 # remain on disk for raw .md download or internal drafts but must not get a case shell.
 SITEMAP_CASE_STEMS = (
+    "01-fictional-horizon-quant-audit",
     "02-derived-freshness-stale-panel",
     "04-round3b-evidence-integrity-reversal",
     "05-second-runtime-v068-sync-false-green",
@@ -752,105 +838,13 @@ def resolve_doc_markdown(stem, lang="en"):
 
 
 def render_markdown(text, title="Falsify docs", current_path=None, lang="en", untranslated=False):
-    body = ['<article class="doc-body">']
+    """Render a Markdown document into the docs shell."""
+    notice_html = ""
     if untranslated:
         notice = DOCS_CHROME.get(lang, DOCS_CHROME["en"])["untranslated"]
-        body.append(f'<p class="doc-untranslated" data-i18n="untranslated">{html_escape(notice)}</p>')
-    lines = text.splitlines()
-    in_code = False
-    code_lang = ""
-    code_lines = []
-    list_open = None
-
-    def close_list():
-        nonlocal list_open
-        if list_open:
-            body.append(f"</{list_open}>")
-            list_open = None
-
-    def render_table(headers, rows):
-        header_html = "".join(f"<th scope=\"col\">{inline_md(cell)}</th>" for cell in headers)
-        row_html = "".join(
-            "<tr>" + "".join(f"<td>{inline_md(cell)}</td>" for cell in row) + "</tr>"
-            for row in rows
-        )
-        body.append(f'<div class="doc-table-scroll"><table><thead><tr>{header_html}</tr></thead><tbody>{row_html}</tbody></table></div>')
-
-    i = 0
-    while i < len(lines):
-        line = lines[i].rstrip()
-        if line.strip().startswith("```"):
-            if not in_code:
-                close_list()
-                in_code = True
-                code_lang = line.strip()[3:].strip()
-                code_lines = []
-            else:
-                lang_cls = f' class="language-{html_escape(code_lang)}"' if code_lang else ""
-                body.append(f"<pre><code{lang_cls}>{html_escape(chr(10).join(code_lines))}</code></pre>")
-                in_code = False
-                code_lang = ""
-                code_lines = []
-            i += 1
-            continue
-        if in_code:
-            code_lines.append(line)
-            i += 1
-            continue
-
-        # A GFM table is a header row followed by a divider row.
-        if i + 1 < len(lines) and markdown_table_cells(line) and is_markdown_table_divider(lines[i + 1]):
-            close_list()
-            headers = markdown_table_cells(line)
-            rows = []
-            i += 2
-            while i < len(lines):
-                row = markdown_table_cells(lines[i])
-                if not row or len(row) != len(headers):
-                    break
-                rows.append(row)
-                i += 1
-            render_table(headers, rows)
-            continue
-
-        stripped = line.strip()
-        if not stripped:
-            close_list()
-        elif stripped.startswith("# "):
-            close_list()
-            body.append(f"<h1>{inline_md(stripped[2:])}</h1>")
-        elif stripped.startswith("## "):
-            close_list()
-            body.append(f"<h2>{inline_md(stripped[3:])}</h2>")
-        elif stripped.startswith("### "):
-            close_list()
-            body.append(f"<h3>{inline_md(stripped[4:])}</h3>")
-        elif stripped.startswith("#### "):
-            close_list()
-            body.append(f"<h4>{inline_md(stripped[5:])}</h4>")
-        elif stripped.startswith("- "):
-            if list_open != "ul":
-                close_list()
-                body.append("<ul>")
-                list_open = "ul"
-            body.append(f"<li>{inline_md(stripped[2:])}</li>")
-        elif re.match(r"^\d+\.\s", stripped):
-            if list_open != "ol":
-                close_list()
-                body.append("<ol>")
-                list_open = "ol"
-            list_text = re.sub(r"^\d+\.\s*", "", stripped)
-            body.append(f"<li>{inline_md(list_text)}</li>")
-        else:
-            close_list()
-            body.append(f"<p>{inline_md(stripped)}</p>")
-        i += 1
-
-    close_list()
-    if in_code and code_lines:
-        body.append(f"<pre><code>{html_escape(chr(10).join(code_lines))}</code></pre>")
-    body.append("</article>")
-    return docs_shell(title, "".join(body), current_path, lang)
+        notice_html = f'<p class="doc-untranslated" data-i18n="untranslated">{html_escape(notice)}</p>'
+    body = f'<article class="doc-body">{notice_html}{_markdown_to_html(text)}</article>'
+    return docs_shell(title, body, current_path, lang)
 
 
 def docs_index(lang="en"):
