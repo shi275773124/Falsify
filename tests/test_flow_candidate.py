@@ -39,5 +39,8 @@ def test_chinese_font_stack_and_utf8_document():
 
 def test_mobile_menu_and_delivery_section_are_preserved():
     html, js, css = source("index.html"), source("candidate.js"), source("candidate.css")
-    assert 'aria-expanded="false"' in html and 'nav.classList.toggle("open")' in js and 'nav.open' in css
+    assert 'aria-expanded="false"' in html and 'nav.open' in css
+    # Menu opens via setMenuOpen helper; outside click + Escape close it.
+    assert "setMenuOpen" in js and 'classList.toggle("open"' in js
+    assert 'event.key === "Escape"' in js or 'event.key==="Escape"' in js
     assert 'id="delivery"' in html and "delivery-list" in html and ".status-badge" in css

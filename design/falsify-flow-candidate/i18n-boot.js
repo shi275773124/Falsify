@@ -1,2 +1,2 @@
-/* i18n boot: arm the anti-FOUC guard before first paint. Tiny, dependency-free, runs in <head>. */
-try{var l=new URLSearchParams(location.search).get("lang")||localStorage.getItem("falsify-flow-language");if(l==="zh"||l==="zh-CN"){var d=document.documentElement;d.setAttribute("data-i18n-pending","");d.lang="zh-CN"}}catch(e){}
+/* i18n boot: arm the anti-FOUC guard before first paint. Fail-open if home.js never clears it. */
+try{var l=new URLSearchParams(location.search).get("lang")||localStorage.getItem("falsify-flow-language");if(l==="zh"||l==="zh-CN"){var d=document.documentElement;d.setAttribute("data-i18n-pending","");d.lang="zh-CN";setTimeout(function(){try{d.removeAttribute("data-i18n-pending")}catch(e){}},1800)}}catch(e){}

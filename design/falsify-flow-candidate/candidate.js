@@ -240,14 +240,23 @@
   window.addEventListener("load",function(){if(window.ScrollTrigger)ScrollTrigger.refresh()});
   render();
   const menu = document.querySelector(".menu"), nav = document.querySelector("nav");
-  menu.addEventListener("click", () => {
-    const open = nav.classList.toggle("open");
+  const setMenuOpen = (open) => {
+    nav.classList.toggle("open", open);
     menu.setAttribute("aria-expanded", String(open));
+  };
+  menu.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setMenuOpen(!nav.classList.contains("open"));
   });
-  nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
-    nav.classList.remove("open");
-    menu.setAttribute("aria-expanded", "false");
-  }));
+  nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenuOpen(false)));
+  document.addEventListener("click", (event) => {
+    if (!nav.classList.contains("open")) return;
+    if (nav.contains(event.target) || menu.contains(event.target)) return;
+    setMenuOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && nav.classList.contains("open")) setMenuOpen(false);
+  });
 
   const receipt = document.querySelector(".demo-receipt");
   const toggle = document.querySelector(".demo-toggle");

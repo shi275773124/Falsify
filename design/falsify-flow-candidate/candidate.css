@@ -590,7 +590,15 @@ article.demo-receipt > *{position:relative;z-index:1}
 
 .compact-meta{padding:68px 0}
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.meta-grid pre{margin:0;padding:22px;overflow:auto;border:1px solid rgba(20,36,50,.2);border-radius:13px;background:#020711;color:#c7e0ee}
+.meta-grid pre{
+  margin:0;padding:22px;overflow:auto;border:1px solid rgba(20,36,50,.2);border-radius:13px;
+  color:#c7e0ee;-webkit-overflow-scrolling:touch;
+  /* Scroll hint: solid base + edge fades so long clone commands aren't a silent clip. */
+  background:
+    linear-gradient(90deg,#020711 70%,transparent) left center / 28px 100% local no-repeat,
+    linear-gradient(270deg,#020711 70%,transparent) right center / 36px 100% local no-repeat,
+    #020711;
+}
 .meta-grid code{font:12px/1.7 var(--mono)}
 .meta-links{grid-column:1/-1;display:flex;gap:18px;flex-wrap:wrap;margin-top:-18px;color:#183e5f;font-size:13px;font-weight:700}
 .meta-links a{transition:color var(--dur-hover) var(--ease)}
@@ -625,16 +633,24 @@ html.reduce-motion [data-reveal]{opacity:1!important;transform:none!important;tr
 @media(max-width:820px){
   :root{--shell:min(100% - 32px,620px)}
   .site-header{height:62px;padding-inline:16px}
-  .menu{display:inline-flex}
+  .menu{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-height:44px;min-width:44px;padding:10px 14px;font-size:12px;
+  }
   .hero-grid>*{min-width:0}
   nav{
-    display:none;position:absolute;top:62px;left:0;right:0;padding:16px;
-    flex-direction:column;align-items:stretch;gap:12px;
+    display:none;position:absolute;top:62px;left:0;right:0;padding:12px 16px 18px;
+    flex-direction:column;align-items:stretch;gap:4px;
     background:#06101d;border-bottom:1px solid var(--line);
     opacity:0;transform:translateY(-6px);pointer-events:none;
     transition:opacity var(--dur-state) var(--ease-out),transform var(--dur-state) var(--ease-out);
   }
   nav.open{display:flex;opacity:1;transform:none;pointer-events:auto}
+  nav a{
+    display:flex;align-items:center;min-height:44px;padding:12px 10px;
+    font-size:15px;border-radius:8px;
+  }
+  nav .lang{min-height:44px;width:100%;justify-content:center;margin-top:6px}
   .hero-grid{min-height:auto;grid-template-columns:1fr;gap:34px;padding:54px 0 45px}
   .hero-copy{max-width:100%}
   .hero h1{font-size:clamp(42px,12.4vw,55px);line-height:.98}
