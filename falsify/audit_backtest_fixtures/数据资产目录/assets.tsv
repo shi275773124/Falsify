@@ -1,0 +1,7 @@
+asset_id	status	class	venue	data_types	symbols	coverage	physical_path	files	bytes	source	last_verified_utc	evidence	notes	coverage_start	coverage_end
+VALID-ASSET	HAVE_VERIFIED_COMPLETE	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	2026-01-01..2026-01-02 continuous	data/panel.csv	1	200	VALID-SOURCE	2026-07-15T00:00:00Z	fixture hash	complete fixture	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z
+LOCATOR-ASSET	LOCATOR_ONLY_NO_DATA	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	locator only	data/panel.csv	0	0	VALID-SOURCE	2026-07-15T00:00:00Z	locator	no_data	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z
+DERIVED-ASSET	DERIVED_CACHE	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	2026-01-01..2026-01-02	data/panel.csv	1	200	VALID-SOURCE	2026-07-15T00:00:00Z	cache	derived	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z
+SOURCE-ASSET	SOURCE_AVAILABLE_NOT_DOWNLOADED	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	source only	data/panel.csv	0	0	VALID-SOURCE	2026-07-15T00:00:00Z	source	not_downloaded	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z
+SPARSE-ASSET	HAVE_VERIFIED_SPARSE	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	2026-01-01..2026-01-02 sample	data/panel.csv	1	200	VALID-SOURCE	2026-07-15T00:00:00Z	sample	sparse	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z
+FREEZE-ASSET	HAVE_PARTIAL	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	2026-01-01..2026-01-02 freeze QA only	data/panel.csv	1	200	VALID-SOURCE	2026-07-15T00:00:00Z	P0_QA_PASS	freeze QA not full archive	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z

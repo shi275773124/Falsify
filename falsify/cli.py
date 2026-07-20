@@ -28,12 +28,13 @@ agent CLI you're already logged into (Claude, Codex, Gemini, Hermes, or any othe
     falsify review report.md --provider claude    # or: codex / gemini / hermes
     # any other agent: FALSIFY_AGENT_CMD='myagent --headless' falsify review report.md -p myagent
 
-    falsify lint   report.md               # no API: tags + ship-blockers
+    falsify lint   report.md               # no API: tags + blocker markers
     falsify demo                           # local fixture demo, no API
     falsify run    brief.md                # full loop: draft then review
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -54,6 +55,14 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 from falsify import VERSION
+from falsify.authority_kernel import (
+    KERNEL_ID,
+    exit_code_for_decision,
+    finalize_authority,
+    parse_model_completion,
+    semantic_leg_from_llm,
+    sha256_text,
+)
 
 # provider -> (base_url, default_model, key_env). model None = user must set one.
 PRESETS = {
@@ -166,6 +175,7 @@ from the brief. Rules:
 
 EXIT = {"PASS": 0, "PASS_WITH_DEBT": 0, "BLOCK": 1}
 LEGACY_VERDICTS = {"PROCEED": "PASS", "HOLD": "BLOCK", "ARCHIVE": "BLOCK"}
+PUBLIC_VERDICTS = ("PASS", "PASS_WITH_DEBT", "BLOCK")
 MAX_TOKENS = 2048
 
 
@@ -249,7 +259,7 @@ def read_input(path):
         die(f"cannot read {path}: {e}")
 
 
-def chat(system, user, base, key, model):
+def chat(system, user, base, key, model, return_meta=False):
     if not base:
         raise FalsifyError("no endpoint. Set --provider <name>, or FALSIFY_API_BASE, or run `falsify init`.")
     if not key:
@@ -268,17 +278,39 @@ def chat(system, user, base, key, model):
         base.rstrip("/") + "/chat/completions", data=payload,
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         method="POST")
+    http_status = None
+    raw_body = b""
     try:
         with urllib.request.urlopen(req, timeout=180) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
+            http_status = getattr(resp, "status", None) or resp.getcode()
+            raw_body = resp.read()
+            data = json.loads(raw_body.decode("utf-8"))
     except urllib.error.HTTPError as e:
         raise FalsifyError(f"API error {e.code}: {e.read().decode('utf-8', 'replace')[:300]}")
     except urllib.error.URLError as e:
         raise FalsifyError(f"network error: {e.reason}")
     try:
-        return data["choices"][0]["message"]["content"]
-    except (KeyError, IndexError):
+        choice = data["choices"][0]
+        content = choice["message"]["content"]
+        finish_reason = choice.get("finish_reason")
+    except (KeyError, IndexError, TypeError):
         raise FalsifyError(f"unexpected API response: {json.dumps(data)[:300]}")
+    # Only finish_reason=stop is adjudicable. length / missing / null /
+    # content_filter / tool_calls / unknown → fail-closed (no silent partial PASS).
+    if finish_reason != "stop":
+        raise FalsifyError(
+            f"model output incomplete (finish_reason={finish_reason!r}, "
+            f"max_tokens={MAX_TOKENS}); refusing to judge a partial audit")
+    meta = {
+        "http_status": http_status or 200,
+        "finish_reason": finish_reason,
+        "usage": data.get("usage") or {},
+        "raw_response_sha256": hashlib.sha256(raw_body).hexdigest() if raw_body else sha256_text(json.dumps(data)),
+        "transport": "http",
+    }
+    if return_meta:
+        return content, meta
+    return content
 
 
 def agent_cmd(agent):
@@ -301,7 +333,7 @@ def agent_for(args):
     return None
 
 
-def run_agent_cli(agent, cmd, system, user):
+def run_agent_cli(agent, cmd, system, user, return_meta=False):
     """Send the prompt to a locally-authenticated agent CLI on stdin; return stdout."""
     exe = cmd[0]
     if shutil.which(exe) is None:
@@ -325,38 +357,52 @@ def run_agent_cli(agent, cmd, system, user):
         err = (r.stderr or "").strip()[:200]
         raise FalsifyError(f"agent '{agent}' returned no output"
                            + (f" (stderr: {err})" if err else ""))
+    # Agent CLIs do not expose finish_reason; treat full non-empty stdout as stop.
+    meta = {
+        "transport": "agent_cli",
+        "agent": agent,
+        "command": list(cmd),
+        "returncode": r.returncode,
+        "stdout_sha256": sha256_text(r.stdout or ""),
+        "stderr_sha256": sha256_text(r.stderr or ""),
+        "finish_reason": "stop",
+        "http_status": None,
+        "usage": {},
+    }
+    if return_meta:
+        return out, meta
     return out
 
 
-def llm(system, user, args, dry_run=False):
+def llm(system, user, args, dry_run=False, return_meta=False):
     """One entry point for both backends: an agent CLI (no key) or an
-    OpenAI-compatible HTTP endpoint (key). Returns the text, or None on dry-run."""
+    OpenAI-compatible HTTP endpoint (key). Returns the text, or None on dry-run.
+    When return_meta=True, returns (text, completion_meta)."""
     agent = agent_for(args)
     if agent:
         cmd = agent_cmd(agent)
         if dry_run:
             print(f"[dry-run] agent={agent} cmd={' '.join(cmd)} (prompt via stdin, no API key)")
             return None
-        return run_agent_cli(agent, cmd, system, user)
+        return run_agent_cli(agent, cmd, system, user, return_meta=return_meta)
     base, key, model = resolve(args)
     if dry_run:
         print(f"[dry-run] http base={base} model={model}")
         return None
-    return chat(system, user, base, key, model)
+    return chat(system, user, base, key, model, return_meta=return_meta)
 
 
 def parse_verdict(text):
-    matches = re.findall(
-        r"VERDICT:\s*(PASS_WITH_DEBT|PASS|BLOCK|PROCEED|HOLD(?:-\d+)?|ARCHIVE)",
-        text,
-        re.IGNORECASE,
-    )
-    if not matches:
+    """Strict parse: exactly one VERDICT as the last non-empty line.
+
+    Multi-verdict bodies, non-terminal verdicts, and unknown tokens return None
+    (fail-closed). Claim-bearing paths must use the authority kernel rather than
+    this helper alone.
+    """
+    parsed = parse_model_completion(text or "")
+    if parsed["completion_status"] != "COMPLETE":
         return None
-    v = matches[-1].upper()
-    if v.startswith("HOLD"):
-        return "BLOCK"
-    return LEGACY_VERDICTS.get(v, v)
+    return parsed["model_verdict"]
 
 
 def severity_for_cutline(cutline):
@@ -399,28 +445,117 @@ def parse_findings(text):
     return findings
 
 
-def review_json_payload(audit, verdict, args):
+def must_fix_override(audit, verdict):
+    """Compatibility wrapper — real rule lives in authority_kernel.semantic_leg_from_llm."""
+    leg = semantic_leg_from_llm(
+        audit_text=audit or "",
+        findings=parse_findings(audit or ""),
+        completion_meta={"finish_reason": "stop"},
+        strict_known_debt_trigger=True,
+    )
+    return leg["llm_semantic_verdict"], leg.get("verdict_override")
+
+
+def adjudicate_llm_audit(
+    audit,
+    args,
+    *,
+    entry="review",
+    risk_tier="normal",
+    claim_scope="document_logic",
+    claim_text="",
+    completion_meta=None,
+    independence_verdict="PASS",
+    executable_evidence_verdict="UNKNOWN",
+    production_path_verdict="UNKNOWN",
+    subject_binding_verdict="UNKNOWN",
+    subject_manifest=None,
+    subject_hashes=None,
+    evidence_hashes=None,
+    satisfied_extra=None,
+):
+    """Shared claim-bearing path: LLM audit text → authority kernel decision.
+
+    All of review / run / high-risk gate adapters must call this (or
+    finalize_authority directly). No entry may parse_verdict + sys.exit alone.
+    """
+    findings = parse_findings(audit or "")
+    strict = bool(getattr(args, "strict_known_debt_trigger", True))
+    meta = dict(completion_meta or {})
+    # Tests / local fixtures that inject audit text without transport meta:
+    # treat as complete stop so semantic rules still apply.
+    if "finish_reason" not in meta:
+        meta["finish_reason"] = "stop"
+
+    leg = semantic_leg_from_llm(
+        audit_text=audit or "",
+        findings=findings,
+        completion_meta=meta,
+        strict_known_debt_trigger=strict,
+    )
+    decision = finalize_authority(
+        claim_text=claim_text or "",
+        claim_scope=claim_scope,
+        risk_tier=risk_tier,
+        entry=entry,
+        model_verdict=leg.get("model_verdict"),
+        llm_semantic_verdict=leg["llm_semantic_verdict"],
+        executable_evidence_verdict=executable_evidence_verdict,
+        production_path_verdict=production_path_verdict,
+        subject_binding_verdict=subject_binding_verdict,
+        independence_verdict=independence_verdict,
+        completion_status=leg["completion_status"],
+        subject_manifest=subject_manifest,
+        subject_hashes=subject_hashes,
+        evidence_hashes=dict(evidence_hashes or {}, **{
+            "raw_review": leg.get("raw_sha256") or sha256_text(audit or ""),
+        }),
+        verdict_override=leg.get("verdict_override"),
+        satisfied_obligations=list(satisfied_extra or []),
+    )
+    return decision, findings, leg
+
+
+def review_json_payload(audit, verdict, args, decision=None, findings=None, completion_meta=None):
+    """Build the stable v1 payload; authority fields come from the kernel."""
     provider = getattr(args, "provider", None) or setting("FALSIFY_PROVIDER") or ""
     model = getattr(args, "model", None) or setting("FALSIFY_MODEL") or ""
-    findings = parse_findings(audit)
-    validation_errors = []
-    for i, f in enumerate(findings):
-        if f.get("cutline") == "Known Debt" and not f.get("upgrade_trigger", "").strip():
-            validation_errors.append({
-                "type": "known_debt_missing_upgrade_trigger",
-                "message": "Known Debt item must include upgrade_trigger.",
-                "finding_index": i,
-                "issue": f.get("issue", ""),
-            })
-
-    strict = bool(getattr(args, "strict_known_debt_trigger", False))
-    effective_verdict = verdict
-    if strict and validation_errors:
-        effective_verdict = "BLOCK"
-
+    if findings is None:
+        findings = parse_findings(audit)
+    if decision is None:
+        decision, findings, _leg = adjudicate_llm_audit(
+            audit, args,
+            entry="review",
+            risk_tier=getattr(args, "risk_tier", "normal") or "normal",
+            claim_scope=getattr(args, "claim_scope", "document_logic") or "document_logic",
+            claim_text=getattr(args, "claim_text", "") or "",
+            completion_meta=completion_meta,
+        )
+    validation_errors = list(
+        (decision.get("verdict_override") and []) or []
+    )
+    # Surface structured finding validation from semantic leg re-run cheaply
+    from falsify.authority_kernel import validate_structured_findings
+    fval = validate_structured_findings(findings)
+    validation_errors = fval.get("errors") or []
+    strict = bool(getattr(args, "strict_known_debt_trigger", True))
     return {
         "schema_version": "falsify.review.v1",
-        "verdict": effective_verdict,
+        "verdict": decision["effective_verdict"],
+        "model_verdict": decision.get("model_verdict") or verdict,
+        "verdict_override": decision.get("verdict_override"),
+        "authority_ceiling": decision.get("authority_ceiling"),
+        "capital_authority": decision.get("capital_authority"),
+        "claim_scope": decision.get("claim_scope"),
+        "risk_tier": decision.get("risk_tier"),
+        "completion_status": decision.get("completion_status"),
+        "required_obligations": decision.get("required_obligations"),
+        "missing_obligations": decision.get("missing_obligations"),
+        "subject_manifest": decision.get("subject_manifest"),
+        "subject_hashes": decision.get("subject_hashes"),
+        "evidence_hashes": decision.get("evidence_hashes"),
+        "exit_code_reason": decision.get("exit_code_reason"),
+        "kernel_id": KERNEL_ID,
         "findings": findings,
         "raw_review": audit,
         "meta": {
@@ -429,13 +564,89 @@ def review_json_payload(audit, verdict, args):
             "target": getattr(args, "file", ""),
             "reviewed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "strict_known_debt_trigger": strict,
-            "validation": {
-                "ok": len(validation_errors) == 0,
-                "errors": validation_errors,
-            },
+            "validation": {"ok": not validation_errors, "errors": validation_errors},
+            "completion_meta": completion_meta or {},
         },
+        "authority": decision,
     }
 
+
+MAX_DEFAULT_FINDINGS = 3
+
+
+def _display_text(value, fallback):
+    value = (value or "").strip()
+    return value or fallback
+
+
+def format_review_summary(payload, verbose=False):
+    """Render the human CLI surface; raw model text stays opt-in."""
+    verdict = payload["verdict"]
+    model_verdict = payload.get("model_verdict")
+    lines = [verdict]
+    if model_verdict and model_verdict != verdict:
+        override = payload.get("verdict_override") or ""
+        if "structured_finding_validation_failed" in override or (
+            payload.get("meta", {}).get("validation", {}).get("errors")
+        ):
+            detail = (
+                "Policy blocked this review because a Known Debt item lacks an upgrade trigger "
+                "or a structured finding is malformed."
+            )
+        else:
+            detail = override or (
+                "Policy blocked this review because a Known Debt item lacks an upgrade trigger."
+            )
+        lines.extend([
+            "Model verdict: {} -> effective verdict: {}".format(model_verdict, verdict),
+            detail,
+        ])
+    ceiling = payload.get("authority_ceiling") or "EPISTEMIC_CLAIM"
+    capital = payload.get("capital_authority") or "NONE"
+    lines.append(
+        "Authority ceiling: {} | Capital authority: {}".format(ceiling, capital)
+    )
+    if capital == "NONE" and verdict in ("PASS", "PASS_WITH_DEBT"):
+        lines.append(
+            "Note: LLM PASS is scoped to claim_scope={!r}; not live/capital authorization.".format(
+                payload.get("claim_scope") or "document_logic"
+            )
+        )
+    findings = payload["findings"]
+    shown = findings if verbose else findings[:MAX_DEFAULT_FINDINGS]
+    if shown:
+        lines.extend(["", "Why this decision:"])
+        for index, finding in enumerate(shown, 1):
+            lines.append("{}. [{}] {}".format(index, finding["cutline"], finding["issue"]))
+            lines.append("   Need: {}".format(_display_text(finding["evidence_gap"], "concrete evidence for this claim")))
+            lines.append("   Next: {}".format(_display_text(finding["minimal_action"], "supply evidence or revise the decision")))
+            if verbose and finding.get("upgrade_trigger"):
+                lines.append("   Upgrade trigger: {}".format(finding["upgrade_trigger"]))
+        if not verbose and len(findings) > len(shown):
+            lines.append("... {} more finding(s); rerun with --verbose.".format(len(findings) - len(shown)))
+    else:
+        lines.extend([
+            "",
+            "Why this decision: no structured findings were parsed from the model response.",
+            "Next: inspect the raw audit with --raw before relying on this result.",
+        ])
+    if verbose:
+        meta = payload["meta"]
+        lines.extend([
+            "",
+            "Execution metadata:",
+            "  provider: {}".format(_display_text(meta["provider"], "not declared")),
+            "  model: {}".format(_display_text(meta["model"], "not declared")),
+            "  target: {}".format(_display_text(meta["target"], "not declared")),
+            "  reviewed_at: {}".format(meta["reviewed_at"]),
+            "  strict_known_debt_trigger: {}".format(meta["strict_known_debt_trigger"]),
+            "  validation: {}".format("ok" if meta["validation"]["ok"] else "failed"),
+            "  kernel: {}".format(payload.get("kernel_id") or KERNEL_ID),
+            "  missing_obligations: {}".format(
+                ",".join(payload.get("missing_obligations") or []) or "none"
+            ),
+        ])
+    return "\n".join(lines)
 
 def review_prompt(*blocks, instructions="Audit this draft. Find what would ship wrong."):
     """Fence draft text in delimiters the draft itself cannot forge: the tag
@@ -479,15 +690,41 @@ def role_identity(args):
     return ("http", base, model)
 
 
-def finish(audit, verdict_text=None):
-    """Print audit, resolve verdict (no explicit verdict -> BLOCK), exit by code."""
+def finish(audit, verdict_text=None, args=None, entry="run", risk_tier="normal",
+           independence_verdict="PASS", completion_meta=None):
+    """Print audit, adjudicate via authority kernel, exit by kernel code.
+
+    Deprecated as a private parse path: always goes through adjudicate_llm_audit.
+    """
     print(audit)
-    v = parse_verdict(verdict_text if verdict_text is not None else audit)
-    if v is None:
-        v = "BLOCK"
+    ns = args if args is not None else argparse.Namespace(
+        provider=None, model=None, file="",
+        strict_known_debt_trigger=True,
+        risk_tier=risk_tier, claim_scope="document_logic", claim_text="",
+    )
+    decision, _findings, leg = adjudicate_llm_audit(
+        verdict_text if verdict_text is not None else audit,
+        ns,
+        entry=entry,
+        risk_tier=getattr(ns, "risk_tier", risk_tier) or risk_tier,
+        independence_verdict=independence_verdict,
+        completion_meta=completion_meta,
+        # Demo / finish without executable evidence: low-risk only.
+        executable_evidence_verdict="UNKNOWN",
+        subject_binding_verdict="UNKNOWN",
+    )
+    v = decision["effective_verdict"]
+    if decision.get("model_verdict") is None:
         print("\n[no explicit VERDICT line - defaulting to BLOCK]", file=sys.stderr)
-    print(f"\n=== Verdict: {v} ===", file=sys.stderr)
-    sys.exit(EXIT[v])
+    if decision.get("verdict_override"):
+        print(f"\n[authority override] {decision['verdict_override']}", file=sys.stderr)
+    print(
+        f"\n=== Verdict: {v} "
+        f"(ceiling={decision.get('authority_ceiling')}, "
+        f"capital={decision.get('capital_authority')}) ===",
+        file=sys.stderr,
+    )
+    sys.exit(exit_code_for_decision(decision))
 
 
 # ----------------------------------------------------------------- commands
@@ -601,14 +838,24 @@ def format_cutline_audit(verdict, findings):
 def cmd_demo(args):
     text = read_input(args.file) if args.file else LOCAL_DEMO_INPUT
     verdict, findings = local_cutline_review(text)
-    finish(format_cutline_audit(verdict, findings))
+    audit = format_cutline_audit(verdict, findings)
+    # Demo is local rule-based, not claim-bearing capital authority.
+    ns = argparse.Namespace(
+        provider=None, model=None, file=getattr(args, "file", "") or "demo",
+        strict_known_debt_trigger=True,
+        risk_tier="normal", claim_scope="local_demo", claim_text="",
+    )
+    finish(audit, args=ns, entry="demo", risk_tier="normal")
 
 
 def lint_findings(text):
-    """Static L2 check core: untagged prose blocks + open ship-blocker tags.
+    """Static L2 check core: untagged prose blocks + open blocker-marker tags.
 
     Returns (untagged_first_lines, blocker_pairs). Shared by `lint` (human
-    pretty-print + exit) and `gate` (aggregate over a PR diff)."""
+    pretty-print + exit) and `gate` (aggregate over a PR diff).
+    Internal constant remains SHIP_BLOCKERS (legacy name); display says
+    "blocker markers" so lint is not read as a ship/live authority surface.
+    """
     untagged = [b.strip().splitlines()[0][:60]
                 for b, fence in iter_blocks(text)
                 if not fence and is_prose(b) and not TAG_RE.match(b)]
@@ -617,6 +864,11 @@ def lint_findings(text):
 
 
 def cmd_lint(args):
+    """Static L2 tag/blocker check only — not claim-bearing authority.
+
+    Exit 0/1 reflects lint cleanliness, not PASS/capital. Do not cite this
+    subcommand as ship/live authorization; use ``falsify review`` / ``gate``.
+    """
     text = read_input(args.file)
     untagged, blockers = lint_findings(text)
 
@@ -628,13 +880,15 @@ def cmd_lint(args):
     else:
         print("\n  ✓ every prose block is tagged")
     if blockers:
-        print("\n  ✗ ship-blockers present:")
+        print("\n  ✗ blocker markers present:")
         for m, n in blockers:
             print(f"      {m} ×{n}")
     else:
-        print("  ✓ no open ship-blockers")
+        print("  ✓ no open blocker markers")
     ok = not untagged and not blockers
-    print(f"\n  → {'SHIPPABLE' if ok else 'NOT shippable'}")
+    # Wording deliberately avoids PASS/SHIPPABLE — lint is not an authority surface.
+    print(f"\n  → {'L2_CLEAN' if ok else 'L2_DIRTY'} "
+          f"(static check only; authority_ceiling=NONE, not claim-bearing)")
     sys.exit(0 if ok else 1)
 
 
@@ -661,18 +915,62 @@ def cmd_review(args):
     else:
         system = SKEPTIC_SYSTEM
         user = review_prompt(("CURRENT DRAFT", cur))
-    out = llm(system, user, args, dry_run=args.dry_run)
-    if out is None:  # dry-run
+    result = llm(system, user, args, dry_run=args.dry_run, return_meta=True)
+    if result is None:  # dry-run
         return
+    if isinstance(result, tuple):
+        out, completion_meta = result
+    else:
+        out, completion_meta = result, {"finish_reason": "stop"}
     if args.out:
         Path(args.out).write_text(out, encoding="utf-8")
         print(f"[audit written to {args.out}]", file=sys.stderr)
+
+    risk_tier = getattr(args, "risk_tier", None) or "normal"
+    claim_scope = getattr(args, "claim_scope", None) or "document_logic"
+    independence = "PASS"
+    # Optional author identity for independence check on high-risk reviews
+    author_id = getattr(args, "author_id", None)
+    reviewer_id = getattr(args, "reviewer_id", None) or role_identity(args)
+    if author_id is not None and author_id == reviewer_id:
+        if risk_tier in ("high", "production", "quant"):
+            independence = "BLOCK"
+        else:
+            print("[warn] author == reviewer; authority ceiling will not upgrade",
+                  file=sys.stderr)
+
+    decision, findings, leg = adjudicate_llm_audit(
+        out, args,
+        entry="review",
+        risk_tier=risk_tier,
+        claim_scope=claim_scope,
+        claim_text=getattr(args, "claim_text", "") or "",
+        completion_meta=completion_meta,
+        independence_verdict=independence,
+        # Epistemic review: no production path required.
+        executable_evidence_verdict="UNKNOWN",
+        production_path_verdict="UNKNOWN",
+        subject_binding_verdict="UNKNOWN",
+    )
+    payload = review_json_payload(
+        out, decision.get("model_verdict") or "BLOCK", args,
+        decision=decision, findings=findings, completion_meta=completion_meta,
+    )
     if getattr(args, "json", False):
-        verdict = parse_verdict(out) or "BLOCK"
-        payload = review_json_payload(out, verdict, args)
         print(json.dumps(payload, ensure_ascii=False, indent=2))
-        sys.exit(EXIT[payload["verdict"]])
-    finish(out)
+    elif getattr(args, "raw", False):
+        # Raw still exits on effective verdict — never launder Must Fix + PASS.
+        print(out)
+        if decision.get("verdict_override"):
+            print(
+                f"\n[authority] model={decision.get('model_verdict')} "
+                f"effective={decision['effective_verdict']}: "
+                f"{decision['verdict_override']}",
+                file=sys.stderr,
+            )
+    else:
+        print(format_review_summary(payload, verbose=bool(getattr(args, "verbose", False))))
+    sys.exit(exit_code_for_decision(decision))
 
 
 def cmd_draft(args):
@@ -689,15 +987,53 @@ def cmd_run(args):
     brief = read_input(args.file)
     drafter_args = role_args(args, "drafter")
     reviewer_args = role_args(args, "reviewer")
-    if role_identity(drafter_args) == role_identity(reviewer_args):
+    same_identity = role_identity(drafter_args) == role_identity(reviewer_args)
+    risk_tier = getattr(args, "risk_tier", None) or "normal"
+    independence = "PASS"
+    if same_identity:
         print("[warn] author == reviewer; independent review is weakened", file=sys.stderr)
+        if risk_tier in ("high", "production", "quant"):
+            independence = "BLOCK"
     print("[1/2] Agent A drafting…", file=sys.stderr)
     draft = llm(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", drafter_args)
+    if draft is None:
+        return
     if args.out:
         Path(args.out).write_text(draft, encoding="utf-8")
     print("[2/2] Agent B (Skeptic) reviewing…", file=sys.stderr)
-    audit = llm(SKEPTIC_SYSTEM, review_prompt(("CURRENT DRAFT", draft)), reviewer_args)
-    finish(audit)
+    result = llm(
+        SKEPTIC_SYSTEM, review_prompt(("CURRENT DRAFT", draft)),
+        reviewer_args, return_meta=True,
+    )
+    if result is None:
+        return
+    if isinstance(result, tuple):
+        audit, completion_meta = result
+    else:
+        audit, completion_meta = result, {"finish_reason": "stop"}
+
+    # Same kernel as review — no finish()/parse_verdict bypass.
+    reviewer_args.strict_known_debt_trigger = getattr(
+        args, "strict_known_debt_trigger", True)
+    decision, findings, leg = adjudicate_llm_audit(
+        audit, reviewer_args,
+        entry="run",
+        risk_tier=risk_tier,
+        claim_scope=getattr(args, "claim_scope", None) or "document_logic",
+        claim_text=getattr(args, "claim_text", "") or "",
+        completion_meta=completion_meta,
+        independence_verdict=independence,
+    )
+    print(audit)
+    if decision.get("verdict_override"):
+        print(f"\n[authority override] {decision['verdict_override']}", file=sys.stderr)
+    print(
+        f"\n=== Verdict: {decision['effective_verdict']} "
+        f"(ceiling={decision.get('authority_ceiling')}, "
+        f"capital={decision.get('capital_authority')}) ===",
+        file=sys.stderr,
+    )
+    sys.exit(exit_code_for_decision(decision))
 
 
 def cmd_init(args):
@@ -730,20 +1066,8 @@ def _changed_md_files(base):
     raise FalsifyError(f"git diff vs {base} failed: {r.stderr.strip()[:200]}")
 
 
-def cmd_gate(args):
-    """`falsify gate` — PR-diff risk gate. HONEST STUB: L2 static check only.
-
-    Aggregates `lint` over every changed .md file vs --base. Emits a verdict:
-      PASS_WITH_DEBT  all changed docs lint-clean (stub can't prove deeper)
-      BLOCK           any changed doc has untagged prose or open ship-blockers
-    No model-backed review, no quant gate0–gate6. v1.1 will route --tier quant
-    through quant_falsify_gate. The stub never fake-reports BLOCK on clean input
-    and never fake-reports PASS on dirty input.
-
-    --glob restricts which changed .md files are linted (fnmatch, repeatable).
-    Default: lint every changed .md. Use --glob to scope to decision-doc paths
-    so the gate doesn't BLOCK on plain README/doc edits.
-    """
+def _gate_l2_lint(args):
+    """L2 static check over changed .md files. Returns (file_results, lint_ok)."""
     files = _changed_md_files(args.base)
     if args.glob:
         import fnmatch
@@ -758,7 +1082,7 @@ def cmd_gate(args):
         try:
             text = Path(f).read_text(encoding="utf-8")
         except OSError as e:
-            file_results.append({"path": f, "error": f"unreadable: {e}"})
+            file_results.append({"path": f, "error": f"unreadable: {e}", "lint_ok": False})
             continue
         untagged, blockers = lint_findings(text)
         file_results.append({
@@ -768,12 +1092,15 @@ def cmd_gate(args):
             "ship_blockers": [{"tag": m, "count": n} for m, n in blockers],
             "lint_ok": not untagged and not blockers,
         })
+    any_block = any((not r.get("lint_ok", True)) or "error" in r for r in file_results)
+    return files, file_results, not any_block
 
-    any_block = any((not r.get("lint_ok", True)) for r in file_results)
-    verdict = "BLOCK" if any_block else "PASS_WITH_DEBT"
 
+def _gate_format_l2_summary(args, files, file_results, authority):
     lines = [
-        f"**Falsify gate (L2 stub)** — tier=`{args.tier}`, base=`{args.base}`",
+        f"**Falsify gate** — tier=`{args.tier}`, base=`{args.base}`",
+        f"Authority ceiling: `{authority.get('authority_ceiling')}` | "
+        f"Capital: `{authority.get('capital_authority')}`",
         f"Changed .md files: {len(files)}",
         "",
     ]
@@ -783,32 +1110,280 @@ def cmd_gate(args):
             continue
         icon = "✅" if r["lint_ok"] else "🛑"
         extras = []
-        if r["untagged_blocks"]:
+        if r.get("untagged_blocks"):
             extras.append(f"{r['untagged_blocks']} untagged")
-        if r["ship_blockers"]:
-            extras.append("blockers: " + ", ".join(f"{b['tag']}×{b['count']}" for b in r["ship_blockers"]))
+        if r.get("ship_blockers"):
+            extras.append(
+                "blockers: " + ", ".join(
+                    f"{b['tag']}×{b['count']}" for b in r["ship_blockers"]
+                )
+            )
         tail = f" ({'; '.join(extras)})" if extras else ""
         lines.append(f"- {icon} `{r['path']}`{tail}")
     if not files:
         lines.append("_No changed .md files in this PR._")
     lines.append("")
     lines.append(
-        "_Stub: L2 static check (lint) only. Model-backed adversarial review "
-        "(`falsify review <file>`) and quant gate0–gate6 are not wired into "
-        "this subcommand yet. v1.1 routes `--tier quant` through "
-        "`quant_falsify_gate`._"
+        f"_kernel={KERNEL_ID}; L2 lint is not production/quant authority._"
     )
-    summary = "\n".join(lines)
+    return "\n".join(lines)
 
+
+def cmd_gate(args):
+    """`falsify gate` — claim-bearing risk gate via the authority kernel.
+
+    - ``--tier normal|auto``: L2 static lint only; ceiling=L2_LINT; capital=NONE.
+      Lint-clean → PASS_WITH_DEBT (cannot prove deeper); dirty → BLOCK.
+    - ``--tier production``: requires production adapter path proof. Pro gate
+      missing → UNSUPPORTED/BLOCK (never green-wash via L2 stub).
+    - ``--tier quant``: requires quant tools/fixtures; SKIP/missing tools → BLOCK.
+      Never falls through to L2 stub with exit 0.
+    """
+    tier = (args.tier or "auto").lower()
+    if tier == "auto":
+        tier = "normal"
+
+    files, file_results, lint_ok = _gate_l2_lint(args)
+    missing = []
+    satisfied = []
+    exec_v = "UNKNOWN"
+    prod_v = "UNKNOWN"
+    bind_v = "UNKNOWN"
+    indep_v = "PASS"
+    llm_v = "PASS_WITH_DEBT" if lint_ok else "BLOCK"
+    model_v = llm_v
+    completion = "COMPLETE"
+    override = None
+    extras = {}
+
+    if tier in ("normal", "auto"):
+        if lint_ok:
+            satisfied.extend(["l2_lint_clean", "authority_ceiling_declared"])
+            llm_v = "PASS_WITH_DEBT"
+        else:
+            llm_v = "BLOCK"
+            override = "l2_lint_failed"
+        # L2 path does not require executable/production legs
+        decision = finalize_authority(
+            claim_text=f"gate L2 vs {args.base}",
+            claim_scope="pr_markdown_lint",
+            risk_tier="normal",
+            entry="gate",
+            model_verdict=model_v,
+            llm_semantic_verdict=llm_v,
+            executable_evidence_verdict="N/A",
+            production_path_verdict="N/A",
+            subject_binding_verdict="N/A",
+            independence_verdict=indep_v,
+            completion_status=completion,
+            satisfied_obligations=satisfied,
+            verdict_override=override,
+            requested_ceiling="L2_LINT",
+        )
+        extras = {"stub": False, "scope": "L2 static check only; ceiling=L2_LINT"}
+
+    elif tier == "production":
+        from falsify.production_adapter import (
+            PRO_PRODUCTION_GATE_AVAILABLE,
+            PRO_PRODUCTION_GATE_REASON,
+            evaluate_production_path,
+        )
+        # Production evidence may be supplied via --production-evidence JSON;
+        # otherwise evaluate empty evidence → fail-closed + Pro unavailable.
+        evidence = {}
+        pe = getattr(args, "production_evidence", None)
+        if pe:
+            try:
+                evidence = json.loads(Path(pe).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as e:
+                raise FalsifyError(f"cannot read --production-evidence: {e}")
+        if not PRO_PRODUCTION_GATE_AVAILABLE and not evidence.get("pro_gate", {}).get("available"):
+            prod_eval = evaluate_production_path(evidence or {
+                "job": {"exists": False},
+                "pro_gate": {"available": False},
+            })
+            prod_v = prod_eval.get("verdict") or "UNSUPPORTED"
+            override = PRO_PRODUCTION_GATE_REASON
+            llm_v = "BLOCK"
+            model_v = "BLOCK"
+            missing_note = list(prod_eval.get("issues") or [])
+            decision = finalize_authority(
+                claim_text=f"gate production vs {args.base}",
+                claim_scope="production_path",
+                risk_tier="production",
+                entry="gate",
+                model_verdict=model_v,
+                llm_semantic_verdict=llm_v,
+                executable_evidence_verdict="BLOCK",
+                production_path_verdict=prod_v if prod_v in PUBLIC_VERDICTS else "BLOCK",
+                subject_binding_verdict="BLOCK",
+                independence_verdict="PASS",
+                completion_status="COMPLETE",
+                verdict_override=override,
+                requested_ceiling="PRODUCTION_LIVE",
+                evidence_hashes={"production_adapter": prod_eval.get("evidence_sha256", "")},
+            )
+            extras = {
+                "stub": False,
+                "production_adapter": prod_eval,
+                "pro_gate_available": False,
+                "issues": missing_note,
+            }
+        else:
+            prod_eval = evaluate_production_path(evidence)
+            prod_v = prod_eval.get("verdict") or "BLOCK"
+            if prod_v not in ("PASS",):
+                llm_v = "BLOCK"
+            decision = finalize_authority(
+                claim_text=f"gate production vs {args.base}",
+                claim_scope="production_path",
+                risk_tier="production",
+                entry="gate",
+                model_verdict="PASS" if prod_v == "PASS" else "BLOCK",
+                llm_semantic_verdict="PASS" if prod_v == "PASS" else "BLOCK",
+                executable_evidence_verdict="PASS" if prod_v == "PASS" else "BLOCK",
+                production_path_verdict="PASS" if prod_v == "PASS" else "BLOCK",
+                subject_binding_verdict="PASS" if prod_v == "PASS" else "BLOCK",
+                independence_verdict="PASS",
+                completion_status="COMPLETE",
+                satisfied_obligations=(
+                    [
+                        "llm_completion_complete", "single_terminal_verdict",
+                        "no_must_fix", "audit_coverage_proof",
+                        "independent_reviewer", "executable_evidence",
+                        "subject_binding", "production_path_proof",
+                        "order_boundary_trap", "account_invariants",
+                    ] if prod_v == "PASS" else []
+                ),
+                requested_ceiling="PRODUCTION_LIVE",
+                evidence_hashes={"production_adapter": prod_eval.get("evidence_sha256", "")},
+            )
+            extras = {"stub": False, "production_adapter": prod_eval}
+
+    elif tier == "quant":
+        # Quant promotion: never green-wash via L2. Probe tools; missing → BLOCK.
+        quant_issues = []
+        try:
+            import falsify.quant_gate as qg  # noqa: F401
+            quant_tools_ok = True
+        except Exception as e:
+            quant_tools_ok = False
+            quant_issues.append(f"quant_gate_import_failed:{e}")
+
+        # Optional backtest-audit probe (SKIP must not disappear from denominator)
+        ba = shutil.which("backtest-audit")
+        if ba is None:
+            quant_issues.append("missing_tool:backtest-audit")
+            quant_tools_ok = False
+
+        results_dir = getattr(args, "results_dir", None) or ""
+        if not results_dir:
+            quant_issues.append("missing_obligation:results_dir")
+            quant_tools_ok = False
+        elif not Path(results_dir).exists():
+            quant_issues.append(f"results_dir_missing:{results_dir}")
+            quant_tools_ok = False
+
+        if not quant_tools_ok:
+            override = "quant_tools_or_fixtures_missing: " + ",".join(quant_issues)
+            decision = finalize_authority(
+                claim_text=f"gate quant vs {args.base}",
+                claim_scope="quant_promotion",
+                risk_tier="quant",
+                entry="gate",
+                model_verdict="BLOCK",
+                llm_semantic_verdict="BLOCK",
+                executable_evidence_verdict="SKIP",
+                production_path_verdict="N/A",
+                subject_binding_verdict="BLOCK",
+                independence_verdict="PASS",
+                completion_status="COMPLETE",
+                verdict_override=override,
+                requested_ceiling="QUANT_PROMOTION",
+            )
+            extras = {
+                "stub": False,
+                "quant_issues": quant_issues,
+                "note": "SKIP/missing tools remain in the adjudication denominator",
+            }
+        else:
+            # Tools present: still require a prior quant report for promotion.
+            from falsify.quant_gate import check_quant_gate_passed
+            pre = check_quant_gate_passed(results_dir)
+            if pre.get("status") != "PASS":
+                override = pre.get("reason") or "quant_gate_not_passed"
+                decision = finalize_authority(
+                    claim_text=f"gate quant vs {args.base}",
+                    claim_scope="quant_promotion",
+                    risk_tier="quant",
+                    entry="gate",
+                    model_verdict="BLOCK",
+                    llm_semantic_verdict="BLOCK",
+                    executable_evidence_verdict="BLOCK",
+                    production_path_verdict="N/A",
+                    subject_binding_verdict="PASS",
+                    independence_verdict="PASS",
+                    completion_status="COMPLETE",
+                    verdict_override=override,
+                    requested_ceiling="QUANT_PROMOTION",
+                    satisfied_obligations=[
+                        "quant_gate_tools_present",
+                    ],
+                )
+                extras = {"stub": False, "quant_precheck": pre}
+            else:
+                decision = finalize_authority(
+                    claim_text=f"gate quant vs {args.base}",
+                    claim_scope="quant_promotion",
+                    risk_tier="quant",
+                    entry="gate",
+                    model_verdict="PASS",
+                    llm_semantic_verdict="PASS",
+                    executable_evidence_verdict="PASS",
+                    production_path_verdict="N/A",
+                    subject_binding_verdict="PASS",
+                    independence_verdict="PASS",
+                    completion_status="COMPLETE",
+                    requested_ceiling="QUANT_PROMOTION",
+                    satisfied_obligations=[
+                        "llm_completion_complete", "single_terminal_verdict",
+                        "no_must_fix", "audit_coverage_proof",
+                        "independent_reviewer", "executable_evidence",
+                        "subject_binding", "quant_gate_tools_present",
+                        "quant_gate_no_skip",
+                    ],
+                )
+                extras = {"stub": False, "quant_precheck": pre}
+    else:
+        raise FalsifyError(f"unknown gate tier: {args.tier}")
+
+    summary = _gate_format_l2_summary(args, files, file_results, decision)
+    if decision.get("verdict_override"):
+        summary += f"\n\n_Override: {decision['verdict_override']}_"
+    if decision.get("missing_obligations"):
+        summary += (
+            "\n\n_Missing obligations: "
+            + ", ".join(decision["missing_obligations"])
+            + "_"
+        )
+
+    verdict = decision["effective_verdict"]
     result = {
-        "schema_version": "falsify.gate.v0.1",
+        "schema_version": "falsify.gate.v1",
         "verdict": verdict,
-        "tier_used": args.tier,
+        "model_verdict": decision.get("model_verdict"),
+        "tier_used": tier,
         "base": args.base,
         "summary": summary,
         "files": file_results,
-        "stub": True,
-        "stub_scope": "L2 static check (lint) only; no model review, no quant gate",
+        "authority_ceiling": decision.get("authority_ceiling"),
+        "capital_authority": decision.get("capital_authority"),
+        "required_obligations": decision.get("required_obligations"),
+        "missing_obligations": decision.get("missing_obligations"),
+        "exit_code_reason": decision.get("exit_code_reason"),
+        "kernel_id": KERNEL_ID,
+        "authority": decision,
+        **extras,
     }
     if args.json:
         Path(args.json).write_text(
@@ -816,8 +1391,12 @@ def cmd_gate(args):
             encoding="utf-8")
         print(f"[gate output written to {args.json}]", file=sys.stderr)
     print(f"VERDICT = {verdict}")
+    print(
+        f"authority_ceiling={decision.get('authority_ceiling')} "
+        f"capital_authority={decision.get('capital_authority')}"
+    )
     print(summary)
-    sys.exit(0 if verdict in ("PASS", "PASS_WITH_DEBT") else 1)
+    sys.exit(exit_code_for_decision(decision))
 
 
 def main():
@@ -834,7 +1413,7 @@ def main():
         sp.add_argument("-m", "--model", help="override model")
         sp.add_argument("--base", help="override API base URL")
 
-    pl = sub.add_parser("lint", help="tag + ship-blocker check (no API)")
+    pl = sub.add_parser("lint", help="tag + blocker-marker check (no API; not claim-bearing)")
     pl.add_argument("file")
     pl.set_defaults(func=cmd_lint)
 
@@ -845,13 +1424,25 @@ def main():
     pr = sub.add_parser("review", help="skeptic reviewer attacks a draft -> Verdict")
     pr.add_argument("file", help="file path, or - for stdin")
     pr.add_argument("-o", "--out", help="write the audit to a file")
-    pr.add_argument("--json", action="store_true",
-                    help="emit stable JSON payload (schema: falsify.review.v1)")
-    pr.add_argument("--strict-known-debt-trigger", action="store_true",
-                    help="when used with --json, downgrade to BLOCK if any Known Debt lacks upgrade_trigger")
+    output_group = pr.add_mutually_exclusive_group()
+    output_group.add_argument("--json", action="store_true",
+                              help="emit stable JSON payload (schema: falsify.review.v1)")
+    output_group.add_argument("--verbose", action="store_true",
+                              help="show all parsed findings and execution metadata")
+    output_group.add_argument("--raw", action="store_true",
+                              help="print the original model audit text")
+    pr.add_argument("--strict-known-debt-trigger", action=argparse.BooleanOptionalAction,
+                    default=True,
+                    help="downgrade to BLOCK if any Known Debt lacks upgrade_trigger "
+                         "(default: on; use --no-strict-known-debt-trigger to disable)")
     pr.add_argument("--against", metavar="GIT_REF",
                     help="also flag unexplained reversals vs this earlier version (e.g. HEAD~1)")
     pr.add_argument("--dry-run", action="store_true")
+    pr.add_argument("--risk-tier", default="normal",
+                    choices=["normal", "high", "production", "quant"],
+                    help="authority risk tier (high/production/quant fail-closed)")
+    pr.add_argument("--claim-scope", default="document_logic",
+                    help="what the LLM PASS is allowed to cover")
     add_api_flags(pr)
     pr.set_defaults(func=cmd_review)
 
@@ -871,6 +1462,12 @@ def main():
     prun.add_argument("--reviewer", help="provider/agent CLI for Agent B (defaults to -p/--provider)")
     prun.add_argument("--reviewer-model", help="model override for Agent B")
     prun.add_argument("--reviewer-base", help="API base override for Agent B")
+    prun.add_argument("--risk-tier", default="normal",
+                      choices=["normal", "high", "production", "quant"],
+                      help="authority risk tier for the run loop")
+    prun.add_argument("--claim-scope", default="document_logic")
+    prun.add_argument("--strict-known-debt-trigger", action=argparse.BooleanOptionalAction,
+                      default=True)
     prun.set_defaults(func=cmd_run)
 
     pi = sub.add_parser("init", help="write a .falsify config template")
@@ -879,19 +1476,30 @@ def main():
 
     pg = sub.add_parser(
         "gate",
-        help="L2 stub: gate a PR diff (lint changed .md files) -> verdict + JSON")
+        help="risk gate via authority kernel (L2 / production / quant)")
     pg.add_argument("--base", required=True,
                     help="git base ref, e.g. origin/main or HEAD~1")
     pg.add_argument("--tier", default="auto",
                     choices=["auto", "normal", "production", "quant"],
-                    help="risk tier (stub honors normal/production; quant "
-                         "falls back to L2 with a note until v1.1)")
+                    help="risk tier: normal=L2 lint (ceiling L2_LINT); "
+                         "production=adapter path proof (no stub green); "
+                         "quant=tools+report required (SKIP/missing → BLOCK)")
     pg.add_argument("--json", metavar="PATH",
-                    help="write JSON result (schema falsify.gate.v0.1) to PATH")
+                    help="write JSON result (schema falsify.gate.v1) to PATH")
     pg.add_argument("--glob", action="append", default=None, metavar="PATTERN",
                     help="fnmatch pattern to restrict changed .md files "
                          "(repeatable). Default: all changed .md.")
+    pg.add_argument("--production-evidence", metavar="PATH",
+                    help="JSON production-path evidence for --tier production")
+    pg.add_argument("--results-dir", metavar="PATH",
+                    help="quant results dir for --tier quant precheck")
     pg.set_defaults(func=cmd_gate)
+
+    # Pure-read frozen-backtest verifier.  Imported lazily so the existing CLI
+    # surface remains import-safe and audit_backtest cannot pull in quant/live
+    # execution code as a side effect.
+    from falsify.audit_backtest import add_parser as add_audit_backtest_parser
+    add_audit_backtest_parser(sub)
 
     args = p.parse_args()
     try:

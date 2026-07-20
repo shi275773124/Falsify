@@ -803,6 +803,11 @@ with tempfile.TemporaryDirectory() as _tmpdir:
                 "--returns-matrix", str(_matrix), "--matrix-columns", "a,b,c,d",
                 "--n-param-combos", "4", "--output", str(_out_missing)]
         _cp = _subprocess.run(_cmd, text=True, capture_output=True, timeout=120, env={**_os.environ, "SKIP_GATE_INTEGRATION": "1"})
+        if not _out_missing.exists():
+            raise AssertionError(
+                f"quant gate did not write output: rc={_cp.returncode}; "
+                f"stdout={_cp.stdout[-1000:]}; stderr={_cp.stderr[-1000:]}"
+            )
         _rep = _json.loads(_out_missing.read_text())
         check("Gate missing evidence → claim_ceiling BLOCK or CANDIDATE",
               _cp.returncode == 1 and _rep.get("claim_ceiling") in ("BLOCK", "CANDIDATE_NEEDS_NEXT_GATE"),

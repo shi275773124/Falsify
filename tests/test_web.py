@@ -1,435 +1,204 @@
-import json
+﻿import json
 from io import BytesIO
 from pathlib import Path
-
-import pytest
-
 from web import serve
 
+def handler(path, method="GET"):
+    h=serve.H.__new__(serve.H); h.path=path; h.headers={}; h.wfile=BytesIO(); h._headers_buffer=[]; h.request_version="HTTP/1.1"; h.command=method
+    h.send_response=lambda code,message=None:setattr(h,"status_code",code); h.send_header=lambda *args:None; h.end_headers=lambda:None
+    return h
 
-REQUIRED_PUBLIC_COPY = [
-    "Review first. Trust after.",
-    "Falsify does not argue. It asks one question: where is the evidence.",
-    "先审，再信。",
-    "Falsify 不争辩，只问一件事：证据在哪里。",
-    "Frame Audit + Adversarial Review + Cutline.",
-    "框架审计 + 对抗审查 + Cutline。",
-    "audit the audit channel itself",
-    "审计通道本身也要被审计",
-    "human-auditability break",
-    "owner / lock / lifecycle",
-    "duplicated authority sources",
-    "rollback / verification path",
-    "naming / status semantics that mislead",
-    "命名与状态语义误导",
-    "Semantic verdict nudge",
-    "Prompt-only audit theater",
-    "Monitor-failure laundering",
-    "Must Fix",
-    "Known Debt",
-    "Delete",
-    "Verdict",
-    "Final",
-    "Falsify classifies risk. It does not authorize action.",
-    "Falsify 只做风险分类，不做执行授权。",
-    "independent final judgment",
-    "Self-review is not independent review.",
-]
-
-
-def test_extract_json_accepts_fenced_json():
-    assert serve.extract_json('```json\n{"verdict":"PASS","risks":[]}\n```') == {
-        "verdict": "PASS",
-        "risks": [],
-    }
-
-
-def test_extract_json_rejects_missing_object():
-    with pytest.raises(ValueError):
-        serve.extract_json("no json here")
-
-
-def test_web_prompt_contains_audit_channel_checks():
-    assert "AI summary without raw evidence" in serve.RISK_SYSTEM
-    assert "fake acceptance evidence" in serve.RISK_SYSTEM
-    assert "logs treated as state verification" in serve.RISK_SYSTEM
-    assert "second-model agreement treated as proof" in serve.RISK_SYSTEM
-    assert "prompt-only audit theater" in serve.RISK_SYSTEM
-    assert "semantic nudges toward PASS" in serve.RISK_SYSTEM
-    assert "monitor failure laundering" in serve.RISK_SYSTEM
-    assert "finish_reason" in serve.RISK_SYSTEM
-    assert "usage/token counts" in serve.RISK_SYSTEM
-    assert "Cutline" in serve.RISK_SYSTEM
-
-
-def test_homepage_hero_redesign():
-    assert "gate-panel" in serve.PAGE
-    assert "hero-cockpit" in serve.PAGE
-    assert "/static/img/hero-block-check.png" in serve.PAGE
-    assert 'data-i18n-alt="hero_img_alt"' in serve.PAGE
-    assert 'data-i18n="hero_docs_link"' in serve.PAGE
-    assert "gate-map" in serve.PAGE
-    assert "Frame Audit" in serve.PAGE
-    assert "框架审计" in serve.PAGE
-    assert 'data-i18n="trust_band_github"' in serve.PAGE
-    assert 'data-i18n="trust_byok"' in serve.PAGE
-    assert 'data-i18n="trust_schema"' in serve.PAGE
-    assert 'href="#try"' in serve.PAGE
-    assert 'data-i18n="btn_run_sample_hero"' in serve.PAGE
-    assert 'data-i18n="btn_install_skill"' in serve.PAGE
-    assert "/docs/17-skills.md" in serve.PAGE
-    assert "preview-must-fix" in serve.PAGE
-    assert "falsify.review.v1" in serve.PAGE
-    assert "workbench-panel" in serve.PAGE
-    assert "workbench-collapse" not in serve.PAGE
-    assert 'class="btn primary" href="/docs/17-skills.md"' in serve.PAGE
-    assert 'class="btn ghost" href="#try"' in serve.PAGE
-    assert "NOT_VIABLE" not in serve.PAGE
-    assert "CAUGHT" not in serve.PAGE
-    assert "id=\"pricing\"" not in serve.PAGE
-    assert "deliverables" not in serve.PAGE
-    assert "evidence-grid" not in serve.PAGE
-    assert "trust-strip" not in serve.PAGE
-    assert 'id="not-falsify"' not in serve.PAGE
-    hero_visual = serve.PAGE.split('class="hero-visual"')[1].split("</header>")[0]
-    assert "hero-cockpit" in hero_visual
-    assert "gate-panel" in hero_visual
-
-
-def test_homepage_limits_compat_copy():
-    assert "Cutline-only ≠ full Falsify" in serve.PAGE
-    assert "只有 Cutline ≠ 完整 Falsify" in serve.PAGE
-    assert 'id="limits"' not in serve.PAGE
-    assert "limits-grid" not in serve.PAGE
-
-
-def test_homepage_layers_strip():
-    assert 'class="layers-strip"' in serve.PAGE
-    assert 'data-i18n="hero_layers_l1_tag"' in serve.PAGE
-    assert 'data-i18n="hero_layers_l3_tag"' in serve.PAGE
-    assert 'data-i18n="hero_layers_verdicts"' in serve.PAGE
-    assert 'class="layer-body"' not in serve.PAGE
-    assert 'data-i18n="hero_layers_hook"' not in serve.PAGE
-    assert 'data-i18n="hero_layers_intro"' not in serve.PAGE
-
-
-def test_homepage_quote_attribution_and_avatar():
-    assert "Chris Shi" in serve.PAGE
-    assert "史可鉴" not in serve.PAGE
-    assert "Founder, Falsify" not in serve.PAGE
-    assert "Falsify 创始人" not in serve.PAGE
-    assert 'src="/assets/chris-shi-founder.png"' in serve.PAGE
-    assert 'alt="Chris Shi"' in serve.PAGE
-    assert 'aria-label="Chris Shi"' in serve.PAGE
-    assert 'avatar-initial' not in serve.PAGE
-    assert 'data-i18n="quote_cite">Chris Shi</cite>' in serve.PAGE
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    assert "align-items: center" in css
-    assert "flex-shrink: 0" in css
-    assert "CTO · AI-native product team" not in serve.PAGE
-    assert "CTO · AI 原生产品团队" not in serve.PAGE
-    assert "applyLang();" in serve.PAGE
-
-
-def test_homepage_hero_layers_section():
-    assert 'class="hero-layers section-flow"' in serve.PAGE
-    assert 'id="how"' in serve.PAGE
-    assert serve.PAGE.index('class="hero"') < serve.PAGE.index('class="hero-layers section-flow"')
-    assert serve.PAGE.index('class="hero-layers section-flow"') < serve.PAGE.index('id="proof"')
-    assert serve.PAGE.index('id="proof"') < serve.PAGE.index('id="try"')
-    assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
-    assert "差一个机制就要上实盘" in serve.PAGE
-    assert "one mechanic away from live money" in serve.PAGE
-
-
-def test_homepage_workbench_partial_scope_copy():
-    assert 'data-i18n="workbench_scope"' in serve.PAGE
-    assert "not full Falsify" in serve.PAGE
-    assert "非完整 Falsify" in serve.PAGE
-    assert 'data-i18n="try_lead"' not in serve.PAGE
-    assert 'data-i18n="demo_note"' not in serve.PAGE
-
-
-def test_web_template_contains_public_product_markers():
-    assert "Review first. Trust after." in serve.PAGE
-    assert "Frame Audit + Adversarial Review + Cutline." in serve.PAGE
-    assert "Frame Audit · Adversarial Review · Cutline" in serve.PAGE
-    assert "框架审计 · 对抗审查 · Cutline" in serve.PAGE
-    for phrase in REQUIRED_PUBLIC_COPY:
-        assert phrase in serve.PAGE
-    assert "PASS / PASS_WITH_DEBT / BLOCK" in serve.PAGE
-    assert "Real backend, not fake analysis." in serve.PAGE
-    assert '<canvas id="cvs" role="img"' in serve.PAGE
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    assert "prefers-reduced-motion: reduce" in css
+def test_production_root_is_formal_console():
+    assert "Falsify | Challenge the claim. Verify the authority. Gate the action." in serve.PAGE
     assert "/docs/" in serve.PAGE
-    assert "https://github.com/shi275773124/Falsify/blob/main/LICENSE" in serve.PAGE
+    assert "/review" in Path(serve.FLOW_HOME_DIR / "candidate.js").read_text(encoding="utf-8")
+    assert "<form" not in serve.PAGE
+
+def test_root_assets_are_versioned_and_brand_assets_are_served():
+    assert "/assets/flow/home.css?v=" in serve.PAGE and "/assets/flow/home.js?v=" in serve.PAGE
+    for page_path in ("/", "/?lang=zh", "/docs/", "/docs/00-getting-started.html"):
+        page=handler(page_path); page.do_GET(); assert page.status_code==200
+        body=page.wfile.getvalue().decode()
+        assert "/static/favicon.svg" in body
+        assert 'class="brand-mark"' in body
+        assert 'class="brand-wordmark"' in body or "Falsify" in body
+    # Public brand surface is brand-mark/wordmark + favicon (not legacy logo-dark).
+    for asset_path in ("/static/favicon.svg", "/static/favicon.png"):
+        asset=handler(asset_path); asset.do_GET(); assert asset.status_code==200 and asset.wfile.getvalue()
+
+def test_docs_routes_use_current_flow_shell():
+    for path in ("/docs/","/docs/?lang=zh","/docs/00-getting-started.html"):
+        h=handler(path); h.do_GET(); assert h.status_code==200
+        assert b"flow-docs" in h.wfile.getvalue()
+
+def test_real_case_reader_routes_render_html_and_keep_raw_markdown():
+    cases = (
+        "02-derived-freshness-stale-panel",
+        "04-round3b-evidence-integrity-reversal",
+        "05-second-runtime-v068-sync-false-green",
+    )
+    for stem in cases:
+        reader = handler(f"/examples/real-cases/{stem}")
+        reader.do_GET()
+        page = reader.wfile.getvalue().decode("utf-8")
+        assert reader.status_code == 200
+        assert "flow-docs" in page
+        assert 'class="case-reader-nav"' in page
+        assert f'/examples/real-cases/{stem}.md' in page
+
+        raw = handler(f"/examples/real-cases/{stem}.md")
+        raw.do_GET()
+        assert raw.status_code == 200
+        assert raw.wfile.getvalue().decode("utf-8-sig").startswith("# ")
 
 
-def test_normalize_verdict_maps_legacy_and_unknown_to_public_values():
-    assert serve.normalize_verdict("PROCEED") == "PASS"
-    assert serve.normalize_verdict("PASS_WITH_DEBT") == "PASS_WITH_DEBT"
-    assert serve.normalize_verdict("nope") == "BLOCK"
+def test_chinese_case_reader_uses_utf8_shell_and_localized_navigation():
+    h = handler("/examples/real-cases/04-round3b-evidence-integrity-reversal?lang=zh")
+    h.do_GET()
+    page = h.wfile.getvalue().decode("utf-8")
+    assert h.status_code == 200
+    assert 'lang="zh-CN"' in page
+    assert "返回案例" in page
+    assert "查看 Markdown 原文 / 下载" in page
 
 
-def test_i18n_keys_exist_in_english_and_chinese():
-    keys = set()
-    for match in serve.re.finditer(r'data-i18n="([^"]+)"', serve.PAGE):
-        keys.add(match.group(1))
+def test_review_request_validation_and_fail_closed(monkeypatch):
+    h=handler("/review","POST"); h.headers={"Content-Length":"2"}; h.rfile=BytesIO(b"{}"); h.do_POST(); assert h.status_code==400
+    monkeypatch.setattr(serve,"review",lambda text,scenario: (_ for _ in ()).throw(serve.falsify.FalsifyError("no api key")))
+    payload=json.dumps({"text":"logs green","scenario":"production"}).encode(); h=handler("/review","POST"); h.headers={"Content-Length":str(len(payload))}; h.rfile=BytesIO(payload); h.do_POST()
+    assert h.status_code==503 and json.loads(h.wfile.getvalue())["error"]["code"]=="provider_unavailable"
 
-    assert keys
-    js = Path(serve.WEB_DIR / "static/js/home.js").read_text(encoding="utf-8")
-    for key in keys:
-        assert f"{key}:" in js or f'"{key}"' in js
+def test_security_headers_and_no_inline_csp_violations():
+    headers = serve.H.SECURITY_HEADERS
+    assert "script-src 'self'" in headers["Content-Security-Policy"]
+    assert headers["Strict-Transport-Security"] == "max-age=31536000; includeSubDomains"
+    assert headers["Permissions-Policy"] == "camera=(), microphone=(), geolocation=()"
+    assert headers["X-Frame-Options"] == "DENY"
 
-    en_block = js.split("en:", 1)[1].split("zh:", 1)[0]
-    zh_block = js.split("zh:", 1)[1].split("};", 1)[0]
-    missing_en = [key for key in keys if f"{key}:" not in en_block and f'"{key}"' not in en_block]
-    missing_zh = [key for key in keys if f"{key}:" not in zh_block and f'"{key}"' not in zh_block]
+def test_options_is_explicitly_rejected_without_cors():
+    h = handler("/review", "OPTIONS")
+    h.do_OPTIONS()
+    assert h.status_code == 405
+    assert json.loads(h.wfile.getvalue())["error"]["code"] == "method_not_allowed"
 
-    assert missing_en == []
-    assert missing_zh == []
-
-
-def make_handler(path):
-    handler = serve.H.__new__(serve.H)
-    handler.path = path
-    handler.headers = {}
-    handler.wfile = BytesIO()
-    handler._headers_buffer = []
-    handler.request_version = "HTTP/1.1"
-    handler.command = "GET"
-    handler.send_response = lambda code, message=None: setattr(handler, "status_code", code)
-    handler.send_header = lambda *args: None
-    handler.end_headers = lambda: None
-    return handler
-
-
-def test_docs_index_route_returns_200():
-    handler = make_handler("/docs/")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"Docs" in body
-    assert b"Documentation" in body
-    assert b"docs-sidebar" in body
-    assert b"doc-card" in body
-    assert b'id="lang-btn"' in body
-    assert b"docs.js" in body or b"falsify-lang" in body
-
-
-def test_docs_index_zh_route_returns_200():
-    handler = make_handler("/docs/?lang=zh")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"lang=zh" in body
-    assert b"lang=\"zh-CN\"" in body
-    assert "文档".encode() in body
-    assert "安装 PR 闸门".encode() in body
-    assert "精选".encode() in body
-
-
-def test_docs_markdown_route_returns_200():
-    handler = make_handler("/docs/00-getting-started.md")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"Getting Started" in body
-    assert b"docs-sidebar" in body
-    assert b'class="active"' in body
-    assert b"doc-body" in body
-
-
-def test_docs_markdown_zh_route_returns_translated_body():
-    handler = make_handler("/docs/00-getting-started.md?lang=zh")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"lang=\"zh-CN\"" in body
-    assert "快速开始".encode() in body
-    assert "对抗审查框架".encode() in body
-    assert b'<p class="doc-untranslated"' not in body
-
-
-def test_docs_markdown_zh_install_guide():
-    handler = make_handler("/docs/14-github-action-install.md?lang=zh")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert "安装 Falsify GitHub Action".encode() in body
-    assert "验收清单".encode() in body
-
-
-def test_docs_markdown_zh_open_core_boundary():
-    handler = make_handler("/docs/12-open-core-boundary.md?lang=zh")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert "Open Core 边界".encode() in body
-    assert "协议开源".encode() in body
-
-
-def test_docs_untranslated_page_shows_notice():
-    handler = make_handler("/docs/16-homepage-redesign-teardown.md?lang=zh")
-    handler.do_GET()
-
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"doc-untranslated" in body
-    assert b'<p class="doc-untranslated"' in body
-    assert "此页暂无中文版".encode() in body
-
-
-def test_docs_zh_typography_css():
-    css = serve.DOCS_CSS
-    assert "--font-zh:" in css
-    assert "PingFang SC" in css
-    assert 'html[lang="zh-CN"]' in css
-    assert "word-break:keep-all" in css.replace(" ", "")
-
-
-def test_doc_has_zh_helpers():
-    assert serve.doc_has_zh("00-getting-started")
-    assert serve.doc_has_zh("14-github-action-install")
-    assert not serve.doc_has_zh("16-homepage-redesign-teardown")
-
-
-def test_static_traversal_is_rejected():
+def test_static_traversal_rejected():
     assert serve.safe_repo_path("/docs/../LICENSE") is None
-    assert serve.safe_repo_path("/docs/%2e%2e/LICENSE") is None
     assert serve.safe_web_static("/static/../serve.py") is None
 
-    handler = make_handler("/docs/../LICENSE")
-    handler.do_GET()
-    assert handler.status_code == 404
+
+def test_design_path_rejects_markdown_drafts():
+    """Design mirrors serve product assets only — never internal .md drafts."""
+    assert serve.safe_design_path("/design/falsify-flow-docs/notes.md") is None
+    assert serve.safe_design_path("/design/any/internal-draft.md") is None
+    h = handler("/design/falsify-flow-docs/notes.md")
+    h.do_GET()
+    assert h.status_code == 404
 
 
-def test_static_css_route_returns_200():
-    handler = make_handler("/static/css/home.css")
-    handler.do_GET()
-    assert handler.status_code == 200
-    body = handler.wfile.getvalue()
-    assert b"gate-panel" in body
+def test_case_reader_allowlist_blocks_non_public_stems():
+    # On-disk drafts outside CASE_ALLOWLIST must not get an HTML reader shell.
+    h = handler("/examples/real-cases/03-cron-wrapper-refresh-gate-rootfix")
+    h.do_GET()
+    assert h.status_code == 404
 
 
-def test_examples_json_route_returns_200():
-    handler = make_handler("/examples/sample-block-report.json")
-    handler.do_GET()
-    assert handler.status_code == 200
-    data = json.loads(handler.wfile.getvalue())
-    assert data["schema_version"] == "falsify.review.v1"
+def test_github_action_markdown_renders_semantic_emphasis_and_table():
+    h = handler("/docs/14-github-action-install.html")
+    h.do_GET()
+    body = h.wfile.getvalue().decode("utf-8")
+    assert h.status_code == 200
+    assert "<strong>target repo</strong>" in body
+    assert "<table>" in body and '<th scope="col">Secret</th>' in body
+    assert "**target repo**" not in body and "| Secret | Example |" not in body
 
 
-def test_head_root_returns_200():
-    handler = make_handler("/")
-    handler.command = "HEAD"
-    handler.do_HEAD()
-    assert handler.status_code == 200
 
-
-def test_head_docs_markdown_returns_200():
-    handler = make_handler("/docs/00-getting-started.md")
-    handler.command = "HEAD"
-    handler.do_HEAD()
-    assert handler.status_code == 200
-
-
-def test_homepage_open_core_licensing_footer():
-    assert 'id="licensing"' in serve.PAGE
-    assert 'data-i18n="licensing_p"' in serve.PAGE
-    assert "/docs/12-open-core-boundary.md" in serve.PAGE
-    assert "MIT (core)" in serve.PAGE
-    assert "MIT（核心）" in serve.PAGE
-    assert "Self-hosted · unlimited repos" in serve.PAGE
-    assert "自托管，仓库不限" in serve.PAGE or "自托管 · 仓库不限" in serve.PAGE
-    assert "hosted policy enforcement" in serve.PAGE
-    assert "托管策略" in serve.PAGE
-    assert "Shared review templates" not in serve.PAGE
-    assert 'class="boundary-block"' not in serve.PAGE
-
-
-def test_homepage_social_and_favicon_meta():
-    assert 'property="og:title"' in serve.PAGE
-    assert 'property="og:image"' in serve.PAGE
-    assert 'name="twitter:card"' in serve.PAGE
-    assert "summary_large_image" in serve.PAGE
-    assert "/static/favicon.svg" in serve.PAGE
-    assert "/static/favicon.ico" in serve.PAGE
-    assert "og-share.png" in serve.PAGE
-
-
-def test_homepage_proof_strip_github():
-    assert 'data-i18n="trust_band_github"' in serve.PAGE
-    assert "github.com/shi275773124/Falsify" in serve.PAGE
-    assert "proof-case" not in serve.PAGE
-    assert "< 1 day" not in serve.PAGE
-    assert "Only PASS" not in serve.PAGE
-    assert "仅 PASS" not in serve.PAGE
-    assert "3 protocol verdicts" in serve.PAGE
-
-
-def test_homepage_case_card_links():
-    assert "https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" in serve.PAGE
-    assert "/examples/sample-block-report.json" in serve.PAGE
-    links = serve.re.findall(r'<a class="case-link"([^>]*)>', serve.PAGE)
-    assert len(links) == 1
-    for attrs in links:
-        assert 'target="_blank"' in attrs
-        assert "noopener" in attrs
-        assert "noreferrer" in attrs
-    assert serve.PAGE.count('<article class="case-card">') == 1
-
-
-def test_homepage_block_stamp_animation():
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    assert "block-stamp" in css
-    assert "@keyframes block-stamp" in css
-    assert "block-stamp" in serve.PAGE
-
-
-def test_homepage_hero_image_first():
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    assert "hero-cockpit" in serve.PAGE
-    assert "hero-cockpit { display: none" not in css
-    hero_visual = serve.PAGE.split('class="hero-visual"')[1].split("</header>")[0]
-    assert "hero-cockpit" in hero_visual
-    assert "gate-panel" in hero_visual
-    assert "hero-check-img" not in hero_visual
-def test_static_home_assets_route_returns_200():
+def test_assets_path_traversal_does_not_leak_repo():
+    """MF-1: /assets/../ must not fall through to safe_repo_path(ROOT)."""
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8", errors="replace")
+    marker = "Falsify" if "Falsify" in readme else readme[:40]
     for path in (
-        "/static/img/hero-block-check.png",
-        "/static/img/og-share.png",
-        "/static/favicon.svg",
-        "/static/favicon.ico",
+        "/assets/../README.md",
+        "/assets/..%2fREADME.md",
+        "/assets/flow/../../README.md",
+        "/assets/not-a-real-file.js",
     ):
-        handler = make_handler(path)
-        handler.do_GET()
-        assert handler.status_code == 200, path
+        h = handler(path)
+        h.do_GET()
+        body = h.wfile.getvalue()
+        assert h.status_code == 404, (path, h.status_code)
+        assert marker.encode("utf-8") not in body or b"not_found" in body
+        # JSON error body must not embed full README
+        assert b"# Falsify" not in body and b"#!/usr/bin" not in body
 
+def test_inline_md_blocks_dangerous_hrefs():
+    assert "javascript:" not in serve.inline_md("[x](javascript:alert(1))")
+    assert "data:" not in serve.inline_md("[x](data:text/html,hi)")
+    assert 'href="https://example.com"' in serve.inline_md("[x](https://example.com)")
+    assert 'href="/docs/"' in serve.inline_md("[x](/docs/)")
 
-def test_render_verdict_shows_upgrade_trigger():
-    assert "upgrade_trigger" in serve.PAGE
-    assert "Upgrade trigger:" in serve.PAGE
-    assert "升级触发：" in serve.PAGE
+def test_hygiene_seo_and_selective_geo_routes():
+    root = handler("/")
+    root.do_GET()
+    home = root.wfile.getvalue().decode("utf-8")
+    assert root.status_code == 200
+    assert 'rel="canonical" href="https://falsify.site/"' in home
+    assert 'property="og:image" content="https://falsify.site/static/img/og-share.png"' in home
+    assert 'name="twitter:card" content="summary_large_image"' in home
 
+    og = handler("/static/img/og-share.png")
+    og.do_GET()
+    assert og.status_code == 200 and og.wfile.getvalue()[:8] == b"\x89PNG\r\n\x1a\n"
 
-def test_homepage_zh_cn_typography():
-    css = Path(serve.WEB_DIR / "static/css/home.css").read_text(encoding="utf-8")
-    tokens = Path(serve.WEB_DIR / "static/css/tokens.css").read_text(encoding="utf-8")
-    js = Path(serve.WEB_DIR / "static/js/home.js").read_text(encoding="utf-8")
+    robots = handler("/robots.txt")
+    robots.do_GET()
+    robots_body = robots.wfile.getvalue().decode("utf-8")
+    assert robots.status_code == 200
+    assert "Sitemap: https://falsify.site/sitemap.xml" in robots_body
+    assert "ai-train=no" in robots_body
+    assert "ai-input=yes" in robots_body
+    assert "User-agent: GPTBot" in robots_body and "Allow: /" in robots_body
+    assert "User-agent: CCBot" in robots_body and "Disallow: /" in robots_body
+    assert "Disallow: /design/" in robots_body
+    assert "Disallow: /review" in robots_body
 
-    assert "--font-zh:" in tokens
-    assert "PingFang SC" in tokens
-    assert 'html[lang="zh-CN"]' in css
-    assert "word-break: keep-all" in css
-    assert "line-height: 1.8" in css or "line-height: 1.82" in css
-    assert 'classList.toggle("lang-zh"' in js
-    assert 'document.documentElement.lang = isZh ? "zh-CN" : "en"' in js
-    assert "falsify-lang" in js
+    sitemap = handler("/sitemap.xml")
+    sitemap.do_GET()
+    sm = sitemap.wfile.getvalue().decode("utf-8")
+    assert sitemap.status_code == 200
+    assert "<loc>https://falsify.site/</loc>" in sm
+    assert "<loc>https://falsify.site/docs/</loc>" in sm
+    assert "<loc>https://falsify.site/docs/14-github-action-install.html</loc>" in sm
+    assert "<loc>https://falsify.site/docs/verdict-vocabulary.html</loc>" in sm
+    for stem in (
+        "02-derived-freshness-stale-panel",
+        "04-round3b-evidence-integrity-reversal",
+        "05-second-runtime-v068-sync-false-green",
+    ):
+        assert f"<loc>https://falsify.site/examples/real-cases/{stem}</loc>" in sm
+
+    llms = handler("/llms.txt")
+    llms.do_GET()
+    llms_body = llms.wfile.getvalue().decode("utf-8")
+    assert llms.status_code == 200
+    assert "Evidence gate" in llms_body
+    assert "https://falsify.site/docs/14-github-action-install.html" in llms_body
+
+    well_known = handler("/.well-known/llms.txt")
+    well_known.do_GET()
+    assert well_known.status_code == 200
+    assert well_known.wfile.getvalue().decode("utf-8") == llms_body
+
+    docs = handler("/docs/")
+    docs.do_GET()
+    docs_body = docs.wfile.getvalue().decode("utf-8")
+    assert docs.status_code == 200
+    assert 'rel="canonical" href="https://falsify.site/docs/"' in docs_body
+    assert 'name="robots" content="index,follow"' in docs_body
+    assert "verdict-vocabulary" in docs_body
+
+    design = handler("/design/falsify-flow-docs/")
+    design.do_GET()
+    design_body = design.wfile.getvalue().decode("utf-8")
+    assert design.status_code == 200
+    assert 'name="robots" content="noindex,follow"' in design_body

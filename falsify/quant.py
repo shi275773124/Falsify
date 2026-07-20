@@ -244,7 +244,14 @@ def compute_effective_trials(returns_matrix: np.ndarray, method: str = "liji") -
     eigenvalues = np.sort(eigenvalues)[::-1]
 
     if method == "liji":
-        m_eff = max(1, int(np.sum(eigenvalues >= 1.0)))
+        # Li & Ji (2005) true formula: Meff = Σ f(λi), f(λ) = I(λ≥1) + (λ − ⌊λ⌋)
+        # Previous impl used int(Σ I(λ≥1)) which dropped fractional residue.
+        # Fixed 2026-07-07 per Exp2: truncated gave m_eff=6, true formula gives 14.
+        # Note: verdict path uses max(n_param_combos, declared, matrix_cols, 1), not this function.
+        m_eff = max(1, int(round(
+            float(np.sum(eigenvalues >= 1.0)) +
+            float(np.sum(eigenvalues - np.floor(eigenvalues)))
+        )))
     elif method == "pr":
         tr_C = np.trace(C)
         tr_C2 = np.trace(C @ C)
@@ -265,9 +272,10 @@ def compute_effective_trials(returns_matrix: np.ndarray, method: str = "liji") -
         "eigenvalues_top5": [round(float(x), 4) for x in eigenvalues[:5]],
         "n_eigenvalues_above_1": int(np.sum(eigenvalues >= 1.0)),
         "note": (
-            "Li & Ji (2005) eigenvalue-based effective trials. "
-            "Permutation-validated: FPR < 8% at DSR>0.90 threshold. "
-            "Cite: Li & Ji, Heredity 2005, DOI 10.1038/sj.hdy.6800717"
+            "Li & Ji (2005) true formula: Meff = Σ[I(λ≥1) + (λ−⌊λ⌋)]. "
+            "Fixed 2026-07-07: previous int(Σ I(λ≥1)) dropped fractional residue (6 vs 14 on R3 96-col matrix). "
+            "Cite: Li & Ji, Heredity 2005, DOI 10.1038/sj.hdy.6800717. "
+            "Caveat: migrated from genetics; verdict path does not call this function."
             if method == "liji" else
             f"Method={method}. See falsify_quant.py docstring for caveats."
         ),
@@ -1545,11 +1553,18 @@ def multi_objective_pbo_calmar(returns_matrix: np.ndarray, n_bins: int = 16,
 
     pbo_pass = pbo_value < 0.5
     calmar_pass = median_calmar >= calmar_floor
+    # WARN zone added 2026-07-07: Calmar 0.3 is industry lenient end (CTA median 0.5-1.0)
+    # Sources: AQR QMHIX Calmar 1.18, Man BTOP50 ~0.44, arxiv CTA Pure Trend 1.0-1.6
+    calmar_warn = calmar_floor <= median_calmar < (calmar_floor + 0.2)  # [0.3, 0.5) → WARN
     overall_pass = pbo_pass and calmar_pass
 
     if pbo_pass and not calmar_pass:
-        verdict = "BLOCK"
-        reason = f"Sharpe-robust but drawdown-fragile (Calmar={median_calmar:.3f} < floor={calmar_floor})"
+        if calmar_warn:
+            verdict = "WARN"
+            reason = f"Sharpe-robust but Calmar={median_calmar:.3f} in WARN zone [0.3,0.5) (industry lenient end, CTA median 0.5-1.0)"
+        else:
+            verdict = "BLOCK"
+            reason = f"Sharpe-robust but drawdown-fragile (Calmar={median_calmar:.3f} < floor={calmar_floor})"
     elif not pbo_pass:
         verdict = "BLOCK"
         reason = f"PBO={pbo_value:.4f} >= 0.5 (Sharpe overfit)"
@@ -1599,15 +1614,174 @@ def per_trade_edge_vs_cost(expected_edge_bps, realized_cost_bps,
     median_cost = float(np.median(realized_cost_bps))
     ratio = median_edge / median_cost if median_cost > 0 else float('inf')
     passed = ratio > threshold
+    # WARN zone added 2026-07-07: 1.5x is industry lenient end (mainstream 2-3x)
+    # Sources: Pomegra "2-3x rule", Ballast Markets "2x rule", arxiv ML Bitcoin lambda=2.0
+    warn_threshold = threshold + 0.5  # [1.5, 2.0) → WARN
+    warned = (not passed) and (ratio > threshold * 0.8)  # close to threshold
+    verdict = "PASS" if passed else ("WARN" if warned else "FAIL")
 
     return {
         "pass": passed,
+        "verdict": verdict,
         "median_edge_bps": round(median_edge, 4),
         "median_cost_bps": round(median_cost, 4),
         "ratio": round(ratio, 4),
         "threshold": threshold,
+        "warn_zone": f"[{threshold*0.8:.2f}, {threshold})",
         "n_trades": n_trades,
-        "reason": "pass" if passed else f"edge/cost ratio {ratio:.3f} <= threshold {threshold}",
+        "reason": "pass" if passed else (
+            f"WARN: edge/cost ratio {ratio:.3f} in warn zone (industry mainstream 2-3x)" if warned
+            else f"edge/cost ratio {ratio:.3f} < threshold {threshold}"
+        ),
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# R²-First Panel (Carver LAM) — pre-backtest signal predictive power screen
+# Fixed 2026-07-07: direction gate + Carver regression R² + rank_ic_sq rename
+# Exp1: Carver R² vs OOS SR r=0.66, mean(IC)² vs OOS SR r=-0.09
+# ═══════════════════════════════════════════════════════════════════════════════
+
+R2_FIRST_THRESHOLDS = {
+    "REJECT": 0.001,
+    "WEAK":   0.005,
+    "OK":     0.02,
+}
+
+R2_FIRST_VERDICT_CLAIM_CEILING = {
+    "REJECT": "BLOCK",
+    "WEAK":   "CANDIDATE_NEEDS_NEXT_GATE",
+    "OK":     "PASS_TO_PAPER",
+    "STRONG": "PASS_TO_PAPER",
+}
+
+
+def r2_first_panel(signal_df, fwd_ret_df, min_obs=20, min_cross_section=5,
+                   strategy_type="any"):
+    """Carver LAM signal filter on a dense panel (fixed 2026-07-07).
+
+    Computes daily cross-sectional Spearman rank IC AND Carver regression R²
+    (1 - SS_res/SS_tot) between signal and forward return.
+
+    Fixes vs previous impl:
+    1. r_squared renamed to rank_ic_sq (was misleadingly called r_squared)
+    2. Added carver_r2: true OLS regression R² (Exp1: predicts OOS SR, r=0.66)
+    3. Added direction gate: momentum requires IC>0, reversal requires IC<0
+       (Exp1: 18 momentum vs 7 reversal, IC² treats both as positive)
+
+    Args:
+        strategy_type: "momentum" (IC>0 required), "reversal" (IC<0 required),
+                       or "any" (no direction check)
+
+    Returns dict with verdict, mean_rank_ic, rank_ic_sq, carver_r2, direction_verdict.
+    """
+    from scipy.stats import spearmanr as _spearmanr
+
+    common_dates = signal_df.index.intersection(fwd_ret_df.index)
+    common_cols = signal_df.columns.intersection(fwd_ret_df.columns)
+    if len(common_dates) < min_obs or len(common_cols) < min_cross_section:
+        return {
+            "verdict": "NO_DATA",
+            "mean_rank_ic": None,
+            "rank_ic_sq": None,
+            "carver_r2": None,
+            "n_days": 0,
+            "detail": f"insufficient data: {len(common_dates)} dates / {len(common_cols)} assets",
+        }
+
+    sig = signal_df.loc[common_dates, common_cols]
+    fwd = fwd_ret_df.loc[common_dates, common_cols]
+
+    daily_ics = []
+    daily_carver_r2s = []
+    for i in range(len(common_dates)):
+        s_row = sig.iloc[i]
+        f_row = fwd.iloc[i]
+        mask = ~(s_row.isna() | f_row.isna())
+        s_valid = s_row[mask]
+        f_valid = f_row[mask]
+        if len(s_valid) < min_cross_section:
+            continue
+        if s_valid.std() == 0 or f_valid.std() == 0:
+            continue
+        rho, _ = _spearmanr(s_valid.values, f_valid.values)
+        if np.isfinite(rho):
+            daily_ics.append(float(rho))
+            # Carver regression R²: 1 - SS_res/SS_tot
+            x = s_valid.values.astype(float)
+            y = f_valid.values.astype(float)
+            xc = x - x.mean()
+            yc = y - y.mean()
+            var_x = float((xc ** 2).sum())
+            ss_tot = float((yc ** 2).sum())
+            if var_x > 0 and ss_tot > 0:
+                beta = float((xc * yc).sum()) / var_x
+                pred = y.mean() + beta * (x - x.mean())
+                ss_res = float(((y - pred) ** 2).sum())
+                daily_carver_r2s.append(1.0 - ss_res / ss_tot)
+            else:
+                daily_carver_r2s.append(0.0)
+
+    n = len(daily_ics)
+    if n < min_obs:
+        return {
+            "verdict": "NO_DATA",
+            "mean_rank_ic": None,
+            "rank_ic_sq": None,
+            "carver_r2": None,
+            "n_days": n,
+            "detail": f"only {n} valid daily IC observations (min={min_obs})",
+        }
+
+    ics = np.array(daily_ics)
+    mean_ic = float(np.mean(ics))
+    std_ic = float(np.std(ics, ddof=1)) if n > 1 else 0.0
+    t_stat = mean_ic / (std_ic / math.sqrt(n)) if std_ic > 0 else 0.0
+    rank_ic_sq = mean_ic ** 2  # was misleadingly named r_squared
+    carver_r2 = float(np.mean(daily_carver_r2s)) if daily_carver_r2s else None
+    predicted_sr = mean_ic * math.sqrt(n)
+    positive_pct = float(np.mean(ics > 0))
+
+    # Direction gate (Exp1: IC² is direction-blind, reversal passes as momentum)
+    direction_verdict = "PASS"
+    if strategy_type == "momentum" and mean_ic <= 0:
+        direction_verdict = "FAIL_DIRECTION_REVERSAL"
+    elif strategy_type == "reversal" and mean_ic >= 0:
+        direction_verdict = "FAIL_DIRECTION_MOMENTUM"
+
+    # Verdict uses carver_r2 if available (Exp1: predicts OOS SR),
+    # falls back to rank_ic_sq if regression failed
+    metric = carver_r2 if carver_r2 is not None else rank_ic_sq
+    if metric is None:
+        verdict = "NO_DATA"
+    elif metric < R2_FIRST_THRESHOLDS["REJECT"]:
+        verdict = "REJECT"
+    elif metric < R2_FIRST_THRESHOLDS["WEAK"]:
+        verdict = "WEAK"
+    elif metric < R2_FIRST_THRESHOLDS["OK"]:
+        verdict = "OK"
+    else:
+        verdict = "STRONG"
+
+    # Direction failure overrides verdict
+    if direction_verdict != "PASS":
+        verdict = f"FAIL_{direction_verdict}"
+
+    return {
+        "verdict": verdict,
+        "direction_verdict": direction_verdict,
+        "strategy_type": strategy_type,
+        "mean_rank_ic": round(mean_ic, 6),
+        "std_ic": round(std_ic, 6),
+        "t_stat": round(t_stat, 4),
+        "rank_ic_sq": round(rank_ic_sq, 8),  # was r_squared
+        "carver_r2": round(carver_r2, 8) if carver_r2 is not None else None,
+        "predicted_sr": round(predicted_sr, 4),
+        "n_days": n,
+        "positive_days_pct": round(positive_pct, 4),
+        "daily_ics": daily_ics,
+        "thresholds": dict(R2_FIRST_THRESHOLDS),
+        "metric_used": "carver_r2" if carver_r2 is not None else "rank_ic_sq",
     }
 
 

@@ -1,64 +1,39 @@
-# 17. Falsify Skills (install)
+# Use Falsify Workflow Packs
 
-[Back to README](../README.md) · [Getting Started](./00-getting-started.md) · [BYOK + Policy](./11-byok-and-policy.md)
+[Getting Started](./00-getting-started.md) ? [Use locally & BYOK](./11-byok-and-policy.md)
 
-Falsify skills are **repeatable sign-off workflows**, not prompt snippets. Each pack includes an input contract, raw artifact requirements, verdict schema (`falsify.review.v1`), sample BLOCK / PASS_WITH_DEBT outputs, pitfalls, and minimal actions.
+Workflow packs are local, repeatable review instructions?not hosted services and not proof by themselves. Each pack tells an agent what evidence to request, how to challenge a claim, and how to format a verdict. Keep the resulting evidence and verdict artifact with your work.
 
-Live site: [falsify.zjdeng.xyz](https://falsify.zjdeng.xyz/)
+## Available packs
 
-## Five workflow packs (v0)
-
-| Skill | Directory | One-line purpose |
-|---|---|---|
-| **Deployment Claim Review** | [`skills/falsify-deployment-claim/`](../skills/falsify-deployment-claim/) | Block "logs green" false confidence before production sign-off. |
-| **Live Production Gate** | [`skills/falsify-live-production-gate/`](../skills/falsify-live-production-gate/) | Production Falsify for live executors: derived freshness, incident replay fixtures, input provenance manifest. |
-| **AI PR Review** | [`skills/falsify-ai-pr-review/`](../skills/falsify-ai-pr-review/) | Review agent-written or human-written PR claims against raw diff, tests, and runtime evidence. |
-| **Research Report Audit** | [`skills/falsify-research-report/`](../skills/falsify-research-report/) | Catch stale data, cherry-picking, and conclusion overreach in memos. |
-| **Agent Safety Check** | [`skills/falsify-agent-safety-check/`](../skills/falsify-agent-safety-check/) | Verify agent completion claims before trust — raw artifacts and side effects, not summaries. |
-
-Anonymized live incident pattern (derived freshness / stale panel): [`examples/real-cases/02-derived-freshness-stale-panel.md`](../examples/real-cases/02-derived-freshness-stale-panel.md).
-
-Browse all packs on GitHub: [`skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
+| Pack | Use it when |
+|---|---|
+| [Deployment Claim Review](../skills/falsify-deployment-claim/) | A deploy sounds successful but you need evidence of the target state. |
+| [AI PR Review](../skills/falsify-ai-pr-review/) | A human or agent PR claims work is complete. |
+| [Research Report Audit](../skills/falsify-research-report/) | A memo may rely on stale, cherry-picked, or unsupported evidence. |
+| [Agent Safety Check](../skills/falsify-agent-safety-check/) | An agent says it finished a consequential task. |
 
 ## Install in Claude Code
 
-1. Clone or download this repo (or copy one skill folder from GitHub).
-2. Copy the skill directory into your workspace or user skills path, for example:
-   - **Project scope:** `.claude/skills/falsify-deployment-claim/` (folder must contain `SKILL.md`)
-   - **User scope:** `~/.claude/skills/falsify-deployment-claim/`
-3. Restart Claude Code or reload skills if your host requires it.
-4. Invoke the workflow when a claim needs sign-off — paste the claim and required raw artifacts per `templates/input.md`.
-
-No Falsify API key is required. Live model-backed review uses **your provider key (BYOK)** or a logged-in agent CLI. See [BYOK + Policy](./11-byok-and-policy.md).
+1. Copy one folder from [`skills/`](../skills/) into a project or user skills location, for example `.claude/skills/falsify-deployment-claim/`.
+2. Confirm the folder contains `SKILL.md`.
+3. Reload or restart your host if it requires it.
+4. Invoke the pack with the claim and the raw artifacts requested by its input template.
 
 ## Install in Cursor
 
-1. Copy a skill folder from [`skills/`](https://github.com/shi275773124/Falsify/tree/main/skills) into:
-   - **Project scope:** `.cursor/skills/<skill-name>/` (contains `SKILL.md`)
-   - **User scope:** `~/.cursor/skills-cursor/<skill-name>/`
-2. The agent loads `SKILL.md` when the task matches the workflow (deployment claim, PR review, research audit, agent completion check).
-3. Bring your own model keys — Falsify does not require a hosted Falsify API key for local or BYOK use.
+1. Copy a folder from [`skills/`](../skills/) into `.cursor/skills/<skill-name>/` or your Cursor user skills location.
+2. Confirm the folder contains `SKILL.md`.
+3. Let the host load it when the task matches, then provide the requested evidence.
 
-## What each pack contains
+No Falsify API key is required to install a pack. A live model-backed review still uses your provider key or a locally authenticated agent CLI.
 
-```text
-skills/falsify-<name>/
-  SKILL.md              # workflow contract (when to use, evidence gates, verdict rules)
-  README.md             # quick start
-  templates/input.md    # paste template for claims + artifacts
-  templates/verdict.schema.json
-  examples/             # sample BLOCK inputs and verdict JSON
-```
+## What a pack does not do
 
-## CLI and GitHub Action (alternative paths)
+A pack does not automatically inspect your cloud account, run a production gate, or turn an agent's answer into evidence. Use it to structure the review; use the CLI or your own verification commands to generate and retain artifacts.
 
-Skills are the **editor-first** entry. You can also:
+## Next
 
-- Run the CLI: `python falsify.py review report.md --provider deepseek` ([Getting Started](./00-getting-started.md))
-- Install the PR gate: [GitHub Action (5 min)](./14-github-action-install.md)
-
-## Upgrade path
-
-Starter skills are MIT open core. When one artifact controls money, production, or a customer commitment, consider an **Audit Sprint** or **Design Partner** pilot — see [Team delivery blueprint](./10-team-delivery-and-business-model.md).
-
-See also: [Pro vs OSS — three-layer boundary](./18-pro-vs-oss.md).
+- [Run a local review](./00-getting-started.md)
+- [CLI & Artifact Reference](./20-cli-and-artifacts.md)
+- [Add a GitHub PR gate](./14-github-action-install.md)

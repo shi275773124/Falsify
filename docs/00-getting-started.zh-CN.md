@@ -21,7 +21,7 @@ python -m pip install -e .[dev]
 Demo 不调用模型。它对 fixture 跑确定性本地规则，返回真实 Falsify 形态的裁决。
 
 ```bash
-python falsify.py demo
+python -m falsify demo
 ```
 
 预期输出形态：
@@ -36,20 +36,20 @@ VERDICT: BLOCK
 
 ```bash
 export DEEPSEEK_API_KEY=sk-...
-python falsify.py review report.md --provider deepseek
+python -m falsify review report.md --provider deepseek
 ```
 
 也可用本地 agent CLI：
 
 ```bash
-python falsify.py review report.md --provider claude
-python falsify.py review report.md --provider codex
+python -m falsify review report.md --provider claude
+python -m falsify review report.md --provider codex
 ```
 
 ## 跑完整闭环
 
 ```bash
-python falsify.py run brief.md --drafter claude --reviewer deepseek
+python -m falsify run brief.md --drafter claude --reviewer deepseek
 ```
 
 尽量让作者与审查者上下文独立。若两角色落到同一模型或 agent 命令，Falsify 会警告独立性被削弱。
@@ -71,3 +71,5 @@ python web/serve.py
 `PASS_WITH_DEBT` 表示当下无阻塞项，但记录了真实 Known Debt，且带有具体升级触发条件。
 
 `BLOCK` 表示仍有 Must Fix、当前证据缺失，或审计结果无法解析。
+
+每张回执还带 `claim_scope` 与 `authority_ceiling`。开源回执为 `EPISTEMIC_ONLY`、`capital_authority: NONE`：它只记录该范围内证明了什么，永远不授权付款、部署或其他实时动作。能授权动作的 `PASS` 还需要 authority adapter 与统一 kernel。

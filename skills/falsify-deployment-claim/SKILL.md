@@ -63,6 +63,18 @@ Return JSON matching `templates/verdict.schema.json`.
 - Attach a post-deploy query result and rollback command.
 - Re-run verification with explicit account, region, and service target.
 
+## Authority exit (Claiming Falsify)
+
+This pack defines **what to attack**. It does **not** replace the product CLI.
+
+Claiming Falsify requires running an authority exit and keeping the artifact:
+
+- `python -m falsify review …` / `python -m falsify demo`
+- Quant (optional): `python -m falsify.quant_gate …` after `pip install falsify[quant]`
+- CI: templates under repo `templates/`
+
+See `skills/README.md` and `docs/ROOTFIX-architecture.md`.
+
 ## Commercial Upgrade Path
 
 - Move from starter skill to Audit Sprint when one deployment claim controls a production, customer, money, or incident decision.

@@ -1,0 +1,136 @@
+# =============================================================================
+# CodeRabbit pilot config — 2-week trial, started 2026-07-05
+#
+# SCOPE: IDE pre-commit review layer ONLY.
+#   - Does NOT replace Falsify (quant/production audit skill)
+#   - Does NOT replace Cursor Bugbot (PR-level defect detection)
+#   - Does NOT replace security-review subagent or cross-bot audit
+#   - Does NOT replace adversarial-cutline-review for strategy theses
+#
+# Do NOT write CodeRabbit into CLAUDE.md / vault AGENTS.md / any SOP until the
+# 2-week pilot produces data: (a) bugs caught that Bugbot missed, (b) false
+# positive rate, (c) whether $24-30/seat/mo is justified.
+#
+# Tuning principle: high signal, low noise. Chris hates comment spam.
+# =============================================================================
+
+language: "en-US"
+
+reviews:
+  # "chill" = real bugs only (level 3). Switch to "assertive" only if pilot
+  # shows chill is missing too much. Don't change without data.
+  profile: "chill"
+
+  # Do NOT request changes — advisory only. Chris merges manually after
+  # Falsify + cross-bot verdict, never auto-blocked by CodeRabbit.
+  request_changes_workflow: false
+
+  # PR-level summary on (useful for context). Poem off. Sequence diagrams off
+  # (small repo, no architectural cross-service flow worth diagramming).
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+  sequence_diagrams: false
+  changed_files_summary: true
+
+  # Terse senior-engineer tone. No compliments, no preamble, no "great job".
+  # Just: issue + why it matters + concrete fix. Link to file:line.
+  tone_instructions: |
+    Be terse and direct, like a senior staff engineer doing a fast review.
+    - No compliments, no "great job", no preamble.
+    - State the issue, why it matters, and the concrete fix in <=3 sentences.
+    - Cite file:line for every finding.
+    - Don't suggest stylistic refactors unless they fix a real bug.
+    - Don't request docstrings — the project has its own doc conventions.
+    - If you're not confident something is a bug, don't post it.
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    base_branches:
+      - "main"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # Exclusions — generated/vendored/large files we never want reviewed.
+  path_filters:
+    - "!**/__pycache__/**"
+    - "!**/*.pyc"
+    - "!.venv/**"
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!**/*.lock"
+    - "!.verification-shots/capture-report.json"
+    - "!examples/**"
+
+  # Per-path review rules — encode the project's hard conventions so
+  # CodeRabbit enforces them instead of just linting syntax.
+  path_instructions:
+    - path: "**/*.py"
+      instructions: |
+        Python in this repo is the Falsify audit framework + quant gate logic.
+        Focus on: logic bugs, race conditions, off-by-one in trial counts,
+        security issues (unsafe deserialization, subprocess shell=True, etc.),
+        and any code path that could silently produce a false PASS verdict
+        from the audit. Do NOT suggest type-hint additions, docstring
+        additions, or stylistic refactors. Don't propose moving to dataclasses
+        or Pydantic unless a real bug requires it.
+
+    - path: "falsify/quant*.py"
+      instructions: |
+        HIGH-STAKES: this is the quant audit core. Pay extra attention to:
+        - effective_trials counting (off-by-one inflates verdicts)
+        - gate thresholds (silent hardcode = silent false PASS)
+        - deployment_parity gaps between backtest contract and live contract
+        - any place a None / NaN could short-circuit a check into PASS
+        Flag any of these as critical, not nitpick.
+
+    - path: "templates/**"
+      instructions: |
+        Vault AGENTS.md templates. Enforce the dual-agent tag rule: every
+        paragraph, code block, table, or list MUST be prefixed with
+        [AGENT-A], [AGENT-B], or [BOTH]. Flag any untagged prose. Flag any
+        edit that rewrites another agent's tagged block instead of adding an
+        audit note beneath it. See templates/AGENTS.md for the full rule set.
+
+    - path: "demo-vault/**"
+      instructions: |
+        Demo vault content follows the same dual-agent tag rules as
+        templates/. Every paragraph needs [AGENT-A]/[AGENT-B]/[BOTH].
+        Critical facts should carry a confidence tier [A]/[B]/[C]/[D].
+        Flag missing tags and missing tiers on critical claims.
+
+    - path: "skills/**/SKILL.md"
+      instructions: |
+        These are Falsify skill definitions (currently v0.9.11 spec). Don't
+        propose restructuring the SKILL.md format or moving sections. Flag
+        any change to gate definitions, verdict schema, or claim-receipt
+        anchors that doesn't also bump the version note in the skill.
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Flag: permissions: write-all (use least privilege), missing
+        timeout-minutes, secrets exposed in env without masking,
+        untrusted-input refs (e.g. ${{ github.event.pull_request.* }} used
+        directly in run: steps without sanitization).
+
+  # Tools auto-detected. ruff/markdownlint/semgrep will run if installed
+  # locally; CodeRabbit won't fail if they're missing.
+  tools:
+    enabled: true
+
+knowledge_base:
+  # Keep learnings local to this repo during pilot. Don't escalate to
+  # org-wide until Chris decides to connect the CodeRabbit org.
+  learnings:
+    scope: "local"
+
+chat:
+  # Don't auto-reply on PR comments during pilot — Chris wants to see what
+  # CodeRabbit posts on its own before enabling conversation loops.
+  auto_reply: false

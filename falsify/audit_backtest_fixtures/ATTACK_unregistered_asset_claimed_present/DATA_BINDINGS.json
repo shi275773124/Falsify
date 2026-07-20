@@ -1,0 +1,18 @@
+{
+  "bindings": [
+    {
+      "asset_id": "FAKE-VENUE-NEVER-REGISTERED-V1",
+      "source_id": "VALID-SOURCE",
+      "physical_path": "data/panel.csv",
+      "data_sha256": "15ee762498452ca51f6ff980bc670c5a09635f13f821487dd9ea197edf2917f8",
+      "coverage_start": "2026-01-01T00:00:00Z",
+      "coverage_end": "2026-01-02T00:00:00Z",
+      "venue": "binance-futures",
+      "class": "raw_archive",
+      "data_types": [
+        "OHLCV_1h"
+      ],
+      "continuous_history": true
+    }
+  ]
+}

@@ -1,4 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect x="4" y="4" width="56" height="56" rx="12" fill="#090909" stroke="#b8ff3c" stroke-width="3"/>
-  <text x="32" y="44" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="32" font-weight="600" fill="#b8ff3c">F</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Real Falsify mark on dark tile: open square + rising slash + mint hexagon point. -->
+  <rect width="32" height="32" rx="7" fill="#020914"/>
+  <g fill="none" stroke="#d5e6f2" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M22 13v12H7V10h11" stroke-width="2"/>
+    <path d="M11 20 L22.5 8.5" stroke-width="2.2"/>
+  </g>
+  <polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#58f5c6"/>
 </svg>

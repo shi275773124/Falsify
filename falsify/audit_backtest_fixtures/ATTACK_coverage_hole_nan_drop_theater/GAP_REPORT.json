@@ -1,0 +1,5 @@
+{
+  "missing_bars": 168,
+  "max_hole_bars": 168,
+  "policy": "dropna"
+}

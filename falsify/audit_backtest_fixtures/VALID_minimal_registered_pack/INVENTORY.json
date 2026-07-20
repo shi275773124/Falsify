@@ -1,0 +1,81 @@
+{
+  "files": [
+    {
+      "path": "ATTACK_CATALOG.json",
+      "sha256": "0e2f90d168de316124f62dda6bea2e888550fafd74733cc6cf77f53b8731cd9d"
+    },
+    {
+      "path": "BAR_INDEX.json",
+      "sha256": "355d4c1230b7dc9831dccfcc48e11b01fe19505003e82e4925c924fa0204e662"
+    },
+    {
+      "path": "CLAIM.json",
+      "sha256": "b3bc9322868286dfd977a8201fb1e7a4e113559f6cb00887f5e954d2b480042a"
+    },
+    {
+      "path": "CLI_CONTRACT.md",
+      "sha256": "2356abf868522f739361b9c06c67d5e599e60e9c17adb3ca52aa6187bebbfe90"
+    },
+    {
+      "path": "DATA_BINDINGS.json",
+      "sha256": "9b72b9864e14eb37a75ddf58c32fe98d8f038c219b1d774969eb834c38b385b4"
+    },
+    {
+      "path": "FEE_MODEL.json",
+      "sha256": "962b59f679db8625700494791ab52084a4e926525148a9d3e9010816be6adeac"
+    },
+    {
+      "path": "FIXTURE_CASE.json",
+      "sha256": "91ae6d3c69467982ac208264827f7b1580ad9f48eba701209bb58393fd72bd4d"
+    },
+    {
+      "path": "GAP_REPORT.json",
+      "sha256": "51a53dac65dbbee6cd3dfc1364fbbddb11e517105f18f60bf1cc190e96f513f8"
+    },
+    {
+      "path": "METRICS.json",
+      "sha256": "58fbe85c95e9f1bdc78e373105275954bcb32822cfcb8cfe99be875d403fecfc"
+    },
+    {
+      "path": "PACK_MANIFEST.json",
+      "sha256": "6fd4776f700e8149badeaae5fa3afb66c097be389bee935d7cf19d5edeeff4a7"
+    },
+    {
+      "path": "PIT_MARKERS.json",
+      "sha256": "d93fdf517e514b876e91a3ac6f695258ec79e142df38dabde419af3ed30610e4"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "26964b17f6d4d8fb3afaded9fbb9c335960dcb0535b1e017c024efda71c8064b"
+    },
+    {
+      "path": "SESSION_CALENDAR.json",
+      "sha256": "2a49be3e7dbba40c6c8de43881214d4784dc7e4b66baefbe5ec53827abfe3ad2"
+    },
+    {
+      "path": "SLIPPAGE_MODEL.json",
+      "sha256": "3c74b8762279a112b2dd06f284a076ca669ee420fa63ed7bdc92462fd19186bd"
+    },
+    {
+      "path": "TRIAL_LEDGER.json",
+      "sha256": "75114d4ecc30caa3b6ff8c74587bc2362f8408ad9998bfd36ce7b2670cde9af4"
+    },
+    {
+      "path": "UNIVERSE.json",
+      "sha256": "c38628ed90c9b4bac485c62657a28d1e20644e57c85ca027822477ece92a9eaf"
+    },
+    {
+      "path": "data/panel.csv",
+      "sha256": "35fe5f6a10a0c714f4555892cb0647d9d893c765bafb5a2a7947e7c54b992e06"
+    },
+    {
+      "path": "trials/trial_1.json",
+      "sha256": "b2cd118994703ce562178d6cd5a91aa018b69c6784a97e2989ae6542d07a47df"
+    },
+    {
+      "path": "trials/trial_2.json",
+      "sha256": "cc6d0736792111142d3293491e75e9e819a881c17e99f0d73abae6d849223b96"
+    }
+  ],
+  "inventory_sha256": "f0c882b179e49c3fd03e878413c4f95d56b25ec0eb3c8ddf4a5598bbc61e4809"
+}

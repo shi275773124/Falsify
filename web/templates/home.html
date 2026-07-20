@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Falsify - evidence gate for high-risk AI conclusions</title>
-<meta name="description" content="Install Falsify skills in Claude Code or Cursor — BYOK — and get PASS, debt, or BLOCK before you ship.">
+<title>Falsify — adversarial sign-off for high-stakes AI decisions</title>
+<meta name="description" content="Falsify is a CLI-first, open-core decision gate for high-stakes AI claims. Public receipts use PASS, PASS_WITH_DEBT, or BLOCK; domain gates can add stricter verdicts and claim ceilings.">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/static/favicon.ico" sizes="32x32">
-<meta property="og:title" content="Falsify - important AI conclusions need evidence">
-<meta property="og:description" content="The evidence gate for high-risk AI conclusions before they are signed off.">
+<meta property="og:title" content="Falsify — Looks green isn't proof.">
+<meta property="og:description" content="Adversarial sign-off for deploys, PRs, research, and agent claims. Open core: protocol MIT; production enforcement stays Pro.">
 <meta property="og:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <meta property="og:url" content="https://falsify.zjdeng.xyz/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Falsify - important AI conclusions need evidence">
-<meta name="twitter:description" content="Independent attack, cutline, verdict, and raw artifact for high-risk AI conclusions.">
+<meta name="twitter:title" content="Falsify — Looks green isn't proof.">
+<meta name="twitter:description" content="Review first. Trust after. CLI-first evidence gates and reproducible receipts.">
 <meta name="twitter:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,16 +23,17 @@
 <link rel="stylesheet" href="/static/css/home.css">
 </head>
 <body>
+<!-- LEGACY homepage stack. Production is design/falsify-flow-candidate at /. See web/LEGACY_HOMEPAGE.md -->
+
 <nav class="nav">
   <div class="wrap nav-wrap">
-    <a class="brand" href="#top">Falsify</a>
+    <a class="brand" href="#top" aria-label="Falsify home"><img class="brand-logo" src="/static/img/falsify-logo-dark.png" width="283" height="65" alt="Falsify"></a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-i18n="nav_menu">Menu</button>
     <div class="links" id="nav-links">
       <a href="#how" data-i18n="nav_how">How</a>
       <a href="#proof" data-i18n="nav_proof">Proof</a>
       <a href="#try" data-i18n="nav_try">Try</a>
       <a href="/docs/" data-i18n="nav_docs">Docs</a>
-      <a href="/docs/17-skills.md" data-i18n="nav_skills">Skills</a>
       <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
       <button class="lang-btn" id="lang-btn" type="button">中文</button>
     </div>
@@ -71,20 +72,16 @@
     independent final judgment
     Self-review is not independent review.
     Real backend, not fake analysis.
-    Upgrade trigger:
-    升级触发：
     Cutline-only ≠ full Falsify
     只有 Cutline ≠ 完整 Falsify
-    差一个机制就要上实盘
     非完整 Falsify
+    3 protocol verdicts
     MIT (core)
     MIT（核心）
-    3 protocol verdicts
-    Self-hosted · unlimited repos
-    自托管 · 仓库不限
-    托管策略
     hosted policy enforcement
+    托管策略
     one mechanic away from live money
+    差一个机制就要上实盘
   </div>
   <img class="hero-check-img" src="/static/img/hero-block-check.png" width="420" height="260" alt="Falsify BLOCK review" data-i18n-alt="hero_img_alt">
 </div>
@@ -92,55 +89,177 @@
 <header class="hero" id="top">
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow" data-i18n="hero_eyebrow">Skills Pack v0 · workflows, not prompts</p>
-      <h1 data-i18n="h1">Looks right isn't enough.</h1>
-      <p class="sub" data-i18n="hero_sub">Install a Falsify skill in Claude Code or Cursor — BYOK — and get PASS, debt, or BLOCK before you ship.</p>
-      <div class="actions">
-        <a class="btn primary" href="/docs/17-skills.md" data-i18n="btn_install_skill">Install skill</a>
-        <a class="btn ghost" href="#try" data-i18n="btn_run_sample_hero">Run sample</a>
+      <p class="eyebrow" data-i18n="hero_eyebrow">Open core · decision gate for AI-era work</p>
+      <h1 class="hero-title" data-i18n="h1">Looks green isn't proof.</h1>
+      <ol class="hero-flow" aria-label="How Falsify works">
+        <li><span class="hero-flow-k" data-i18n="hero_step_1_k">Input</span><span data-i18n="hero_step_1"> — a deployment claim, PR summary, or research report</span></li>
+        <li><span class="hero-flow-k" data-i18n="hero_step_2_k">Check</span><span data-i18n="hero_step_2"> — adversarial evidence review (not self-review)</span></li>
+        <li><span class="hero-flow-k" data-i18n="hero_step_3_k">Artifact</span><span data-i18n="hero_step_3"> ? a core PASS / PASS_WITH_DEBT / BLOCK receipt as falsify.review.v1 JSON</span></li>
+      </ol>
+      <div class="actions hero-actions">
+        <a class="btn primary" href="#proof" data-i18n="btn_run_sample_hero">See a real BLOCK artifact</a>
       </div>
+      <p class="hero-secondary-links">
+        <a href="#try" data-i18n="btn_try_demo">Run 60s demo</a>
+        <a href="/docs/17-skills.md" data-i18n="btn_install_skill">Install locally</a>
+        <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer" data-i18n="trust_band_github">GitHub</a>
+      </p>
       <div class="hero-trust" aria-label="Trust signals">
-        <a class="trust-chip trust-link" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">
-          <span data-i18n="trust_band_github">GitHub</span>
-        </a>
-        <span class="trust-chip trust-item" data-i18n="trust_mit">MIT (core)</span>
+        <span class="trust-chip trust-item" data-i18n="trust_mit">MIT (open core)</span>
         <span class="trust-chip trust-item" data-i18n="trust_byok">No Falsify key · BYOK</span>
         <span class="trust-chip trust-item" data-i18n="trust_schema">falsify.review.v1</span>
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-scene" aria-label="Falsify skill attack and BLOCK verdict">
-        <svg class="hero-scene-geo" viewBox="0 0 480 520" aria-hidden="true" focusable="false">
-          <circle class="hero-geo-arc" cx="420" cy="72" r="88" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="120 220" opacity="0.12"/>
-          <line class="hero-geo-line" x1="28" y1="420" x2="148" y2="340" stroke="currentColor" stroke-width="1" opacity="0.1"/>
-          <circle class="hero-geo-dot hero-geo-dot-a" cx="52" cy="248" r="3" fill="currentColor" opacity="0.1"/>
-          <circle class="hero-geo-dot hero-geo-dot-b" cx="68" cy="264" r="2" fill="currentColor" opacity="0.08"/>
-          <circle class="hero-geo-dot hero-geo-dot-c" cx="84" cy="252" r="2.5" fill="currentColor" opacity="0.09"/>
-        </svg>
-          <div class="hero-scene-frame">
-          <a class="hero-scene-skill-strip" href="/docs/17-skills.md" data-i18n-aria="hero_skill_strip_label" aria-label="Install Falsify skills — Claude Code or Cursor, BYOK">
-            <span data-i18n="hero_skill_install">Install skill</span>
-            <span class="hero-scene-sep" aria-hidden="true">·</span>
-            <span data-i18n="hero_skill_claude">Claude Code</span>
-            <span class="hero-scene-sep" aria-hidden="true">·</span>
-            <span data-i18n="hero_skill_cursor">Cursor</span>
-            <span class="hero-scene-sep" aria-hidden="true">·</span>
-            <span data-i18n="hero_skill_byok">BYOK</span>
-          </a>
-          <div class="hero-scene-body">
-            <p class="hero-scene-claim" data-i18n="hero_claim">Sharpe 4.06 — strategy looks ready for shadow live</p>
-            <div class="hero-scene-must-fix preview-must-fix">
-              <strong data-i18n="preview_must_fix">Must Fix</strong>
-              <span data-i18n="preview_issue">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77</span>
+      <div class="hero-scene" aria-label="Falsify adjudication radar">
+        <article class="receipt radar" aria-label="Falsify review receipt">
+          <div class="radar-stage">
+            <ul class="radar-nodes radar-nodes-left" aria-label="Review stages left">
+              <li class="radar-node radar-node-01">
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">01</span>
+                  <span class="radar-node-t" data-i18n="radar_n1_t">Claim parse</span>
+                  <span class="radar-node-s" data-i18n="radar_n1_s">Deconstruct claim</span>
+                </div>
+                <span class="radar-node-dot" aria-hidden="true"></span>
+              </li>
+              <li class="radar-node radar-node-02">
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">02</span>
+                  <span class="radar-node-t" data-i18n="radar_n2_t">Evidence</span>
+                  <span class="radar-node-s" data-i18n="radar_n2_s">Collect artifacts</span>
+                </div>
+                <span class="radar-node-dot" aria-hidden="true"></span>
+              </li>
+              <li class="radar-node radar-node-03">
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">03</span>
+                  <span class="radar-node-t" data-i18n="radar_n3_t">Verifiability</span>
+                  <span class="radar-node-s" data-i18n="radar_n3_s">Reproduce checks</span>
+                </div>
+                <span class="radar-node-dot" aria-hidden="true"></span>
+              </li>
+            </ul>
+
+            <div class="radar-disk">
+              <svg class="radar-rings" viewBox="0 0 480 480" aria-hidden="true" focusable="false">
+                <defs>
+                  <radialGradient id="radarCoreGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="rgba(224,50,44,0.18)"/>
+                    <stop offset="28%" stop-color="rgba(224,50,44,0.06)"/>
+                    <stop offset="55%" stop-color="rgba(160,190,255,0.03)"/>
+                    <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+                  </radialGradient>
+                  <linearGradient id="radarArcHi" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(210,225,255,0)"/>
+                    <stop offset="40%" stop-color="rgba(210,225,255,0.85)"/>
+                    <stop offset="100%" stop-color="rgba(210,225,255,0)"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="240" cy="240" r="210" fill="url(#radarCoreGlow)"/>
+                <!-- dense concentric HUD -->
+                <circle cx="240" cy="240" r="78" fill="none" stroke="rgba(200,220,255,0.07)" stroke-width="1"/>
+                <circle cx="240" cy="240" r="108" fill="none" stroke="rgba(200,220,255,0.09)" stroke-width="1"/>
+                <circle cx="240" cy="240" r="138" fill="none" stroke="rgba(200,220,255,0.11)" stroke-width="1"/>
+                <circle cx="240" cy="240" r="168" fill="none" stroke="rgba(200,220,255,0.14)" stroke-width="1.2"/>
+                <circle cx="240" cy="240" r="188" fill="none" stroke="rgba(200,220,255,0.16)" stroke-width="1.25" stroke-dasharray="2 6"/>
+                <circle class="radar-ring-spin" cx="240" cy="240" r="202" fill="none" stroke="rgba(200,220,255,0.22)" stroke-width="1.4" stroke-dasharray="14 10 4 18"/>
+                <circle cx="240" cy="240" r="214" fill="none" stroke="rgba(200,220,255,0.12)" stroke-width="1" stroke-dasharray="1 5"/>
+                <!-- bright arc segments -->
+                <path d="M 240 32 A 208 208 0 0 1 428 180" fill="none" stroke="url(#radarArcHi)" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M 52 240 A 188 188 0 0 1 120 96" fill="none" stroke="rgba(210,225,255,0.45)" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M 360 400 A 188 188 0 0 1 160 430" fill="none" stroke="rgba(210,225,255,0.32)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M 400 120 A 168 168 0 0 1 430 240" fill="none" stroke="rgba(210,225,255,0.38)" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- ticks -->
+                <g stroke="rgba(200,220,255,0.28)" stroke-width="1.3" stroke-linecap="round">
+                  <line x1="240" y1="20" x2="240" y2="38"/>
+                  <line x1="240" y1="442" x2="240" y2="460"/>
+                  <line x1="20" y1="240" x2="38" y2="240"/>
+                  <line x1="442" y1="240" x2="460" y2="240"/>
+                  <line x1="88" y1="78" x2="100" y2="90"/>
+                  <line x1="392" y1="78" x2="380" y2="90"/>
+                  <line x1="88" y1="402" x2="100" y2="390"/>
+                  <line x1="392" y1="402" x2="380" y2="390"/>
+                </g>
+                <!-- node anchors on ring -->
+                <g fill="rgba(210,225,255,0.9)">
+                  <circle cx="52" cy="120" r="2.8"/>
+                  <circle cx="32" cy="240" r="2.8"/>
+                  <circle cx="52" cy="360" r="2.8"/>
+                  <circle cx="428" cy="120" r="2.8"/>
+                  <circle cx="448" cy="240" r="2.8"/>
+                  <circle cx="428" cy="360" r="2.8"/>
+                </g>
+              </svg>
+
+              <div class="radar-core">
+                <p class="radar-kicker" data-i18n="radar_kicker">Verdict</p>
+                <strong class="receipt-verdict">BLOCK</strong>
+                <p class="radar-status" data-i18n="radar_status">Verdict: BLOCK</p>
+                <p class="radar-claim-label" data-i18n="receipt_claim_label">claim</p>
+                <p class="radar-claim" data-i18n="hero_claim">“Logs green. Another AI agreed. Ship it.”</p>
+                <p class="radar-evidence-label" data-i18n="radar_evidence_label">Blocking evidence</p>
+                <ul class="receipt-evidence">
+                  <li data-i18n="receipt_e1">× log is not state</li>
+                  <li data-i18n="receipt_e2">× missing rollback proof</li>
+                  <li data-i18n="receipt_e3">× incomplete risk assessment</li>
+                </ul>
+                <p class="radar-mustfix"><strong data-i18n="preview_must_fix">Must Fix</strong> <span data-i18n="preview_issue">Logs ≠ state. Need probe + rollback evidence.</span></p>
+              </div>
             </div>
+
+            <ul class="radar-nodes radar-nodes-right" aria-label="Review stages right">
+              <li class="radar-node radar-node-04">
+                <span class="radar-node-dot" aria-hidden="true"></span>
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">04</span>
+                  <span class="radar-node-t" data-i18n="radar_n4_t">Risk scope</span>
+                  <span class="radar-node-s" data-i18n="radar_n4_s">Impact &amp; range</span>
+                </div>
+              </li>
+              <li class="radar-node radar-node-05">
+                <span class="radar-node-dot" aria-hidden="true"></span>
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">05</span>
+                  <span class="radar-node-t" data-i18n="radar_n5_t">Adversarial</span>
+                  <span class="radar-node-s" data-i18n="radar_n5_s">Hunt counterproof</span>
+                </div>
+              </li>
+              <li class="radar-node radar-node-06">
+                <span class="radar-node-dot" aria-hidden="true"></span>
+                <div class="radar-node-copy">
+                  <span class="radar-node-n">06</span>
+                  <span class="radar-node-t" data-i18n="radar_n6_t">Decision</span>
+                  <span class="radar-node-s" data-i18n="radar_n6_s">Core receipt + claim ceiling</span>
+                </div>
+              </li>
+            </ul>
+
+            <div class="radar-footer">
+              <div class="radar-badge">
+                <svg class="radar-badge-icon" width="12" height="12" viewBox="0 0 16 16" aria-hidden="true">
+                  <path fill="currentColor" d="M8 1.2 2.5 3.4v4.1c0 3.4 2.3 5.9 5.5 7.3 3.2-1.4 5.5-3.9 5.5-7.3V3.4L8 1.2zm0 1.7 4 1.6v3c0 2.5-1.6 4.4-4 5.5-2.4-1.1-4-3-4-5.5v-3l4-1.6z"/>
+                </svg>
+                <span data-i18n="hero_scene_meta">falsify.review.v1</span>
+              </div>
+              <p class="radar-repro" data-i18n="radar_repro">Reproduce: open examples/sample-block-report.json</p>
+            </div>
+          </div>
+        </article>
+        <!-- legacy hooks for tests / hidden compat -->
+        <div class="hero-scene-frame hero-scene-legacy" hidden aria-hidden="true">
+          <div class="hero-scene-skill-strip" data-i18n-aria="hero_skill_strip_label"></div>
+          <div class="hero-scene-body">
+            <p class="hero-scene-claim" data-i18n="hero_claim"></p>
+            <div class="hero-scene-must-fix"><strong data-i18n="preview_must_fix"></strong><span data-i18n="preview_issue"></span></div>
             <strong class="hero-scene-verdict block-stamp verdict-block">BLOCK</strong>
           </div>
-          <ol class="hero-scene-loop product-loop product-loop-rail" aria-label="Product loop">
-            <li class="loop-dot" data-step="0"><span data-i18n="loop_submit">Submit</span></li>
-            <li class="loop-dot" data-step="1"><span data-i18n="loop_attack">Attack</span></li>
-            <li class="loop-dot" data-step="2"><span data-i18n="loop_cutline">Cutline</span></li>
-            <li class="loop-dot" data-step="3"><span data-i18n="loop_verdict">Verdict</span></li>
-            <li class="loop-dot" data-step="4"><span data-i18n="loop_artifact">Artifact</span></li>
+          <ol class="hero-scene-loop product-loop product-loop-rail">
+            <li class="loop-dot" data-step="0"></li>
+            <li class="loop-dot" data-step="1"></li>
+            <li class="loop-dot" data-step="2"></li>
+            <li class="loop-dot is-active" data-step="3"></li>
+            <li class="loop-dot" data-step="4"></li>
           </ol>
         </div>
       </div>
@@ -152,17 +271,16 @@
             <span class="gate-live status-dot" role="status" data-i18n="gate_live">LIVE EVIDENCE GATE</span>
           </div>
           <div class="gate-stages">
-            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-map">Frame Audit</span><span class="gate-val" data-i18n="gate_pass">PASS</span><span class="compat-zh">框架审计</span></div>
+            <div class="gate-stage"><span class="gate-label" data-i18n="gate_frame">Frame</span><span class="gate-map">Frame Audit</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
             <div class="gate-stage"><span class="gate-label" data-i18n="gate_adv">Adversarial</span><span class="gate-map">Adversarial Review</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
             <div class="gate-stage"><span class="gate-label" data-i18n="gate_cut">Cutline</span><span class="gate-val" data-i18n="gate_pass">PASS</span></div>
             <div class="gate-stage final"><span class="gate-label" data-i18n="gate_verdict">Verdict</span><span class="gate-val block-stamp">BLOCK</span></div>
           </div>
-          <div class="gate-body"></div>
-          <p class="preview-title" data-i18n="preview_title">6/7 gates PASS — ready for shadow live.</p>
+          <p class="preview-title" data-i18n="preview_title">Logs green. Second model agreed. Ready to ship?</p>
           <div class="preview-must-fix">
             <strong data-i18n="preview_must_fix">Must Fix</strong>
-            <span data-i18n="preview_issue">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77</span>
-            <span class="preview-action" data-i18n="preview_action">Minimal action: Mechanic ground-truth vs live journal</span>
+            <span data-i18n="preview_issue">Logs are not state proof; no read-after-write probe or rollback evidence</span>
+            <span class="preview-action" data-i18n="preview_action">Minimal action: attach post-deploy probe + rollback command</span>
           </div>
         </div>
       </div>
@@ -170,33 +288,56 @@
   </div>
 </header>
 
+<section class="s signal-bar" aria-label="Key signals">
+  <div class="wrap signal-grid">
+    <div class="signal-item">
+      <span class="signal-num" data-i18n="sig1_n">Stable public core</span>
+      <span class="signal-lbl" data-i18n="sig1_l">PASS · PASS_WITH_DEBT · BLOCK</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-num" data-i18n="sig2_n">Evidence or BLOCK</span>
+      <span class="signal-lbl" data-i18n="sig2_l">green logs / AI agreement are not proof</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-num" data-i18n="sig3_n">3 cost tiers</span>
+      <span class="signal-lbl" data-i18n="sig3_l">Normal ? Production ? Quant</span>
+    </div>
+    <div class="signal-item">
+      <span class="signal-num" data-i18n="sig4_n">Open core</span>
+      <span class="signal-lbl" data-i18n="sig4_l">MIT protocol · Pro enforcement stays closed</span>
+    </div>
+  </div>
+</section>
+
 <section class="hero-layers section-flow" id="how">
   <div class="wrap layers-wrap">
-    <p class="section-label" data-i18n="how_label">How it decides</p>
-    <div class="layers-scroll-wrap">
-      <div class="layers-strip" role="list">
-        <article class="layer-chip" role="listitem">
-          <span class="layer-step-num" aria-hidden="true">01</span>
-          <span class="layer-tag" data-i18n="hero_layers_l1_tag">Frame</span>
-          <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Frame Audit</span>
-        </article>
-        <span class="layer-sep" aria-hidden="true">→</span>
-        <article class="layer-chip" role="listitem">
-          <span class="layer-step-num" aria-hidden="true">02</span>
-          <span class="layer-tag" data-i18n="hero_layers_l2_tag">Adversarial</span>
-          <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Adversarial Review</span>
-        </article>
-        <span class="layer-sep" aria-hidden="true">→</span>
-        <article class="layer-chip" role="listitem">
-          <span class="layer-step-num" aria-hidden="true">03</span>
-          <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
-          <span class="layer-map-tag" data-i18n="hero_layers_l3_map">What must change now</span>
-        </article>
+    <div class="how-clean">
+      <p class="section-label" data-i18n="how_label">How it decides</p>
+      <div class="layers-scroll-wrap">
+        <div class="layers-strip" role="list">
+          <article class="layer-chip" role="listitem">
+            <span class="layer-step-num" aria-hidden="true">01</span>
+            <span class="layer-tag" data-i18n="hero_layers_l1_tag">Contract</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Define claim, evidence, authority</span>
+          </article>
+          <span class="layer-sep" aria-hidden="true">&rarr;</span>
+          <article class="layer-chip" role="listitem">
+            <span class="layer-step-num" aria-hidden="true">02</span>
+            <span class="layer-tag" data-i18n="hero_layers_l2_tag">Adversarial</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Hunt the cheapest counterproof</span>
+          </article>
+          <span class="layer-sep" aria-hidden="true">&rarr;</span>
+          <article class="layer-chip" role="listitem">
+            <span class="layer-step-num" aria-hidden="true">03</span>
+            <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l3_map">Must Fix, Known Debt, Delete</span>
+          </article>
+        </div>
       </div>
+      <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">Core receipt: PASS / PASS_WITH_DEBT / BLOCK</p>
+      <p class="how-docs"><a class="hero-docs-link" href="/docs/05-adversarial-review.md" data-i18n="hero_docs_link">How adversarial review works ?</a></p>
     </div>
-    <p class="hero-layers-verdicts" data-i18n="hero_layers_verdicts">PASS / PASS_WITH_DEBT / BLOCK</p>
-    <p class="compat-copy">one mechanic away from live money 差一个机制就要上实盘</p>
-    <p class="how-docs"><a class="hero-docs-link" href="/docs/05-adversarial-review.md" data-i18n="hero_docs_link">How adversarial review works →</a></p>
+    <p class="compat-copy" hidden aria-hidden="true">one mechanic away from live money 差一个机制就要上实盘</p>
   </div>
 </section>
 
@@ -204,25 +345,89 @@
   <div class="wrap">
     <div class="section-head">
       <p class="section-label" data-i18n="proof_label">Proof</p>
-      <h2 data-i18n="proof_h2">Six gates passed. Still BLOCK.</h2>
+      <h2 data-i18n="proof_h2">What actually gets stopped.</h2>
+      <p class="lead" data-i18n="proof_lead">Public artifacts use the stable core receipt; stricter domain verdicts safely degrade to BLOCK for core consumers.</p>
     </div>
-    <article class="case-card">
+
+    <article class="case-card case-card-primary">
       <div class="case-head">
-        <span class="case-domain" data-i18n="case1_domain">Strategy research</span>
+        <span class="case-domain" data-i18n="case1_domain">Production · deploy</span>
         <span class="badge BLOCK case-badge">BLOCK</span>
       </div>
-      <h3 class="case-title" data-i18n="case1_title">Sharpe 4.06 · 6/7 PASS — mechanic flaw</h3>
-      <p class="case-finding" data-i18n="case1_finding">Second AI reran a different rebalance mechanic; SR collapsed to ≈0.77. Gate pass is not evidence.</p>
-      <a class="case-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case1_link">01-fictional-horizon-quant-audit.md →</a>
+      <h3 class="case-title" data-i18n="case1_title">Logs green ≠ state proven</h3>
+      <dl class="case-proof-grid">
+        <div>
+          <dt data-i18n="case_claim_label">Original claim</dt>
+          <dd data-i18n="case1_claim">“Deployment succeeded — logs completed and another AI found no issue.”</dd>
+        </div>
+        <div>
+          <dt data-i18n="case_found_label">What Falsify found</dt>
+          <dd data-i18n="case1_finding">Logs treated as state verification; “another AI reviewed it” is not evidence. No read-after-write probe, no rollback in the pack.</dd>
+        </div>
+        <div>
+          <dt data-i18n="case_verdict_label">Verdict</dt>
+          <dd><span class="badge BLOCK">BLOCK</span> <span class="case-verdict-note" data-i18n="case_verdict_note">Not FAIL. Not KILL. Engineering protocol uses BLOCK.</span></dd>
+        </div>
+      </dl>
+      <div class="artifact-panel">
+        <div class="artifact-panel-head">
+          <span data-i18n="case_artifact_label">Raw artifact</span>
+          <a class="case-link" href="/examples/sample-block-report.json" data-i18n="case1_link">sample-block-report.json →</a>
+        </div>
+        <pre class="artifact-json" id="proof-artifact-json" tabindex="0"><code>{
+  "schema_version": "falsify.review.v1",
+  "verdict": "BLOCK",
+  "target": "reports/deploy.md",
+  "scenario": "production",
+  "findings": [
+    {
+      "cutline": "Must Fix",
+      "severity": "high",
+      "issue": "Logs are treated as state verification",
+      "minimal_action": "Add read-after-write probe and attach post-deploy output"
+    },
+    {
+      "cutline": "Delete",
+      "severity": "low",
+      "issue": "Another AI reviewed it — not evidence",
+      "minimal_action": "Remove from acceptance chain"
+    }
+  ]
+}</code></pre>
+        <p class="case-repro" data-i18n="case1_repro">curl -sL https://falsify.zjdeng.xyz/examples/sample-block-report.json | python -m json.tool</p>
+        <p class="case-repro case-repro-local" data-i18n="case1_repro_local">Local: open examples/sample-block-report.json · or python -m json.tool examples/sample-block-report.json</p>
+      </div>
     </article>
+
+    <div class="cases-grid">
+      <article class="proof-side-card">
+        <div class="case-head">
+          <span class="case-domain" data-i18n="case2_domain">Research ops · tables</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
+        </div>
+        <h3 class="case-title" data-i18n="case2_title">4 pricing errors in one table</h3>
+        <p class="case-finding" data-i18n="case2_finding">Dual agents, different model families: wrong base, flipped sign, abandoned tier, wrong row. Conflicts logged with verification paths — never silently overwritten.</p>
+        <a class="text-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/comparison-case-study/README.md" target="_blank" rel="noopener noreferrer" data-i18n="case2_link">comparison case study →</a>
+      </article>
+      <article class="proof-side-card">
+        <div class="case-head">
+          <span class="case-domain" data-i18n="case3_domain">Optional depth</span>
+          <span class="badge BLOCK case-badge">BLOCK</span>
+        </div>
+        <h3 class="case-title" data-i18n="case3_title">Pretty metrics, wrong mechanic</h3>
+        <p class="case-finding" data-i18n="case3_finding">A report looked ready after formal gates. An independent second model forced a different execution assumption — the claim died before live. Same protocol; domain is optional.</p>
+        <a class="text-link" href="https://github.com/shi275773124/Falsify/blob/main/examples/real-cases/01-fictional-horizon-quant-audit.md" target="_blank" rel="noopener noreferrer" data-i18n="case3_link">deep case (optional) →</a>
+      </article>
+    </div>
+
     <div class="proof-quote">
       <div class="quote-card">
         <div class="avatar" role="img" aria-label="Chris Shi">
           <img class="avatar-img" src="/assets/chris-shi-founder.png" alt="Chris Shi" width="56" height="56" loading="lazy" decoding="async">
         </div>
         <div class="quote-body">
-          <p data-i18n="quote_p">"Six gates passed. We were one mechanic away from live money — until the second run collapsed the Sharpe."</p>
-          <p class="compat-copy">差一个机制就要上实盘</p>
+          <p data-i18n="quote_p">"Gate pass is not evidence. If the assumption is wrong, pretty numbers just make the failure faster."</p>
+          <p class="compat-copy" data-i18n="compat_mechanic">one mechanic away from live money</p>
           <cite data-i18n="quote_cite">Chris Shi</cite>
         </div>
       </div>
@@ -234,8 +439,9 @@
   <div class="wrap">
     <div class="section-head workbench-head">
       <p class="section-label" data-i18n="nav_try">Try</p>
-      <h2 data-i18n="workbench_h2">Try a verdict in minutes</h2>
-      <p class="lead workbench-note" data-i18n="workbench_scope">Verdict format demo — not full Falsify enforcement.</p>
+      <h2 data-i18n="workbench_h2">Generate a BLOCK receipt in under a minute</h2>
+      <p class="lead workbench-note" data-i18n="workbench_scope">Local demo of the verdict format — not full Falsify enforcement. Keep this output or a CLI artifact if you claim Falsify was run.</p>
+      <p class="workbench-privacy" data-i18n="workbench_privacy">Run example stays local in the browser. Review my claim only hits /review if you configure a provider key — nothing is uploaded to Falsify cloud.</p>
     </div>
     <div class="try-grid">
       <div class="workbench-panel">
@@ -251,59 +457,82 @@
                 <option value="research" data-i18n="scenario_research">Research</option>
                 <option value="production" selected data-i18n="scenario_production">Production</option>
               </select>
-              <button class="btn primary" type="button" id="btn-sample" data-i18n="btn_sample">Run sample</button>
-              <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Quick review</button>
+              <button class="btn primary" type="button" id="btn-sample" data-i18n="btn_sample">Run example</button>
+              <button class="btn ghost" type="button" id="b" data-i18n="btn_review">Review my claim</button>
             </div>
           </div>
           <div class="panel result" id="out" aria-live="polite">
             <h3 data-i18n="output_h3">Verdict</h3>
-            <p data-i18n="output_p">Hit Run sample to preview the decision artifact.</p>
+            <p data-i18n="output_p">Hit Run example to preview a BLOCK artifact.</p>
           </div>
         </div>
       </div>
       <div class="try-terminal paper-surface">
-        <p class="terminal-label" data-i18n="start_h2">Install a workflow in 60 seconds.</p>
-        <p class="try-skills-note" data-i18n="try_skills_note">Four starter workflows: deployment claim, AI PR, research report, agent safety.</p>
+        <p class="terminal-label" data-i18n="start_h2">Install locally</p>
+        <p class="try-skills-note" data-i18n="try_skills_note">MIT: protocol, CLI, packs, templates. Pro: production enforcement, private runtime skills, full fixture libraries.</p>
         <div class="terminal">git clone https://github.com/shi275773124/Falsify.git
 cd Falsify
-cp -r skills/falsify-deployment-claim .cursor/skills/
-# Apply SKILL.md in Claude Code or Cursor · BYOK
-python falsify.py demo
+pip install -e ".[dev]"
+python -m falsify demo
 python web/serve.py</div>
         <p class="try-skills-note"><a class="text-link" href="/docs/17-skills.md" data-i18n="try_skills_link">Install a Falsify skill (Claude Code or Cursor) →</a></p>
-        <a class="btn ghost" href="/docs/14-github-action-install.md" data-i18n="docs_install">Install GitHub Action (5 min) →</a>
+        <a class="text-link" href="/docs/14-github-action-install.md" data-i18n="docs_install">Install GitHub Action (5 min) →</a>
       </div>
     </div>
   </div>
 </section>
 
-<section class="s final-cta">
+<section class="s final-cta" id="open-core">
   <div class="wrap cta-wrap">
-    <h2 data-i18n="cta_h2">Block weak evidence before it ships.</h2>
-    <div class="actions center">
-      <a class="btn primary" href="/docs/17-skills.md" data-i18n="btn_install_skill">Install skill</a>
-      <a class="btn ghost" href="#try" data-i18n="btn_run_sample_hero">Run sample</a>
-      <a class="btn ghost" href="/docs/14-github-action-install.md" data-i18n="btn_install">Install GitHub Action</a>
-      <a class="btn ghost" href="/docs/" data-i18n="nav_docs">Docs</a>
-      <a class="btn ghost" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
-      <a class="text-link" href="mailto:chrisshi168@icloud.com?subject=Falsify%20Audit%20Sprint">Email</a>
+    <h2 data-i18n="cta_h2">Review first. Trust after.</h2>
+    <p class="lead cta-boundary" data-i18n="cta_boundary">No pricing table yet. Know what ships today vs what stays Pro.</p>
+    <div class="oss-pro-grid" aria-label="OSS vs Pro">
+      <div class="oss-pro-col">
+        <h3 data-i18n="oss_h">OSS (MIT)</h3>
+        <ul>
+          <li data-i18n="oss_1">Protocol + schema (falsify.review.v1)</li>
+          <li data-i18n="oss_2">CLI + local demo</li>
+          <li data-i18n="oss_3">Local receipts / public example artifacts</li>
+          <li data-i18n="oss_4">Starter skill packs + Action templates</li>
+        </ul>
+      </div>
+      <div class="oss-pro-col">
+        <h3 data-i18n="pro_h">Pro</h3>
+        <ul>
+          <li data-i18n="pro_1">CI enforcement hooks</li>
+          <li data-i18n="pro_2">Policy management</li>
+          <li data-i18n="pro_3">Private antibodies / fixture libraries</li>
+          <li data-i18n="pro_4">Audit retention + contracted governance</li>
+        </ul>
+      </div>
     </div>
-    <p class="footer-licensing" id="licensing">
-      <span data-i18n="licensing_p">MIT covers the protocol, CLI, JSON schema, workflow templates, and local artifacts. Team covers hosted policy enforcement, report retention, org rollout, and managed integrations — not a second copy of the OSS templates.</span>
-      <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">View on GitHub →</a>
+    <div class="actions center cta-actions">
+      <a class="btn primary" href="#proof" data-i18n="btn_run_sample_hero">See a real BLOCK artifact</a>
+    </div>
+    <p class="cta-links">
+      <a href="#try" data-i18n="btn_try_demo">Run 60s demo</a>
+      <a href="/docs/17-skills.md" data-i18n="btn_install_skill">Install locally</a>
+      <a href="/docs/" data-i18n="nav_docs">Docs</a>
+      <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
+      <a href="/docs/12-open-core-boundary.md" data-i18n="licensing_link">Open-core boundary →</a>
+      <a href="/docs/18-pro-vs-oss.md" data-i18n="licensing_pro">Pro vs OSS →</a>
     </p>
-    <p class="compat-copy">Self-hosted · unlimited repos 自托管 · 仓库不限 托管策略 hosted policy enforcement</p>
+    <p class="footer-licensing" id="licensing">
+      <span data-i18n="licensing_p">This site is not hosted SaaS. Self-host the MIT tree; Pro is separate closed surface.</span>
+    </p>
+    <p class="compat-copy" data-i18n="compat_selfhost">Self-hosted · unlimited repos</p>
   </div>
 </section>
 
 <footer>
   <div class="wrap footer-wrap">
-    <div>Falsify</div>
+    <a class="brand" href="#top" aria-label="Falsify home"><img class="brand-logo" src="/static/img/falsify-logo-dark.png" width="283" height="65" alt="Falsify"></a>
     <div>
       <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
       <a href="/docs/" data-i18n="nav_docs">Docs</a>
       <a href="/docs/17-skills.md" data-i18n="nav_skills">Skills</a>
       <a href="/examples/sample-block-report.json">Sample</a>
+      <a href="/docs/ROOTFIX-architecture.md" data-i18n="nav_rootfix">ROOTFIX</a>
       <a href="https://github.com/shi275773124/Falsify/blob/main/LICENSE" rel="noopener noreferrer">License</a>
     </div>
   </div>

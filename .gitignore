@@ -2,25 +2,145 @@
 .DS_Store
 Thumbs.db
 
-# Editor
+# Editor / agent local
 .vscode/
 .idea/
+.cursor/
 *.swp
 
-# Build artifacts
+# Build artifacts / envs
 node_modules/
+.venv/
+venv/
 *.log
-
-# transient demo artifacts
-demo-output.txt
-assets/_preview_*.png
 __pycache__/
 *.pyc
 *.egg-info/
 .pytest_cache/
+.pytest-tmp-predeploy/
+junit.xml
+pytest_*.txt
+
+# transient demo artifacts
+demo-output.txt
+assets/_preview_*.png
 
 # falsify local config (may hold a key)
 .falsify
 
-# opsec: never commit audit briefs
+# opsec: never commit audit briefs / live audit dumps
 audit-briefs/
+audit-artifacts/
+.audit-live-*/
+.tmp-*/
+.verification-shots/
+design/.verification-shots/
+
+# local secrets (never commit)
+.env.local
+.env
+
+# Local research / backtest scratch (not OSS product)
+artifacts/
+archives/
+rcf_*/
+research-artifacts/
+calvin_patreon/
+_danger_research/
+_hermes_ref/
+_tmp_*/
+tmp/
+tmp_*/
+state/
+collectors/
+backtest_btc_fair_price/
+
+# One-off research scripts and probe dumps at repo root
+/_tmp_*
+/tmp_*
+/probe_*
+/exp*
+/analyze_*
+/inspect_*
+/final_*
+/momentum_*
+/ob_factor_*
+/rcf_*
+/ws_*
+/cta_*
+/databento_*
+/pull_*
+/extract_*
+/r3dlive_*
+/test_hl*
+/test_tardis*
+/test_binance*
+/test_urls*
+/test_write*
+/dsr*
+/p2.txt
+/kimi.md
+/chatgpt_appeal_letter.md
+/funding-ls-backtest-results.md
+/leading-*
+/paper-*
+/phase1-results.md
+/falsify-quant-gates-audit-*
+/falsify-runtime-repair-report.md
+/tmp-falsify-*
+/calvin-*
+/eth-exchange-flow-data-acquisition.md
+/_falsify_*
+/_frontend_*
+/=
+
+# Local quant research scripts (not OSS product surface)
+/scripts/archive_*
+/scripts/probe_*
+/scripts/run_hl_*
+/scripts/scan_*
+/scripts/smoke_*
+/scripts/test_*
+/scripts/validate_*
+/scripts/watch_*
+/scripts/push_artifact_*
+/tools/*_cheap_falsifier.py
+/tools/cftc_*
+/tools/d2_*
+/tools/deribit_*
+/tools/discovery_loop.py
+/tools/funding_*
+/tools/oi_*
+/tools/premium_*
+/tools/run_audit_backtest_gate_b_matrix.py
+/tools/generate_audit_backtest_fixtures.py
+/tests/test_p0_fwd_*
+/tests/test_agent_control.py
+/docs/falsify-lineage-*
+/docs/falsify-real-money-*
+/docs/falsify-skills-status-*
+/docs/growth-wedge-plan.md
+/docs/hang-gate-targets.md
+/docs/21-alpha-discovery-factory.md
+/docs/agent-control-plane.md
+/docs/seo-geo-hygiene.md
+/docs/falsify-skill-shell-contract.md
+
+# Local design dumps / legacy brand sources / unused console prototype
+/web/console/
+/web/static/vendor/
+/web/static/img/falsify-logo-dark.png
+/web/static/img/falsify-logo-user-source-light.png
+/examples/real-cases/03-cron-wrapper-refresh-gate-rootfix.md
+/scripts/inspect_gate.py
+/设计资产/
+
+# Local package backups
+*.bak_*
+falsify/*.bak_*
+
+# Design work-in-progress notes (not product surface)
+design/falsify-flow-candidate/COPY_*.md
+design/falsify-flow-candidate/FLUID_*.md
+design/falsify-flow-candidate/*.bak*
+design/falsify-flow-candidate/verification/

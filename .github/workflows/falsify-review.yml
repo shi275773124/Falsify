@@ -1,7 +1,10 @@
-name: Falsify Review
+name: Falsify Review (L2 lint)
 
 # Auto-running PR gate for this repo. Eats our own dog food: every PR that
 # changes a decision doc (.md) gets a Falsify verdict comment + CI status.
+#
+# Authority ceiling: L2_LINT / EPISTEMIC_ONLY — not claim-bearing quant authority,
+# not capital authorization. doctor/selftest green is never promotion authority.
 #
 # Verdict source: `python -m falsify gate --base origin/<base> --tier $FALSIFY_TIER --json`
 # - gate is an HONEST STUB (L2 static check = lint). It never fake-reports BLOCK
@@ -100,14 +103,16 @@ jobs:
             echo "body<<FALSIFY_BODY_EOF"
             echo "<!-- falsify-pr-review -->"
             echo ""
-            echo "## Falsify Review"
+            echo "## Falsify Review (L2 lint)"
             echo ""
-            echo "${emoji} **VERDICT: ${VERDICT}**  ·  tier=\`${TIER}\`  ·  base=\`${BASE}\`"
+            echo "${emoji} **VERDICT: ${VERDICT}**  ·  tier=\`${TIER}\`  ·  base=\`${BASE}\`  ·  ceiling=\`L2_LINT / EPISTEMIC_ONLY\`"
+            echo ""
+            echo "> Scope: static decision-doc gate only. Not quant promotion authority. Not capital authorization."
             echo ""
             echo "${SUMMARY}"
             echo ""
             echo "---"
-            echo "_Powered by [\`falsify gate\`](https://github.com/shi275773124/Falsify) — risk scalpel for high-stakes changes.  run [#${RUN_ID}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_"
+            echo "_Powered by [\`falsify gate\`](https://github.com/shi275773124/Falsify) — L2 lint / epistemic-only.  run [#${RUN_ID}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_"
             echo "FALSIFY_BODY_EOF"
           } >> "$GITHUB_OUTPUT"
 

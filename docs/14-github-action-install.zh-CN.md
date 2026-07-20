@@ -13,6 +13,8 @@
 - `falsify-report.md`（人类可读）
 - 裁决为 `BLOCK` 时失败的 GitHub Check
 
+OSS 模板是**对抗审查层**，不是 production/deployment authority。它不能签发 claim-bearing production PASS；后者需要另行部署的 authority adapter、signer 与 sandbox。
+
 ## 前置条件
 
 - 已启用 Actions 的 GitHub 仓库
@@ -58,7 +60,7 @@ reports/deployment-claim.md
 - PR 评论 `<!-- falsify-pr-summary -->` 出现或更新
 - artifact `falsify-report` 上传
 
-无 API secret 时，真审查跳过，lint 仍运行（advisory 模式）。
+无 API secret 时，真审查不可用。模板会记录 `BLOCK`，而不是把 lint-only 输出洗成 `PASS`；添加 BYOK 凭证后才运行模型审查。
 
 ## 步骤 3 — （可选）启用 BYOK 真审查（1 分钟）
 
@@ -94,17 +96,17 @@ Policy 记录团队的 globs、限制与执行意图。
 
 ## 步骤 5 — 开启 required check（就绪后）
 
-advisory 评论跑 3–7 天后：
+先在非 consequential 文档上观察报告后：
 
 1. 仓库 → **Settings** → **Branches** → branch protection rule
 2. Require status check：`falsify-pr-review`（或你的 workflow job 名）
-3. 团队还在调 globs 时，先保持 advisory 模式
+3. 不要把这个 OSS 模板设为 production/deployment authorization required check。它是审查信号；claim-bearing PASS 需要单独实现 authority gate。
 
 ## 验收清单
 
 在第一个 PR 上跑这些检查：
 
-- [ ] 干净的决策文档让 workflow 绿过
+- [ ] 缺 `FALSIFY_API_KEY` 时应为 `BLOCK`，绝不能产生 lint-only `PASS`
 - [ ] PR 评论含裁决 + 按 cutline 分组 findings
 - [ ] Artifact 含 `schema_version: falsify.report.v0.1` 的 `falsify-report.json`
 - [ ] 启用真审查时，故意弱声明应返回 `BLOCK`
@@ -114,8 +116,8 @@ advisory 评论跑 3–7 天后：
 
 | 模式 | Secrets | 行为 |
 |---|---|---|
-| Advisory | 无 | 跑 lint，跳过真审查，仍发评论 |
-| Live BYOK | 设 `FALSIFY_*` | 跑 review，`BLOCK` 可 fail check |
+| 无证据 | 无 | 跑 lint，跳过真审查，裁决为 `BLOCK` |
+| Live BYOK | 设 `FALSIFY_*` | 跑模型审查；它仍是非权威 OSS review |
 | Strict debt | 默认开 | Known Debt 缺 trigger 变 `BLOCK` |
 
 ## 排障
@@ -125,10 +127,10 @@ advisory 评论跑 3–7 天后：
 - 改动文件不匹配 `TARGET_GLOBS`
 - 修正 globs 或把决策文档移到覆盖路径
 
-**Workflow 过了但评论说 skipped live review**
+**真审查跳过导致 Workflow BLOCK**
 
-- 无 `FALSIFY_API_KEY` 时属预期
-- 加 BYOK secrets 启用真审查
+- 无 `FALSIFY_API_KEY` 时属预期：无证据，不得 PASS
+- 加 BYOK secrets 启用模型 OSS 审查
 
 **Check 意外 BLOCK fail**
 

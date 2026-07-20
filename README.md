@@ -1,29 +1,39 @@
 # Falsify
 
-> **Review first. Trust after.**
+> **Evidence-driven decision gate for high-risk AI claims.**  
+> Not another model opinion. Multi-model review is an optional attacker—never the trust root.
 
-> **Open core:** Protocol, CLI, templates, and JSON schema are [MIT](./LICENSE). Team edition covers hosted governance, report retention, and enterprise integrations — not the protocol itself. See [Open Core boundary](./docs/12-open-core-boundary.md) and [Pro vs OSS](./docs/18-pro-vs-oss.md).
+> **MVP surface:** GitHub Action that gates **claims surrounding a change** (PR narrative, deploy plan, decision docs) and emits scoped `PASS` / `PASS_WITH_DEBT` / `BLOCK`. It gates **review** — never payments, deploys, or other live actions; OSS verdicts are epistemic.  
+> Tagline for philosophy only: *Make consequential AI output easier to disprove.*
 
-Falsify is an **adversarial sign-off layer for high-risk AI work**: PRs, deployments, research reports, agent outputs, and **quant backtests** are reviewed against raw evidence before a team ships the decision.
+> **Open core (not full open source):** Protocol, starter CLI, templates, and JSON schema are [MIT](./LICENSE). **Production enforcement, live fixture libraries, and private runtime skills stay closed** (Pro). Team covers hosted governance — not the protocol. See [Open Core boundary](./docs/12-open-core-boundary.md), [Pro vs OSS](./docs/18-pro-vs-oss.md), [ROOTFIX](./docs/ROOTFIX-architecture.md).
 
-It is still a decision gate: it turns raw evidence into `PASS`, `PASS_WITH_DEBT`, or `BLOCK` before a high-risk decision ships.
+Falsify forces decisions to bottom out in an **authority path**, **raw artifacts**, and **explicit policy**—then returns exactly one of `PASS`, `PASS_WITH_DEBT`, or `BLOCK`.
 
-It forces decisions to bottom out in evidence and cuts risk into **Must Fix**, **Known Debt**, or **Delete**.
-
-Falsify is not another model saying "looks good." It is a protocol for separating defensible decisions from confident noise and returning exactly one of `PASS`, `PASS_WITH_DEBT`, or `BLOCK`.
-
-Code review and lint gates catch many issues. They still ask: **"Does the diff look right?"**  
-Falsify asks: **"Is this decision defensible?"**
+Code review and lint ask: **"Does the diff look right?"**  
+Falsify asks: **"Is this claim defensible?"**
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[Chinese](./README.zh-CN.md) · [Live site](https://falsify.zjdeng.xyz/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[Chinese](./README.zh-CN.md) · [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+
+## Product family（one product · not everything is open）
+
+| Surface | Repo / path | Open? | Role |
+|---------|-------------|-------|------|
+| **This repo** | [shi275773124/Falsify](https://github.com/shi275773124/Falsify) | **MIT subset** | Protocol, starter CLI, sign-off packs, docs, site, optional quant extra |
+| **Agent skill shell** | [shi275773124/falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT shell | Install entry / ASP narrative — **no** Pro production scripts |
+| **Pro runtime** | Private (Hermes / operator skill tree) | **Closed** | Sole production & quant enforcement gates, fixture antibodies, live wiring |
+| **Public version** | `falsify/__init__.py` → `VERSION` | public | Only badge for “what version of OSS Falsify” — not Pro skill version |
+
+**Claiming Falsify** = running an authority exit and keeping the command + artifact — not only installing a skill. Full live-money discipline lives in **Pro**, not in this MIT tree. See [skills/README.md](./skills/README.md), [Pro vs OSS](./docs/18-pro-vs-oss.md), [ROOTFIX](./docs/ROOTFIX-architecture.md).
 
 ## Table of contents
 
+- [Product family](#product-familyone-product-clear-surfaces)
 - [Entry path](#entry-path)
 - [Skills (4 workflows)](#skills-4-workflows)
-- [Audit Sprint / Design Partner / Team path](#audit-sprint--design-partner--team-path)
+- [Audit Sprint / Design Partner / Team path](#delivery-status-what-you-can-get-today)
 - [What problem it solves](#what-problem-it-solves)
 - [The framework](#the-framework)
 - [Quick start](#quick-start)
@@ -33,14 +43,16 @@ Falsify asks: **"Is this decision defensible?"**
 ## Entry path
 
 1. **Install a skill** in [Claude Code or Cursor](./docs/17-skills.md) — copy a folder from [`skills/`](./skills/) (BYOK; no Falsify API key).
-2. Run a sample review with `python falsify.py demo` or the [homepage workbench](https://falsify.zjdeng.xyz/#try).
-3. Install the [GitHub Action](./docs/14-github-action-install.md) when PR docs need a gate.
-4. Use Falsify on one high-risk artifact before the decision ships.
+2. Install the [GitHub Action](./docs/14-github-action-install.md) (primary product path) — [one-screen share pack](./docs/github-action-share-pack.md) · [false-green share cards](./examples/real-cases/SHARE-CARDS.md).
+3. Optionally run `python -m falsify demo` or the [homepage format demo](https://falsify.site/#try) to see receipt **shape only**—not full gate capability.
+4. Use Falsify on one high-risk claim before the decision ships.
 5. If the workflow repeats or becomes high-stakes, discuss an Audit Sprint or Design Partner pilot.
 
 ## Skills (4 workflows)
 
 The v0 skills pack packages evidence discipline into reusable sign-off workflows — not prompts. Each skill includes an input contract, raw artifact requirements, verdict schema, BLOCK sample, PASS_WITH_DEBT sample, pitfalls, and minimal action examples.
+
+Packs define **what to attack**. Enforcement is still the **CLI / CI / Pro gate** ([skills/README.md](./skills/README.md)).
 
 | Workflow | Path | Purpose |
 |---|---|---|
@@ -51,16 +63,17 @@ The v0 skills pack packages evidence discipline into reusable sign-off workflows
 
 **Install:** [Skills guide (Claude Code / Cursor / BYOK)](./docs/17-skills.md) · [Browse `skills/` on GitHub](https://github.com/shi275773124/Falsify/tree/main/skills)
 
-## Audit Sprint / Design Partner / Team path
+## Delivery status (what you can get today)
 
-Open core is the CLI, JSON schema, GitHub Action template, local artifacts, workflow templates, public examples, and downloadable skills. The commercial path is for teams that need an Audit Sprint on one high-risk artifact, a 4-8 week Design Partner pilot, shared policy, review history, report retention, org rollout, managed integrations, or private deployment/support paths. Those team capabilities are described as a path, not claimed as hosted features in this repo.
+The LLM attacks the claim and signs a bounded verdict; an **authority adapter** checks physical facts; the **unified kernel** decides what that verdict may authorize. Every offer below states its status — nothing here turns a review into a production or payment gate.
 
-Implemented today versus path:
-
-- Implemented today: CLI, local demo, JSON verdict format, GitHub Action template, docs, examples, and starter skills.
-- Available as service: Audit Sprint review of one high-risk artifact.
-- Design Partner path: workflow mapping and pilot integration for one team.
-- Team / Enterprise path: shared history, retention, managed integrations, private deployment, RBAC, SSO, audit logs, and SLA only where explicitly supported or contracted.
+| Offer | Status | What it is |
+|---|---|---|
+| **Falsify Review** | **AVAILABLE · OSS** | Adversarial LLM review with a bounded epistemic verdict: CLI, local demo, JSON verdict format, GitHub Action template, docs, examples, starter skills. |
+| **Falsify Authority Gate** | **ADAPTER REQUIRED** | Runs executable evidence checks against a real authority path; only then can a `PASS` bear action. No public adapter ships today — without one, every verdict stays epistemic. |
+| **Audit Sprint** | **AVAILABLE · SERVICE** | Claim manifest, kill-shots, evidence pack, and a signed verdict receipt for one high-risk artifact ([deliverables template](./templates/audit-sprint.md)). |
+| **Production / Quant Pro** | **DESIGN PARTNER · PRIVATE** | Integrated per concrete authority path (deploy, data, execution). Scoped pilots, not self-serve. |
+| **Team / Enterprise** | **TARGET · NOT SHIPPED** | Dashboard, SSO, RBAC, retention, managed integrations. Roadmap targets — not delivered features. |
 
 License/commercial boundary: this repo contains an MIT `LICENSE`. Commercial workflow packaging, managed integrations, support, private deployment path, and controlled Falsify brand/certification marks remain commercial boundary items.
 
@@ -84,7 +97,7 @@ Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
 | Adversarial Review | false truth, false risk, silent failure, stale data, permission drift, fake acceptance evidence, semantic nudges, prompt-only audit theater, monitor failure laundering | tagged findings |
 | Cutline / 风险裁刀 | review aftermath failure: every risk becomes urgent, or real risk gets deleted as "simplicity" | Must Fix / Known Debt / Delete |
 
-Final decision:
+Final decision (every receipt carries `claim_scope` and `authority_ceiling`; OSS receipts are `EPISTEMIC_ONLY` with `capital_authority: NONE`):
 
 - `PASS`: evidence holds and no current blocker remains.
 - `PASS_WITH_DEBT`: no current blocker remains, and every Known Debt item has an upgrade trigger.
@@ -95,7 +108,7 @@ Final decision:
 Falsify's quant layer catches what backtests hide: overfitting, lookahead bias, and cost optimism.
 
 ```bash
-pip install falsify[quant]  # numpy, scipy, pandas
+pip install -e ".[quant]"  # from the repo root: numpy, scipy, pandas
 python -m falsify.quant_gate --script strategy.py --contract contract.yaml --results-dir results/
 ```
 
@@ -141,27 +154,27 @@ python -m pip install -e .[dev]
 python -m pip install -e .[quant]  # adds numpy, scipy, pandas
 
 # No API key: deterministic local fixture demo.
-python falsify.py demo
+python -m falsify demo
 
 # No Falsify API key. Live review uses your provider key (BYOK) or a logged-in agent CLI.
 
 # No API key: local tag/blocker lint.
-python falsify.py lint examples/comparison-case-study/05-final-excerpt.md
+python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
 # Real model-backed review through an OpenAI-compatible provider.
 export DEEPSEEK_API_KEY=sk-...
-python falsify.py review report.md --provider deepseek
+python -m falsify review report.md --provider deepseek
 
 # Full loop: one model drafts, another reviews.
-python falsify.py run brief.md --drafter claude --reviewer deepseek
+python -m falsify run brief.md --drafter claude --reviewer deepseek
 ```
 
 You can also route review through a local agent CLI you are already logged into:
 
 ```bash
-python falsify.py review report.md --provider claude
-python falsify.py review report.md --provider codex
-FALSIFY_AGENT_CMD="myagent --headless" python falsify.py review report.md -p myagent
+python -m falsify review report.md --provider claude
+python -m falsify review report.md --provider codex
+FALSIFY_AGENT_CMD="myagent --headless" python -m falsify review report.md -p myagent
 ```
 
 Start the local product site and paste-and-go reviewer:
@@ -220,9 +233,12 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 
 - [Getting Started](./docs/00-getting-started.md)
 - [Skills install (Claude Code / Cursor)](./docs/17-skills.md)
+- [ROOTFIX architecture](./docs/ROOTFIX-architecture.md) — structural cure for version / dual-repo / claiming drift
+- [Versioning](./docs/VERSIONING.md) — one public product version
+- [Verdict vocabulary](./docs/verdict-vocabulary.md) — Core + extensions
 - [Brooks-Lint](./docs/09-brooks-lint.md)
 - [Adversarial Review](./docs/05-adversarial-review.md)
-- [Cutline / 风险裁刀 / Cutline](./docs/06-risk-scalpel.md)
+- [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 - [Examples](./docs/08-examples.md)
 - [Audit-channel risks](./docs/07-audit-channel-risks.md)
 - [Team delivery & business model blueprint](./docs/10-team-delivery-and-business-model.md)
@@ -231,6 +247,7 @@ Falsify requires the raw output, parse status, HTTP status, `finish_reason`, usa
 - [CI and release gate](./docs/15-ci-and-release-gate.md)
 - [Open Core boundary](./docs/12-open-core-boundary.md)
 - [Team edition spec (reserved)](./docs/13-team-edition-spec.md)
+- [Pro vs OSS](./docs/18-pro-vs-oss.md)
 
 ## OSS PR gate (self-hosted)
 

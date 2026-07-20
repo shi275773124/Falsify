@@ -1,0 +1,18 @@
+{
+  "bindings": [
+    {
+      "asset_id": "VALID-ASSET",
+      "source_id": "VALID-SOURCE",
+      "physical_path": "data/panel.csv",
+      "data_sha256": "35fe5f6a10a0c714f4555892cb0647d9d893c765bafb5a2a7947e7c54b992e06",
+      "coverage_start": "2026-01-01T00:00:00Z",
+      "coverage_end": "2026-01-02T00:00:00Z",
+      "venue": "binance-futures",
+      "class": "raw_archive",
+      "data_types": [
+        "OHLCV_1h"
+      ],
+      "continuous_history": true
+    }
+  ]
+}
