@@ -17,9 +17,13 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Environment :: Console",
 ]
+# Required by web/serve.py case+docs Markdown rendering (not optional).
+dependencies = [
+  "markdown>=3.4",
+]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "markdown>=3.4"]
+dev = ["pytest>=8"]
 # empyrical-reloaded (not upstream `empyrical`): upstream 0.5.5 is unmaintained
 # since 2020 — its versioneer uses configparser.SafeConfigParser (removed in
 # Py3.12) so `pip install empyrical` fails on 3.12, and its code uses np.NINF
