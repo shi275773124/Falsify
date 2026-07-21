@@ -57,7 +57,7 @@
         const el = document.querySelector(id);
         if (!el) return;
         e.preventDefault();
-        lenis.scrollTo(el, { offset: -72, duration: 0.85 });
+        lenis.scrollTo(el, { offset: -72, duration: 0.45 });
       });
     });
 
@@ -128,7 +128,6 @@
   }
 
   function initSpotlight() {
-    const root = document.documentElement;
     const hero = document.querySelector(".hero");
     if (!hero) return;
 
@@ -138,11 +137,12 @@
     let ty = my;
     let raf = 0;
 
+    // Scope CSS vars to .hero (candidate.css already defines defaults + consumers there).
     const set = () => {
-      root.style.setProperty("--spot-x", `${(mx * 100).toFixed(2)}%`);
-      root.style.setProperty("--spot-y", `${(my * 100).toFixed(2)}%`);
-      root.style.setProperty("--text-x", `${(mx * 100).toFixed(2)}%`);
-      root.style.setProperty("--text-y", `${(my * 100).toFixed(2)}%`);
+      hero.style.setProperty("--spot-x", `${(mx * 100).toFixed(2)}%`);
+      hero.style.setProperty("--spot-y", `${(my * 100).toFixed(2)}%`);
+      hero.style.setProperty("--text-x", `${(mx * 100).toFixed(2)}%`);
+      hero.style.setProperty("--text-y", `${(my * 100).toFixed(2)}%`);
     };
     set();
 

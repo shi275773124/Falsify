@@ -1,46 +1,40 @@
 # Falsify
 
-> **证据驱动的决策门：拦住高风险 AI 声明。**  
-> 不是又一个模型意见。多模型审查只是可选攻击器——不是信任根。
+**看起来绿了，还不够。**
 
-> **MVP 切口：** 用 GitHub Action 拦截**变更周围的声明**（PR 叙事、部署计划、决策文档），输出范围受限的 `PASS` / `PASS_WITH_DEBT` / `BLOCK`。它管的是**审查**——永远不管付款、部署或其他实时动作；开源版裁决只到认知层。  
-> 理念句仅作补充：*让有后果的 AI 输出更容易被证伪。*
+先审，再信；先证据，再放行。
 
-> **Open core（不是全部开源）：** 协议、入门 CLI、模板与 JSON schema 为 [MIT](./LICENSE)。**生产强制、真金 fixture 库、私有运行时 skill 默认闭源（Pro）。** Team 覆盖托管治理，不包含协议本身。详见 [Open Core 边界](./docs/12-open-core-boundary.md)、[Pro vs OSS](./docs/18-pro-vs-oss.md)、[ROOTFIX](./docs/ROOTFIX-architecture.md)。
+两个痛点。三层白话。
 
-Falsify 强制决策落到 **权威路径、原始工件、明确策略**，并返回且仅返回 `PASS` / `PASS_WITH_DEBT` / `BLOCK` 之一。
+| 痛点 | Falsify 怎么做 |
+|------|----------------|
+| **AI 幻觉与假绿** — 日志绿了、另一个模型也同意，仍可能不安全 | **对抗审** — 专打「看起来没问题」 |
+| **长期腐烂 / 过度工程** — 隐状态、脆弱回滚、流程表演 | **框架审 + Cutline** — 专抓「以后会烂掉」；该改改、该记记、该删删 |
 
-传统 code review / lint 问：**「这个 diff 看起来对不对？」**  
-Falsify 问：**「这个声明是否可辩护？」**
+```text
+对抗审   →  专打「看起来没问题」
+框架审   →  专抓「以后会烂掉」
+Cutline  →  该改改 / 该记记 / 该删删
+回执     →  PASS / PASS_WITH_DEBT / BLOCK
+```
+
+> 只做审查签收，不自动部署、不下单。
 
 [English](./README.md) · [线上站点](https://falsify.site/) · [Getting Started](./docs/00-getting-started.zh-CN.md) · [Skills 安装](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
-## 产品族（一个产品 · 不全开源）
+## 快速开始
 
-| 表面 | 仓库/位置 | 开源？ | 角色 |
-|------|-----------|--------|------|
-| **本仓** | [Falsify](https://github.com/shi275773124/Falsify) | **MIT 子集** | 协议、入门 CLI、签收 packs、文档、站点、可选 quant |
-| **Agent skill 壳** | [falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT 壳 | 安装入口 / ASP 叙事 — **不含** Pro 生产脚本 |
-| **Pro 运行时** | 私有（Hermes / 操作机 skill 树） | **闭源** | 生产/量化 sole gate、事故抗体、live 接线 |
-| **对外版本** | `falsify/__init__.py` → `VERSION` | 公开 | 仅表示 OSS 产品版，不是 Pro skill 版 |
-
-**声称做过 Falsify** = 跑过权威出口并保留命令与产物。真金强制在 **Pro**，不在本 MIT 树。见 [skills/README.md](./skills/README.md)、[Pro vs OSS](./docs/18-pro-vs-oss.md)、[ROOTFIX](./docs/ROOTFIX-architecture.md)。
-
-## 目录
-
-- [产品族](#产品族一个产品多种表面)
-- [入口路径](#入口路径)
-- [Skills（4 个工作流）](#skills4-个工作流)
-- [文档](#文档)
-- [快速开始](#快速开始)
-
-## 入口路径
+```bash
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo
+```
 
 1. 在 [Claude Code 或 Cursor 安装 skill](./docs/17-skills.md) — 从 [`skills/`](./skills/) 复制文件夹（BYOK；无需 Falsify API key）。
-2. 用 `python -m falsify demo` 或[首页格式演示](https://falsify.site/#try) 跑样例审查（仅看回执形态，不是完整门禁能力）。
-3. 当 PR 文档需要闸门时，安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md)。
+2. 安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md) — [一屏分享包](./docs/github-action-share-pack.md) · [假绿卡片](./examples/real-cases/SHARE-CARDS.md)。
+3. 可选打开[首页格式演示](https://falsify.site/#try) — 仅看回执形态，不是完整门禁能力。
 4. 在一个高风险产物上跑 Falsify，再决定是否放行。
-5. 工作流重复或 stakes 升高时，讨论 Audit Sprint 或 Design Partner pilot。
 
 ## Skills（4 个工作流）
 
@@ -54,6 +48,19 @@ v0 skills pack 把证据纪律封装为可重复签收工作流 — 不是提示
 | Agent Safety Check | [`skills/falsify-agent-safety-check/`](./skills/falsify-agent-safety-check/) | 信任前验证 agent 完成声明。 |
 
 **安装：** [Skills 指南（Claude Code / Cursor / BYOK）](./docs/17-skills.md) · [GitHub 浏览 `skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
+
+## Open core 与「声称做过 Falsify」
+
+| 表面 | 仓库/位置 | 开源？ | 角色 |
+|------|-----------|--------|------|
+| **本仓** | [Falsify](https://github.com/shi275773124/Falsify) | **MIT 子集** | 协议、入门 CLI、签收 packs、文档、站点、可选 quant |
+| **Agent skill 壳** | [falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT 壳 | 安装入口 — **不含** Pro 生产脚本 |
+| **Pro 运行时** | 私有（操作机 skill 树） | **闭源** | 生产/量化强制闸门、事故抗体、live 接线 |
+| **对外版本** | `falsify/__init__.py` → `VERSION` | 公开 | 仅表示 OSS 产品版，不是 Pro skill 版 |
+
+> **Open core（不是全部开源）：** 协议、入门 CLI、模板与 JSON schema 为 [MIT](./LICENSE)。**生产强制、真金 fixture 库、私有运行时 skill 默认闭源（Pro）。** 详见 [Open Core 边界](./docs/12-open-core-boundary.md)、[Pro vs OSS](./docs/18-pro-vs-oss.md)、[ROOTFIX](./docs/ROOTFIX-architecture.md)。
+
+**声称做过 Falsify** = 跑过权威出口并保留命令与产物——不只是安装 skill。真金强制在 **Pro**，不在本 MIT 树。见 [skills/README.md](./skills/README.md)。
 
 ## 交付状态（今天能拿到什么）
 
@@ -105,14 +112,14 @@ Falsify 要求结论回到可检查证据：原始产物、代码 diff、命令�
 ## 三层框架
 
 ```text
-Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
+Falsify = 对抗审 + 框架审 + Cutline
 ```
 
-| 层 | 发现什么 | 产出 |
-|---|---|---|
-| Brooks-Lint | hidden state、implicit authority、duplicated control paths、brittle rollback、unverifiable acceptance、AI summary 替代 raw evidence | 结构性审计目标 |
-| Adversarial Review | false truth、false risk、silent failure、stale data、permission drift、fake acceptance evidence、semantic verdict nudge、prompt-only audit theater、monitor failure laundering | 对抗式 findings |
-| Cutline / 风险裁刀 | 把所有风险都当 P0，或用“简化”删除真实风险 | Must Fix / Known Debt / Delete |
+| 层 | 白话 | 发现什么 | 产出 |
+|---|---|---|---|
+| 对抗审 | 专打「看起来没问题」 | false truth、false risk、假绿、第二个模型同意当证据 | 对抗式 findings |
+| 框架审（Brooks-Lint） | 专抓「以后会烂掉」 | hidden state、重复权威、脆弱回滚、过度工程 | 结构性审计目标 |
+| Cutline / 风险裁刀 | 该改改，该记记，该删删 | 把所有风险都当 P0，或用「简化」删掉真实风险 | Must Fix / Known Debt / Delete |
 
 最终输出（每张回执都带 `claim_scope` 与 `authority_ceiling`；开源回执为 `EPISTEMIC_ONLY`、`capital_authority: NONE`）：
 

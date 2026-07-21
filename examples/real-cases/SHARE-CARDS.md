@@ -1,10 +1,14 @@
 # Falsify real cases — forwardable share cards
 
+**Looks green isn't proof.**
+
 Three documented **false-greens**. Same shape every time:
 
 ```text
 APPARENT GREEN → REAL FAILURE → AUTHORITY / FALSIFY REQUIRED → VERDICT
 ```
+
+Adversarial red-teams "looks fine." Framework + Cutline catch what will rot later. Review first. Trust after.
 
 Copy a card into a PR, chat, or post. Deep links open the full public-safe writeup on [falsify.site](https://falsify.site/).
 
@@ -61,11 +65,11 @@ Copy a card into a PR, chat, or post. Deep links open the full public-safe write
 ## Paste block (all three)
 
 ```text
-Falsify false-greens (looks green ≠ proof):
+Falsify — Looks green isn't proof.
 1) Fresh signal / stale panel — https://falsify.site/examples/real-cases/02-derived-freshness-stale-panel
 2) Stats PASS / missing-data policy — https://falsify.site/examples/real-cases/04-round3b-evidence-integrity-reversal
 3) Mirror fixed / runtime not — https://falsify.site/examples/real-cases/05-second-runtime-v068-sync-false-green
-Install the PR gate: https://falsify.site/docs/14-github-action-install.html
+Review first. Trust after. Install: https://falsify.site/docs/14-github-action-install.html
 ```
 
 ## Full sources

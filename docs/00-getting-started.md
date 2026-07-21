@@ -1,6 +1,10 @@
 # Getting Started
 
-Falsify is a local, BYOK review toolchain for stopping **false green**: a change, report, or deployment that looks complete but cannot show the evidence needed to trust it.
+**Looks green isn't proof.**
+
+Two pains: **AI hallucination & false-green** → adversarial review; **long-term rot / over-engineering** → framework review + Cutline (Must Fix / Debt / Delete).
+
+Falsify is a local, BYOK review toolchain. It returns a sign-off receipt: `PASS` / `PASS_WITH_DEBT` / `BLOCK`. Sign-off only — does not deploy or trade for you.
 
 Start with one decision that matters. Falsify does not host your review data, guess your source of truth, or make a decision for you. It helps you challenge the claim, record what was checked, and keep the resulting artifact beside your work.
 
