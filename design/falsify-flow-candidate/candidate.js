@@ -16,7 +16,7 @@
       heroSolve1:"Adversarial review — red-teams \"looks fine\"",
       heroSolve2:"Framework + Cutline — stay maintainable, no bloat",
       heroLead:"",
-      receiptExample:"FALSIFY RECEIPT #0482",receiptPhase:"01 CLAIM",
+      receiptExample:"FALSIFY RECEIPT #0482",receiptPhase:"05 RECEIPT",
       proofHeadline:"Agents say \"trust me.\"",
       demoPause:"Reset",demoPlay:"Run example",
       deployBot:"DEPLOY BOT",successPill:"SUCCESS",
@@ -69,7 +69,7 @@
       stepCheck:"Must Fix / Known Debt / Delete — what to change, what to record, what to remove.",
       stepVerdict:"Receipt: PASS, PASS_WITH_DEBT, or BLOCK — keep it, diff it, re-run it.",
       stepGate:"Sign-off only. Does not deploy or trade for you.",
-      deliveryLabel:"WHAT YOU CAN GET TODAY",deliveryTitle:"Review first. Trust after.",
+      deliveryLabel:"WHAT YOU CAN GET TODAY",deliveryTitle:"Same kernel. Different authority levels.",
       deliveryLead:"Every offer states its status. Sign-off only — nothing here deploys or trades for you.",
       d1Name:"Falsify Review",d1Status:"AVAILABLE · OSS",d1Text:"Adversarial LLM review with a bounded epistemic verdict. CLI, local demo, skills, and the GitHub Action template.",
       d2Name:"Falsify Authority Gate",d2Status:"ADAPTER REQUIRED",d2Text:"Runs executable evidence checks against a real authority path. Only then can a PASS bear action. No public adapter ships today.",
@@ -104,7 +104,7 @@
       heroSolve1:"对抗审 — 专打「看起来没问题」",
       heroSolve2:"框架审 + Cutline — 好维护、不过度工程",
       heroLead:"",
-      receiptExample:"FALSIFY 回执 #0482",receiptPhase:"01 声明",
+      receiptExample:"FALSIFY 回执 #0482",receiptPhase:"05 回执",
       proofHeadline:"Agent 说「信我」。",
       demoPause:"重置",demoPlay:"运行示例",
       deployBot:"部署机器人",successPill:"SUCCESS",
@@ -157,7 +157,7 @@
       stepCheck:"该改改，该记记，该删删——Must Fix / Known Debt / Delete。",
       stepVerdict:"回执：PASS、PASS_WITH_DEBT 或 BLOCK——可保留、可 diff、可重跑。",
       stepGate:"只做审查签收，不自动部署、不下单。",
-      deliveryLabel:"今天能拿到什么",deliveryTitle:"先审，再信。",
+      deliveryLabel:"今天能拿到什么",deliveryTitle:"同一内核，不同权威级别。",
       deliveryLead:"每个交付物都标明状态。只做审查签收——这里不会替你部署或下单。",
       d1Name:"Falsify Review",d1Status:"AVAILABLE · 开源",d1Text:"对抗式 LLM 审查，签发边界内的认知层裁决。含 CLI、本地 demo、skills 与 GitHub Action 模板。",
       d2Name:"Falsify Authority Gate",d2Status:"需要 ADAPTER",d2Text:"对真实权威路径执行可执行的证据检查；只有这样 PASS 才能承载动作。目前没有公开的 adapter。",
@@ -244,9 +244,9 @@
     history.replaceState(null, "", url);
     render();
     setStage(stageIndex);
-    const demoActive = stageIndex > 0 || demoTimer;
-    toggle.setAttribute("aria-pressed", demoActive ? "true" : "false");
-    toggle.textContent = demoActive ? translations[language].demoPause : translations[language].demoPlay;
+    const playing = demoActive || Boolean(demoTimer);
+    toggle.setAttribute("aria-pressed", playing ? "true" : "false");
+    toggle.textContent = playing ? translations[language].demoPause : translations[language].demoPlay;
     if(window.ScrollTrigger)ScrollTrigger.refresh();
   });
   window.addEventListener("load",function(){if(window.ScrollTrigger)ScrollTrigger.refresh()});
@@ -275,49 +275,60 @@
   const phaseEl = document.querySelector(".receipt-phase");
   // claim → success card → frame/compare intro → commits lit → conflict → block+receipt
   const stages = ["claim", "success", "compare", "mismatch", "conflict", "block"];
+  const defaultStageIndex = stages.length - 1; // full BLOCK receipt on first paint
   // Per-stage dwell (ms): short holds so CSS opacity/transform reveals (≤220ms) read clearly.
   const stageDelays = [0, 170, 180, 190, 200, 0];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let demoTimer = 0, stageIndex = 0;
+  let demoTimer = 0, stageIndex = defaultStageIndex, demoActive = false;
   const stopDemo = () => { if (demoTimer) window.clearTimeout(demoTimer); demoTimer = 0; };
   const setStage = (index) => {
     stageIndex = Math.min(index, stages.length - 1);
     receipt.dataset.demoState = stages[stageIndex];
     if (phaseEl) phaseEl.textContent = phaseLabels[language][stageIndex];
   };
+  // Idle default = complete receipt (not empty claim glass). Reset returns here.
   const resetDemo = () => {
     stopDemo();
-    setStage(0);
+    demoActive = false;
+    setStage(defaultStageIndex);
     toggle.setAttribute("aria-pressed", "false");
     toggle.textContent = translations[language].demoPlay;
   };
   const advanceDemo = () => {
     if (stageIndex >= stages.length - 1) {
       stopDemo();
+      demoActive = false;
+      toggle.setAttribute("aria-pressed", "false");
+      toggle.textContent = translations[language].demoPlay;
       return;
     }
     setStage(stageIndex + 1);
     if (stageIndex >= stages.length - 1) {
       stopDemo();
+      demoActive = false;
+      toggle.setAttribute("aria-pressed", "false");
+      toggle.textContent = translations[language].demoPlay;
       return;
     }
     demoTimer = window.setTimeout(advanceDemo, stageDelays[stageIndex] || 180);
   };
   const startDemo = () => {
     stopDemo();
+    demoActive = true;
     if (reducedMotion.matches) {
-      setStage(stages.length - 1);
-      toggle.setAttribute("aria-pressed", "true");
-      toggle.textContent = translations[language].demoPause;
+      setStage(defaultStageIndex);
+      toggle.setAttribute("aria-pressed", "false");
+      toggle.textContent = translations[language].demoPlay;
+      demoActive = false;
       return;
     }
-    setStage(1);
+    setStage(0);
     toggle.setAttribute("aria-pressed", "true");
     toggle.textContent = translations[language].demoPause;
     demoTimer = window.setTimeout(advanceDemo, stageDelays[1] || 170);
   };
   toggle.addEventListener("click", () => {
-    if (stageIndex > 0 || demoTimer) resetDemo(); else startDemo();
+    if (demoActive || demoTimer) resetDemo(); else startDemo();
   });
   if (typeof reducedMotion.addEventListener === "function") reducedMotion.addEventListener("change", resetDemo);
   resetDemo();
