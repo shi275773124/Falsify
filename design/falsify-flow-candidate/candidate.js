@@ -3,12 +3,13 @@
   const copyCommand = "curl -sS https://falsify.site/examples/sample-block-report.json | python -m json.tool";
   const translations = {
     en: {
-      menuLabel:"Menu",navProof:"Real cases",navDifference:"What it is",navHow:"How it works",navDelivery:"Get it",navTry:"Try",navDocs:"Docs",
+      menuLabel:"Menu",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",
       heroTitle:"Looks green isn't proof.",
       heroEyebrow:"TWO PAINS · THREE LAYERS",
       heroPrimary:"Install GitHub Action",heroSecondary:"Watch a claim get blocked",
-      heroNote:"Sign-off only. Does not deploy or trade for you. Format demo is not live data.",
+      heroNote:"Sign-off only. Does not deploy or trade for you.",
       brandThesis:"Review first. Trust after. Evidence first. Ship after.",
+      evidenceChrome:"EVIDENCE",
       heroPainLabel:"THE PAIN",
       heroPain1:"AI hallucination and false-green still ship",
       heroPain2:"Code rots — or dies of over-engineering",
@@ -16,7 +17,7 @@
       heroSolve1:"Adversarial review — red-teams \"looks fine\"",
       heroSolve2:"Framework + Cutline — stay maintainable, no bloat",
       heroLead:"",
-      receiptExample:"FALSIFY RECEIPT #0482",receiptPhase:"05 RECEIPT",
+      receiptExample:"FALSIFY RECEIPT #0482",receiptPhase:"01 CLAIM",
       proofHeadline:"Agents say \"trust me.\"",
       demoPause:"Reset",demoPlay:"Run example",
       deployBot:"DEPLOY BOT",successPill:"SUCCESS",
@@ -31,8 +32,8 @@
       ceilingLabel:"AUTHORITY CEILING",ceilingValue:"EPISTEMIC_ONLY — no action authorized",
       capitalLabel:"CAPITAL AUTHORITY",capitalValue:"NONE",
       reproduceLabel:"REPRODUCE LOCALLY",
-      demoCaption:"Format demo only: claim → attack → evidence check → verdict with scope and ceiling. Not live data — the local fixture demo reproduces this false green deterministically.",
-      cutlineKicker:"04 CUTLINE",
+      demoCaption:"Format demo: claim → attack → evidence check → verdict. Not live data — local fixture reproduces this false green.",
+      cutlineKicker:"CUTLINE",
       cutlineTitle:"NO EVIDENCE.<br><em>NO PASS.</em>",
       cutlineLead:"A deployment claim is not a production fact. Falsify checks the claim against executable evidence — not against another summary.",
       stripClaim:"CLAIM",stripAuth:"EVIDENCE",
@@ -61,9 +62,10 @@
       bugScanner:"Bug scanner",bugScannerText:"checks a diff for defects",eval:"Eval",evalText:"measures model behavior on a test set",
       secondAi:"Second model",secondAiText:"another opinion — not proof",
       falsifyText:"adversarial + framework + Cutline → a sign-off receipt, not auto-ship",
-      stepAttackTitle:"Adversarial",stepFrameTitle:"Framework",stepCheckTitle:"Cutline",stepVerdictTitle:"Verdict",stepGateTitle:"Boundary",
+      stepClaimTitle:"Claim",stepAttackTitle:"Adversarial",stepFrameTitle:"Framework",stepCheckTitle:"Cutline",stepVerdictTitle:"Verdict",stepGateTitle:"Boundary",
       howLabel:"HOW IT WORKS",howTitle:"Three layers. One plain question: where is the evidence?",
       howLead:"Adversarial red-teams \"looks fine.\" Framework catches what will rot later. Cutline says Must Fix / Debt / Delete. Then PASS, PASS_WITH_DEBT, or BLOCK.",
+      stepClaim:"Something asserts success — a deploy, a metric, a \"done\" without proof.",
       stepAttack:"Red-teams what looks fine — AI hallucination, false-green, and confident claims without evidence.",
       stepFrame:"Catches what will rot later — hidden state, duplicated authority, brittle rollback, over-engineering.",
       stepCheck:"Must Fix / Known Debt / Delete — what to change, what to record, what to remove.",
@@ -76,9 +78,9 @@
       d3Name:"Audit Sprint",d3Status:"AVAILABLE · SERVICE",d3Text:"Claim manifest, kill-shots, evidence pack, and a signed verdict receipt for one high-risk artifact.",
       d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · PRIVATE",d4Text:"Integrated per concrete authority path — deploy, data, or execution. Scoped pilots, not self-serve.",
       d5Name:"Team / Enterprise",d5Status:"TARGET · NOT SHIPPED",d5Text:"Dashboard, SSO, RBAC, retention. Roadmap targets — not delivered features.",
-      resultLabel:"FORMAT DEMO ONLY",footerDocs:"Docs",footerContact:"Contact",footerSample:"Sample receipt",contactKicker:"CONTACT THE FOUNDER",contactLead:"Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.",contactTwitter:"X / Twitter",contactEmail:"Email",contactGithub:"GitHub",contactEmailLabel:"Email",contactSecurity:"Security reporting",
-      tryLabel:"FORMAT DEMO ONLY",tryTitle:"Preview the receipt shape — not full verification",
-      tryLead:"This is a format demo only. It does not run a full Falsify gate, a cloud review, or a live state probe. Do not treat it as proof of product capability.",
+      resultLabel:"FORMAT PREVIEW",footerDocs:"Docs",footerContact:"Contact",footerSample:"Sample receipt",contactKicker:"CONTACT THE FOUNDER",contactLead:"Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.",contactTwitter:"X / Twitter",contactEmail:"Email",contactGithub:"GitHub",contactEmailLabel:"Email",contactSecurity:"Security reporting",
+      tryLabel:"FORMAT PREVIEW",tryTitle:"Preview the receipt shape",
+      tryLead:"Same format as the hero demo — shape only, not a full gate or live probe.",
       runExample:"Run example",copyArtifact:"Copy reproduction command",
       resultTitle:"Ready to preview a format sample.",
       resultLead:"Run the example to see the verdict shape only — not evidence-backed verification.",
@@ -86,17 +88,18 @@
       installLead:"Best first step: the GitHub Action reviews PR claims and decision docs and posts a PASS / PASS_WITH_DEBT / BLOCK receipt. Sign-off only — does not deploy or trade for you.",
       actionLink:"Install GitHub Action →",skillsLink:"Install a skill →",verdictLink:"Verdict contract →",
       ctaTitle:"Review first. Trust after.",
-      ctaLead:"Evidence first. Ship after. Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK.",
-      ctaPrimary:"Install GitHub Action",ctaSecondary:"Format demo only",
-      footer:"Review first. Trust after. Sign-off only — does not deploy or trade for you."
+      ctaLead:"Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK. Sign-off only.",
+      ctaPrimary:"Install GitHub Action",ctaSecondary:"See what you can get",
+      footer:"Sign-off only — does not deploy or trade for you."
     },
     zh: {
-      menuLabel:"菜单",navProof:"真实案例",navDifference:"它是什么",navHow:"工作原理",navDelivery:"如何获取",navTry:"试一试",navDocs:"文档",
+      menuLabel:"菜单",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",
       heroTitle:"看起来绿了，还不够。",
       heroEyebrow:"两个痛点 · 三层白话",
       heroPrimary:"安装 GitHub Action",heroSecondary:"看一条声明被拦下",
-      heroNote:"只做审查签收，不自动部署、不下单。格式演示不是实时数据。",
+      heroNote:"只做审查签收，不自动部署、不下单。",
       brandThesis:"先审，再信；先证据，再放行。",
+      evidenceChrome:"证据",
       heroPainLabel:"痛点",
       heroPain1:"AI 幻觉和假绿照样进生产",
       heroPain2:"代码长期腐烂，或过度工程",
@@ -104,7 +107,7 @@
       heroSolve1:"对抗审 — 专打「看起来没问题」",
       heroSolve2:"框架审 + Cutline — 好维护、不过度工程",
       heroLead:"",
-      receiptExample:"FALSIFY 回执 #0482",receiptPhase:"05 回执",
+      receiptExample:"FALSIFY 回执 #0482",receiptPhase:"01 声明",
       proofHeadline:"Agent 说「信我」。",
       demoPause:"重置",demoPlay:"运行示例",
       deployBot:"部署机器人",successPill:"SUCCESS",
@@ -119,8 +122,8 @@
       ceilingLabel:"权威上限",ceilingValue:"EPISTEMIC_ONLY — 不授权任何动作",
       capitalLabel:"资金权限",capitalValue:"NONE",
       reproduceLabel:"本地复现",
-      demoCaption:"仅为格式演示：声明 → 攻击 → 证据检查 → 带范围与上限的裁决。不是实时数据——本地 fixture demo 可确定性复现这个假绿。",
-      cutlineKicker:"04 分级",
+      demoCaption:"格式演示：声明 → 攻击 → 证据检查 → 裁决。不是实时数据——本地 fixture 可复现这个假绿。",
+      cutlineKicker:"CUTLINE",
       cutlineTitle:"没有证据。<br><em>就不能 PASS。</em>",
       cutlineLead:"部署声明不等于生产事实。Falsify 用可执行的证据检查核对声明，而不是再看一份摘要。",
       stripClaim:"声明",stripAuth:"证据",
@@ -149,9 +152,10 @@
       bugScanner:"缺陷扫描器",bugScannerText:"检查 diff 里有没有缺陷",eval:"模型评测",evalText:"衡量模型在测试集上的表现",
       secondAi:"第二个模型",secondAiText:"又一个意见——不是证明",
       falsifyText:"对抗审 + 框架审 + Cutline → 签收回执，不是自动上线",
-      stepAttackTitle:"对抗审",stepFrameTitle:"框架审",stepCheckTitle:"Cutline",stepVerdictTitle:"裁决",stepGateTitle:"边界",
+      stepClaimTitle:"声明",stepAttackTitle:"对抗审",stepFrameTitle:"框架审",stepCheckTitle:"Cutline",stepVerdictTitle:"裁决",stepGateTitle:"边界",
       howLabel:"工作原理",howTitle:"三层白话。只问一件事：证据在哪里？",
       howLead:"对抗审专打「看起来没问题」。框架审专抓「以后会烂掉」。Cutline：该改改，该记记，该删删。然后 PASS、PASS_WITH_DEBT 或 BLOCK。",
+      stepClaim:"有人声称成功——一次部署、一个指标、一句没有证据的「做完了」。",
       stepAttack:"专打「看起来没问题」——AI 幻觉、假绿、没证据却很自信的声明。",
       stepFrame:"专抓「以后会烂掉」——隐状态、重复权威、脆弱回滚、过度工程。",
       stepCheck:"该改改，该记记，该删删——Must Fix / Known Debt / Delete。",
@@ -164,9 +168,9 @@
       d3Name:"Audit Sprint",d3Status:"AVAILABLE · 服务",d3Text:"针对一个高风险产物：声明清单、kill-shots、证据包，以及签署的裁决回执。",
       d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · 私有",d4Text:"按具体权威路径集成——部署、数据或执行。小规模试点，不自助开放。",
       d5Name:"Team / Enterprise",d5Status:"TARGET · 未交付",d5Text:"Dashboard、SSO、RBAC、留存。路线图目标，不是已交付功能。",
-      resultLabel:"仅格式演示",footerDocs:"文档",footerContact:"联系",footerSample:"示例回执",contactKicker:"联系创始人",contactLead:"设计合作、集成、研究协作或产品问题——直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
-      tryLabel:"仅格式演示",tryTitle:"预览回执长什么样——不是完整核验",
-      tryLead:"这只是格式演示，不会跑完整 Falsify 门禁、云端审查或实时状态探测。请别把它当成产品能力证明。",
+      resultLabel:"格式预览",footerDocs:"文档",footerContact:"联系",footerSample:"示例回执",contactKicker:"联系创始人",contactLead:"设计合作、集成、研究协作或产品问题——直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
+      tryLabel:"格式预览",tryTitle:"预览回执长什么样",
+      tryLead:"与 Hero 演示同一格式——只看形状，不是完整门禁或实时探测。",
       runExample:"运行示例",copyArtifact:"复制复现命令",
       resultTitle:"可以预览格式样例",
       resultLead:"运行示例只看判定长什么样——不是有证据背书的核验。",
@@ -174,9 +178,9 @@
       installLead:"最稳的第一步：GitHub Action 审查 PR 声明与决策文档，给出 PASS / PASS_WITH_DEBT / BLOCK 回执。只做审查签收，不自动部署、不下单。",
       actionLink:"安装 GitHub Action →",skillsLink:"安装 Skill →",verdictLink:"查看判定约定 →",
       ctaTitle:"先审，再信。",
-      ctaLead:"先证据，再放行。留下回执——PASS、PASS_WITH_DEBT 或 BLOCK。",
-      ctaPrimary:"安装 GitHub Action",ctaSecondary:"格式演示",
-      footer:"先审，再信。只做审查签收，不自动部署、不下单。"
+      ctaLead:"留下回执——PASS、PASS_WITH_DEBT 或 BLOCK。只做审查签收。",
+      ctaPrimary:"安装 GitHub Action",ctaSecondary:"看看能拿到什么",
+      footer:"只做审查签收，不自动部署、不下单。"
     }
   };
   const phaseLabels = {
@@ -275,22 +279,20 @@
   const phaseEl = document.querySelector(".receipt-phase");
   // claim → success card → frame/compare intro → commits lit → conflict → block+receipt
   const stages = ["claim", "success", "compare", "mismatch", "conflict", "block"];
-  const defaultStageIndex = stages.length - 1; // full BLOCK receipt on first paint
-  // Per-stage dwell (ms): short holds so CSS opacity/transform reveals (≤220ms) read clearly.
+  // Idle default = claim (start empty). Run example advances to full BLOCK.
   const stageDelays = [0, 170, 180, 190, 200, 0];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let demoTimer = 0, stageIndex = defaultStageIndex, demoActive = false;
+  let demoTimer = 0, stageIndex = 0, demoActive = false;
   const stopDemo = () => { if (demoTimer) window.clearTimeout(demoTimer); demoTimer = 0; };
   const setStage = (index) => {
     stageIndex = Math.min(index, stages.length - 1);
     receipt.dataset.demoState = stages[stageIndex];
     if (phaseEl) phaseEl.textContent = phaseLabels[language][stageIndex];
   };
-  // Idle default = complete receipt (not empty claim glass). Reset returns here.
   const resetDemo = () => {
     stopDemo();
     demoActive = false;
-    setStage(defaultStageIndex);
+    setStage(0);
     toggle.setAttribute("aria-pressed", "false");
     toggle.textContent = translations[language].demoPlay;
   };
@@ -316,7 +318,7 @@
     stopDemo();
     demoActive = true;
     if (reducedMotion.matches) {
-      setStage(defaultStageIndex);
+      setStage(stages.length - 1);
       toggle.setAttribute("aria-pressed", "false");
       toggle.textContent = translations[language].demoPlay;
       demoActive = false;
@@ -355,8 +357,16 @@
     if (language !== "zh") return cutline || "FINDING";
     return { "MUST FIX": "必须修复", DELETE: "应当删除", "KNOWN DEBT": "已知欠账", FINDING: "发现" }[cutline] || cutline || "发现";
   };
+  const verdictClass = (verdict) => {
+    const v = String(verdict || "BLOCK").toUpperCase();
+    if (v === "PASS") return "is-pass";
+    if (v === "PASS_WITH_DEBT" || v.includes("DEBT")) return "is-debt";
+    return "is-block";
+  };
   const renderReceipt = (label, verdict, risks) => {
     result.replaceChildren();
+    result.classList.remove("is-pass", "is-debt", "is-block");
+    result.classList.add(verdictClass(verdict));
     addText(result, "p", "result-label", label);
     addText(result, "p", "verdict", verdict || "BLOCK");
     risks.forEach((risk) => {
