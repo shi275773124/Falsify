@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Falsify — adversarial sign-off for high-stakes AI decisions</title>
-<meta name="description" content="Falsify is a CLI-first, open-core decision gate for high-stakes AI claims. Public receipts use PASS, PASS_WITH_DEBT, or BLOCK; domain gates can add stricter verdicts and claim ceilings.">
+<title>Falsify — Looks green isn't proof.</title>
+<meta name="description" content="Looks green isn't proof. Adversarial review red-teams false-green; framework review + Cutline catch long-term rot. Review first. Trust after.">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/static/favicon.ico" sizes="32x32">
 <meta property="og:title" content="Falsify — Looks green isn't proof.">
-<meta property="og:description" content="Adversarial sign-off for deploys, PRs, research, and agent claims. Open core: protocol MIT; production enforcement stays Pro.">
+<meta property="og:description" content="Two pains: AI false-green → adversarial review; long-term rot → framework + Cutline. Review first. Trust after. Sign-off only.">
 <meta property="og:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <meta property="og:url" content="https://falsify.zjdeng.xyz/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Falsify — Looks green isn't proof.">
-<meta name="twitter:description" content="Review first. Trust after. CLI-first evidence gates and reproducible receipts.">
+<meta name="twitter:description" content="Review first. Trust after. Evidence first. Ship after. Adversarial · Framework · Cutline.">
 <meta name="twitter:image" content="https://falsify.zjdeng.xyz/static/img/og-share.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,12 +89,12 @@
 <header class="hero" id="top">
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow" data-i18n="hero_eyebrow">Open core · decision gate for AI-era work</p>
+      <p class="eyebrow" data-i18n="hero_eyebrow">Two pains · three layers</p>
       <h1 class="hero-title" data-i18n="h1">Looks green isn't proof.</h1>
       <ol class="hero-flow" aria-label="How Falsify works">
-        <li><span class="hero-flow-k" data-i18n="hero_step_1_k">Input</span><span data-i18n="hero_step_1"> — a deployment claim, PR summary, or research report</span></li>
-        <li><span class="hero-flow-k" data-i18n="hero_step_2_k">Check</span><span data-i18n="hero_step_2"> — adversarial evidence review (not self-review)</span></li>
-        <li><span class="hero-flow-k" data-i18n="hero_step_3_k">Artifact</span><span data-i18n="hero_step_3"> ? a core PASS / PASS_WITH_DEBT / BLOCK receipt as falsify.review.v1 JSON</span></li>
+        <li><span class="hero-flow-k" data-i18n="hero_step_1_k">Adversarial</span><span data-i18n="hero_step_1"> — red-teams "looks fine" (false-green, AI hallucination)</span></li>
+        <li><span class="hero-flow-k" data-i18n="hero_step_2_k">Framework</span><span data-i18n="hero_step_2"> — catches what will rot later (structure, over-engineering)</span></li>
+        <li><span class="hero-flow-k" data-i18n="hero_step_3_k">Cutline</span><span data-i18n="hero_step_3"> — Must Fix / Debt / Delete, then PASS / PASS_WITH_DEBT / BLOCK</span></li>
       </ol>
       <div class="actions hero-actions">
         <a class="btn primary" href="#proof" data-i18n="btn_run_sample_hero">See a real BLOCK artifact</a>
@@ -317,20 +317,20 @@
         <div class="layers-strip" role="list">
           <article class="layer-chip" role="listitem">
             <span class="layer-step-num" aria-hidden="true">01</span>
-            <span class="layer-tag" data-i18n="hero_layers_l1_tag">Contract</span>
-            <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Define claim, evidence, authority</span>
+            <span class="layer-tag" data-i18n="hero_layers_l1_tag">Adversarial</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l1_map">Red-teams "looks fine"</span>
           </article>
           <span class="layer-sep" aria-hidden="true">&rarr;</span>
           <article class="layer-chip" role="listitem">
             <span class="layer-step-num" aria-hidden="true">02</span>
-            <span class="layer-tag" data-i18n="hero_layers_l2_tag">Adversarial</span>
-            <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Hunt the cheapest counterproof</span>
+            <span class="layer-tag" data-i18n="hero_layers_l2_tag">Framework</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l2_map">Catches what will rot later</span>
           </article>
           <span class="layer-sep" aria-hidden="true">&rarr;</span>
           <article class="layer-chip" role="listitem">
             <span class="layer-step-num" aria-hidden="true">03</span>
             <span class="layer-tag" data-i18n="hero_layers_l3_tag">Cutline</span>
-            <span class="layer-map-tag" data-i18n="hero_layers_l3_map">Must Fix, Known Debt, Delete</span>
+            <span class="layer-map-tag" data-i18n="hero_layers_l3_map">Must Fix / Debt / Delete</span>
           </article>
         </div>
       </div>

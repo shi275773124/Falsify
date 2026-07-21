@@ -6,10 +6,12 @@
 
 A **PR claim gate**, not another code-review bot.
 
-When a PR changes decision docs, Falsify posts a **PASS / PASS_WITH_DEBT / BLOCK** receipt.  
-**Looks green isn't proof** — a completion message is a claim until an authority path is checked.
+**Looks green isn't proof.**  
+When a PR changes decision docs, Falsify posts a **PASS / PASS_WITH_DEBT / BLOCK** receipt.
 
-OSS Action = adversarial review layer. It does **not** grant production or live trading authority.
+Two pains, three layers: adversarial (false-green / AI hallucination) · framework (what will rot later) · Cutline (Must Fix / Debt / Delete).
+
+> Sign-off only. Does not deploy or trade for you.
 
 ## 5 minutes
 
@@ -52,7 +54,7 @@ Then re-run for model-backed `falsify review --json`.
 
 ## One sentence to paste
 
-> We gate AI/agent “done” claims on decision docs: Falsify returns a reproducible PASS / PASS_WITH_DEBT / BLOCK receipt. Install: 5-minute GitHub Action — https://falsify.site/docs/14-github-action-install.html
+> Looks green isn't proof. We gate AI/agent “done” claims on decision docs: Falsify returns a reproducible PASS / PASS_WITH_DEBT / BLOCK receipt. Review first. Trust after. Install: 5-minute GitHub Action — https://falsify.site/docs/14-github-action-install.html
 
 ## Three false-green cases (why this exists)
 

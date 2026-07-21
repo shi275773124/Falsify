@@ -1,52 +1,42 @@
 # Falsify
 
-> **Evidence-driven decision gate for high-risk AI claims.**  
-> Not another model opinion. Multi-model review is an optional attacker—never the trust root.
+**Looks green isn't proof.**
 
-> **MVP surface:** GitHub Action that gates **claims surrounding a change** (PR narrative, deploy plan, decision docs) and emits scoped `PASS` / `PASS_WITH_DEBT` / `BLOCK`. It gates **review** — never payments, deploys, or other live actions; OSS verdicts are epistemic.  
-> Tagline for philosophy only: *Make consequential AI output easier to disprove.*
+Review first. Trust after. Evidence first. Ship after.
 
-> **Open core (not full open source):** Protocol, starter CLI, templates, and JSON schema are [MIT](./LICENSE). **Production enforcement, live fixture libraries, and private runtime skills stay closed** (Pro). Team covers hosted governance — not the protocol. See [Open Core boundary](./docs/12-open-core-boundary.md), [Pro vs OSS](./docs/18-pro-vs-oss.md), [ROOTFIX](./docs/ROOTFIX-architecture.md).
+Two pains. Three layers.
 
-Falsify forces decisions to bottom out in an **authority path**, **raw artifacts**, and **explicit policy**—then returns exactly one of `PASS`, `PASS_WITH_DEBT`, or `BLOCK`.
+| Pain | What Falsify does |
+|------|-------------------|
+| **AI hallucination & false-green** — logs green, another model agrees, still unsafe | **Adversarial review** — red-teams "looks fine" |
+| **Long-term rot / over-engineering** — hidden state, brittle rollback, process theater | **Framework review + Cutline** — catch what will rot later; Must Fix / Debt / Delete |
 
-Code review and lint ask: **"Does the diff look right?"**  
-Falsify asks: **"Is this claim defensible?"**
+```text
+Adversarial  →  red-teams "looks fine"
+Framework    →  catches what will rot later
+Cutline      →  Must Fix / Known Debt / Delete
+Receipt      →  PASS / PASS_WITH_DEBT / BLOCK
+```
+
+> Sign-off only. Does not deploy or trade for you.
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[Chinese](./README.zh-CN.md) · [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Brooks-Lint](./docs/09-brooks-lint.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[Chinese](./README.zh-CN.md) · [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
-## Product family（one product · not everything is open）
+## Quick start
 
-| Surface | Repo / path | Open? | Role |
-|---------|-------------|-------|------|
-| **This repo** | [shi275773124/Falsify](https://github.com/shi275773124/Falsify) | **MIT subset** | Protocol, starter CLI, sign-off packs, docs, site, optional quant extra |
-| **Agent skill shell** | [shi275773124/falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT shell | Install entry / ASP narrative — **no** Pro production scripts |
-| **Pro runtime** | Private (Hermes / operator skill tree) | **Closed** | Sole production & quant enforcement gates, fixture antibodies, live wiring |
-| **Public version** | `falsify/__init__.py` → `VERSION` | public | Only badge for “what version of OSS Falsify” — not Pro skill version |
-
-**Claiming Falsify** = running an authority exit and keeping the command + artifact — not only installing a skill. Full live-money discipline lives in **Pro**, not in this MIT tree. See [skills/README.md](./skills/README.md), [Pro vs OSS](./docs/18-pro-vs-oss.md), [ROOTFIX](./docs/ROOTFIX-architecture.md).
-
-## Table of contents
-
-- [Product family](#product-familyone-product-clear-surfaces)
-- [Entry path](#entry-path)
-- [Skills (4 workflows)](#skills-4-workflows)
-- [Audit Sprint / Design Partner / Team path](#delivery-status-what-you-can-get-today)
-- [What problem it solves](#what-problem-it-solves)
-- [The framework](#the-framework)
-- [Quick start](#quick-start)
-- [Docs](#docs)
-- [OSS PR gate (self-hosted)](#oss-pr-gate-self-hosted)
-
-## Entry path
+```bash
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo
+```
 
 1. **Install a skill** in [Claude Code or Cursor](./docs/17-skills.md) — copy a folder from [`skills/`](./skills/) (BYOK; no Falsify API key).
-2. Install the [GitHub Action](./docs/14-github-action-install.md) (primary product path) — [one-screen share pack](./docs/github-action-share-pack.md) · [false-green share cards](./examples/real-cases/SHARE-CARDS.md).
-3. Optionally run `python -m falsify demo` or the [homepage format demo](https://falsify.site/#try) to see receipt **shape only**—not full gate capability.
+2. Install the [GitHub Action](./docs/14-github-action-install.md) — [one-screen share pack](./docs/github-action-share-pack.md) · [false-green share cards](./examples/real-cases/SHARE-CARDS.md).
+3. Optionally open the [homepage format demo](https://falsify.site/#try) — receipt **shape only**, not full gate capability.
 4. Use Falsify on one high-risk claim before the decision ships.
-5. If the workflow repeats or becomes high-stakes, discuss an Audit Sprint or Design Partner pilot.
 
 ## Skills (4 workflows)
 
@@ -62,6 +52,19 @@ Packs define **what to attack**. Enforcement is still the **CLI / CI / Pro gate*
 | Agent Safety Check | [`skills/falsify-agent-safety-check/`](./skills/falsify-agent-safety-check/) | Verify agent completion claims before trust. |
 
 **Install:** [Skills guide (Claude Code / Cursor / BYOK)](./docs/17-skills.md) · [Browse `skills/` on GitHub](https://github.com/shi275773124/Falsify/tree/main/skills)
+
+## Open core & Claiming
+
+| Surface | Repo / path | Open? | Role |
+|---------|-------------|-------|------|
+| **This repo** | [shi275773124/Falsify](https://github.com/shi275773124/Falsify) | **MIT subset** | Protocol, starter CLI, sign-off packs, docs, site, optional quant extra |
+| **Agent skill shell** | [shi275773124/falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT shell | Install entry — **no** Pro production scripts |
+| **Pro runtime** | Private (operator skill tree) | **Closed** | Production & quant enforcement gates, fixture antibodies, live wiring |
+| **Public version** | `falsify/__init__.py` → `VERSION` | public | OSS product version only — not Pro skill version |
+
+> **Open core (not full open source):** Protocol, starter CLI, templates, and JSON schema are [MIT](./LICENSE). **Production enforcement, live fixture libraries, and private runtime skills stay closed** (Pro). See [Open Core boundary](./docs/12-open-core-boundary.md), [Pro vs OSS](./docs/18-pro-vs-oss.md), [ROOTFIX](./docs/ROOTFIX-architecture.md).
+
+**Claiming Falsify** = running an authority exit and keeping the command + artifact — not only installing a skill. Full live-money discipline lives in **Pro**, not in this MIT tree. See [skills/README.md](./skills/README.md).
 
 ## Delivery status (what you can get today)
 
@@ -88,14 +91,14 @@ Falsify forces the review to bottom out in raw artifacts: code, diffs, command o
 ## The framework
 
 ```text
-Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
+Falsify = Adversarial Review + Framework review + Cutline
 ```
 
-| Layer | What it catches | Output |
-|---|---|---|
-| Brooks-Lint | structural decay: hidden state, implicit authority, duplicated control paths, brittle rollback, unverifiable acceptance, AI summaries replacing raw evidence | concrete review targets |
-| Adversarial Review | false truth, false risk, silent failure, stale data, permission drift, fake acceptance evidence, semantic nudges, prompt-only audit theater, monitor failure laundering | tagged findings |
-| Cutline / 风险裁刀 | review aftermath failure: every risk becomes urgent, or real risk gets deleted as "simplicity" | Must Fix / Known Debt / Delete |
+| Layer | Plain language | What it catches | Output |
+|---|---|---|---|
+| Adversarial Review | red-teams "looks fine" | false truth, false risk, silent failure, stale data, fake acceptance, second-model agreement theater | tagged findings |
+| Framework (Brooks-Lint) | catches what will rot later | hidden state, implicit authority, duplicated control paths, brittle rollback, over-engineering | concrete review targets |
+| Cutline / 风险裁刀 | Must Fix / Debt / Delete | every risk treated as P0, or real risk deleted as "simplicity" | Must Fix / Known Debt / Delete |
 
 Final decision (every receipt carries `claim_scope` and `authority_ceiling`; OSS receipts are `EPISTEMIC_ONLY` with `capital_authority: NONE`):
 

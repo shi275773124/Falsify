@@ -30,7 +30,11 @@ def test_review_remains_user_triggered_and_fail_closed():
 def test_chinese_font_stack_and_utf8_document():
     html, js, css = source("index.html"), source("candidate.js"), source("candidate.css")
     assert '<meta charset="utf-8">' in html
-    for codepoints in ((0x5148, 0x653b, 0x51fb, 0x58f0, 0x660e), (0x6700, 0x540e, 0x51b3, 0x5b9a, 0x80fd, 0x4e0d, 0x80fd, 0x653e, 0x884c)):
+    # Narrative pins (zh): 看起来绿了 / 痛点
+    for codepoints in (
+        (0x770B, 0x8D77, 0x6765, 0x7EFF, 0x4E86),  # 看起来绿了
+        (0x75DB, 0x70B9),  # 痛点
+    ):
         assert ''.join(map(chr, codepoints)) in js
     for font in ('-apple-system', 'BlinkMacSystemFont', '"SF Pro SC"', '"PingFang SC"', '"Microsoft YaHei UI"', '"Noto Sans SC"'):
         assert font in css
