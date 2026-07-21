@@ -413,5 +413,15 @@
       button.disabled = false;
     }
   });
+  /* Sticky nav border on scroll — craft polish (border/bg only; no height animation) */
+  const siteHeader = document.querySelector(".site-header");
+  if (siteHeader) {
+    const onHeaderScroll = () => {
+      siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
+    };
+    onHeaderScroll();
+    window.addEventListener("scroll", onHeaderScroll, { passive: true });
+  }
+
   window.FalsifyFlow = { copyCommand, renderReceipt };
 })();
