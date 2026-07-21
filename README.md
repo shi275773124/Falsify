@@ -20,6 +20,9 @@ Receipt      →  PASS / PASS_WITH_DEBT / BLOCK
 
 > Sign-off only. Does not deploy or trade for you.
 
+**Evidence-driven decision gate** — Falsify is a decision gate for high-risk claims: adversarial review + framework + Cutline, then a signed receipt. Not a chatbot second opinion.
+
+
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [Chinese](./README.zh-CN.md) · [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
