@@ -262,7 +262,7 @@ nav a{
 /* Desktop: hamburger must stay hidden. Header is flex space-between;
    a visible .menu becomes a third flex item and sits in the dead center. */
 .site-header > .menu{
-  display:none;
+  display:none!important; /* desktop: never park hamburger in flex center */
   border:1px solid var(--line);border-radius:var(--radius-full);background:transparent;color:var(--text);
   font:600 11px var(--mono);padding:8px 12px;cursor:pointer;
   transition:
@@ -1288,7 +1288,7 @@ html.reduce-motion [data-reveal]{opacity:1!important;transform:none!important;tr
   .site-header{height:62px;padding-inline:16px}
   /* Mobile only: brand left, menu right (nav is absolute overlay when closed). */
   .site-header > .menu{
-    display:inline-flex;align-items:center;justify-content:center;
+    display:inline-flex!important;align-items:center;justify-content:center;
     margin-left:auto;
     min-height:44px;min-width:44px;padding:10px 14px;font-size:12px;
   }
