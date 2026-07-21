@@ -22,7 +22,7 @@ def test_every_declared_i18n_key_has_both_languages():
 
 def test_visible_chinese_copy_is_native_and_not_mojibake():
     js = source("candidate.js")
-    for phrase in ("\u83dc\u5355", "\u5fc5\u987b\u4fee\u590d", "\u4e0d\u662f\u53c8\u4e00\u4e2a\u6a21\u578b\u610f\u89c1", "\u6743\u5a01\u6765\u6e90"):
+    for phrase in ("\u83dc\u5355", "\u5fc5\u987b\u4fee\u590d", "\u4e0d\u662f\u53c8\u4e00\u4e2a\u6a21\u578b\u610f\u89c1", "\u6743\u5a01\u8def\u5f84"):
         assert phrase in js
     assert chr(0xfffd) not in source("index.html") + js
 
@@ -50,7 +50,8 @@ def test_chinese_copy_states_adapter_and_epistemic_boundaries():
 
 def test_chinese_copy_uses_native_product_language():
     js = source("candidate.js")
-    for copy in ("Agent \u8bf4", "\u6ca1\u6709 adapter \u5c31\u6ca1\u6709\u52a8\u4f5c", "\u4e0d\u662f\u771f\u76f8\u6765\u6e90", "\u53ea\u5230\u8ba4\u77e5\u5c42"):
+    # Product language pins aligned to two-pains narrative
+    for copy in ("Agent \u8bf4", "\u6ca1\u6709\u516c\u5f00\u7684 adapter", "\u4e0d\u6388\u6743\u4efb\u4f55\u52a8\u4f5c", "\u8ba4\u77e5\u5c42"):
         assert copy in js
     for stale in ("\u5b9e\u65f6\u8bc1\u636e\u95e8", "\u88c1\u7ebf"):
         assert stale not in js
