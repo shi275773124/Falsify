@@ -681,8 +681,9 @@ def flow_docs_shell(title, body, current=None, lang="en", canonical=False, path=
     menu_label = FLOW_DOCS_ZH["menu_open"] if is_zh else "Menu"
     language_label = FLOW_DOCS_ZH["language"] if is_zh else "Switch to Chinese"
     menu_close = FLOW_DOCS_ZH["menu_close"] if is_zh else "Menu"
-    contact_label = "联系" if is_zh else "Contact"
-    contact_href = f"{docs_prefix}19-security-and-contact.html{lang_query}"
+    home_label = "首页" if is_zh else "Home"
+    partner_label = "合作" if is_zh else "Partner"
+    partner_href = f"{flow_prefix}#partner" if not lang_query else f"{flow_prefix}{lang_query}#partner"
     if path is None:
         if current:
             path = f"{docs_prefix}{current}.html"
@@ -691,7 +692,16 @@ def flow_docs_shell(title, body, current=None, lang="en", canonical=False, path=
     # Design-candidate mirrors stay out of the public index.
     noindex = not canonical
     meta = flow_docs_meta_tags(title, description, path, lang=lang, noindex=noindex)
-    return f"""<!doctype html><html lang="{'zh-CN' if is_zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#020914"><title>{html_escape(title)} \u2014 Falsify Flow Docs</title>{meta}<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"><link rel="stylesheet" href="/design/falsify-flow-docs/candidate.css"></head><body><a class="skip" href="#main">{html_escape(skip)}</a><header class="flow-docs-header"><a class="flow-brand" href="{docs_prefix}{lang_query}" aria-label="Falsify home"><svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#020914"/><rect x="5" y="5" width="22" height="22" rx="5" fill="none" stroke="#58f5c6" stroke-width="2.2"/><path d="M9.5 16.5l4.5 4.5 8.5-10" fill="none" stroke="#58f5c6" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter"/></svg><span class="brand-wordmark">Falsify</span></a><div class="flow-header-actions"><a href="{flow_href}">Flow</a><a href="{docs_href}" aria-current="page">{html_escape(docs_label)}</a><a href="{contact_href}">{html_escape(contact_label)}</a><button id="flow-lang" type="button" aria-label="{html_escape(language_label)}">{button}</button><button id="docs-menu" type="button" aria-expanded="false" aria-controls="flow-sidebar" data-open-label="{html_escape(menu_label)}" data-close-label="{html_escape(menu_close)}">{html_escape(menu_label)}</button></div></header><div class="flow-docs-layout"><aside id="flow-sidebar" class="flow-docs-sidebar"><p class="sidebar-kicker">FLOW / DOCS</p>{flow_docs_nav_html(current, lang, canonical)}</aside><main id="main" class="flow-docs-main">{body}</main></div><script src="/design/falsify-flow-docs/candidate.js"></script></body></html>"""
+    brand_svg = (
+        '<svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">'
+        '<g fill="none" stroke="#1a1a1a" stroke-linecap="square" stroke-linejoin="miter">'
+        '<path d="M22 13v12H7V10h11" stroke-width="2"/>'
+        '<path d="M11 20 L22.5 8.5" stroke-width="2.2"/>'
+        "</g>"
+        '<polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#6366f1"/>'
+        "</svg>"
+    )
+    return f"""<!doctype html><html lang="{'zh-CN' if is_zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fafafa"><meta name="color-scheme" content="light"><title>{html_escape(title)} \u2014 Falsify Docs</title>{meta}<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"><link rel="stylesheet" href="/design/falsify-flow-docs/candidate.css?v=light-saas-20260722"></head><body><a class="skip" href="#main">{html_escape(skip)}</a><header class="flow-docs-header"><a class="flow-brand" href="{flow_href}" aria-label="Falsify home">{brand_svg}<span class="brand-wordmark">Falsify</span></a><div class="flow-header-actions"><a href="{flow_href}">{html_escape(home_label)}</a><a href="{docs_href}" aria-current="page">{html_escape(docs_label)}</a><a href="{partner_href}">{html_escape(partner_label)}</a><button id="flow-lang" type="button" aria-label="{html_escape(language_label)}">{button}</button><button id="docs-menu" type="button" aria-expanded="false" aria-controls="flow-sidebar" data-open-label="{html_escape(menu_label)}" data-close-label="{html_escape(menu_close)}">{html_escape(menu_label)}</button></div></header><div class="flow-docs-layout"><aside id="flow-sidebar" class="flow-docs-sidebar"><p class="sidebar-kicker">DOCS</p>{flow_docs_nav_html(current, lang, canonical)}</aside><main id="main" class="flow-docs-main">{body}</main></div><script src="/design/falsify-flow-docs/candidate.js"></script></body></html>"""
 
 
 def flow_docs_index(lang="en", canonical=False):

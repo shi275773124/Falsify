@@ -3,7 +3,7 @@
   const copyCommand = "curl -sS https://falsify.site/examples/sample-block-report.json | python -m json.tool";
   const translations = {
     en: {
-      menuLabel:"Menu",menuCloseLabel:"Close",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",
+      menuLabel:"Menu",menuCloseLabel:"Close",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",navPartner:"Partner",
       heroTitle:"Looks green isn't proof.",
       heroEyebrow:"TWO PAINS · THREE LAYERS",
       heroPrimary:"Install GitHub Action",heroSecondary:"Watch a claim get blocked",
@@ -78,7 +78,7 @@
       d3Name:"Audit Sprint",d3Status:"AVAILABLE · SERVICE",d3Text:"Claim manifest, kill-shots, evidence pack, and a signed verdict receipt for one high-risk artifact.",
       d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · PRIVATE",d4Text:"Integrated per concrete authority path — deploy, data, or execution. Scoped pilots, not self-serve.",
       d5Name:"Team / Enterprise",d5Status:"TARGET · NOT SHIPPED",d5Text:"Dashboard, SSO, RBAC, retention. Roadmap targets — not delivered features.",
-      resultLabel:"FORMAT PREVIEW",footerDocs:"Docs",footerContact:"Contact",footerSample:"Sample receipt",contactKicker:"CONTACT THE FOUNDER",contactLead:"Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.",contactTwitter:"X / Twitter",contactEmail:"Email",contactGithub:"GitHub",contactEmailLabel:"Email",contactSecurity:"Security reporting",
+      resultLabel:"FORMAT PREVIEW",footerDocs:"Docs",footerContact:"Partner",footerSample:"Sample receipt",contactKicker:"PARTNER WITH THE FOUNDER",contactLead:"Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.",contactTwitter:"X / Twitter",contactEmail:"Email",contactGithub:"GitHub",contactEmailLabel:"Email",contactSecurity:"Security reporting",
       tryLabel:"FORMAT PREVIEW",tryTitle:"Preview the receipt shape",
       tryLead:"Same format as the hero demo — shape only, not a full gate or live probe.",
       runExample:"Run example",copyArtifact:"Copy reproduction command",
@@ -93,7 +93,7 @@
       footer:"Sign-off only — does not deploy or trade for you."
     },
     zh: {
-      menuLabel:"菜单",menuCloseLabel:"关闭",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",
+      menuLabel:"菜单",menuCloseLabel:"关闭",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",navPartner:"合作",
       heroTitle:"看起来绿了，还不够。",
       heroEyebrow:"两个痛点 · 三层白话",
       heroPrimary:"安装 GitHub Action",heroSecondary:"看一条声明被拦下",
@@ -168,7 +168,7 @@
       d3Name:"Audit Sprint",d3Status:"AVAILABLE · 服务",d3Text:"针对一个高风险产物：声明清单、kill-shots、证据包，以及签署的裁决回执。",
       d4Name:"Production / Quant Pro",d4Status:"DESIGN PARTNER · 私有",d4Text:"按具体权威路径集成——部署、数据或执行。小规模试点，不自助开放。",
       d5Name:"Team / Enterprise",d5Status:"TARGET · 未交付",d5Text:"Dashboard、SSO、RBAC、留存。路线图目标，不是已交付功能。",
-      resultLabel:"格式预览",footerDocs:"文档",footerContact:"联系",footerSample:"示例回执",contactKicker:"联系创始人",contactLead:"设计合作、集成、研究协作或产品问题——直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
+      resultLabel:"格式预览",footerDocs:"文档",footerContact:"合作",footerSample:"示例回执",contactKicker:"与创始人合作",contactLead:"设计合作、集成、研究协作或产品问题——直接联系 Chris Shi。",contactTwitter:"X / Twitter",contactEmail:"邮箱",contactGithub:"GitHub",contactEmailLabel:"邮箱",contactSecurity:"安全报告",
       tryLabel:"格式预览",tryTitle:"预览回执长什么样",
       tryLead:"与 Hero 演示同一格式——只看形状，不是完整门禁或实时探测。",
       runExample:"运行示例",copyArtifact:"复制复现命令",

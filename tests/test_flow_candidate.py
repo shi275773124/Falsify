@@ -10,13 +10,29 @@ def source(name):
 
 def test_homepage_keeps_boundaries_and_brand_assets():
     html, js = source("index.html"), source("candidate.js")
-    for marker in ('id="top"', 'id="proof"', 'id="difference"', 'id="how"', 'id="try"', 'id="review-claim"'):
+    for marker in ('id="top"', 'id="proof"', 'id="difference"', 'id="how"', 'id="try"', 'id="review-claim"', 'id="partner"'):
         assert marker in html
     assert "PASS, PASS_WITH_DEBT, or BLOCK" in html
     assert 'class="brand-mark"' in html
     assert 'class="brand-wordmark"' in html
     assert "Falsify" in html
     assert 'fetch("/review"' in js
+    assert 'href="#partner"' in html
+    assert "navPartner" in js
+    assert "合作" in js
+    assert "Partner" in js
+
+
+def test_light_theme_tokens_are_active():
+    html, css = source("index.html"), source("candidate.css")
+    assert 'content="light"' in html or 'color-scheme" content="light"' in html
+    assert 'content="#fafafa"' in html
+    assert "--ink:#fafafa" in css.replace(" ", "")
+    assert "--cyan:#4f46e5" in css.replace(" ", "")
+    assert "light SaaS" in css
+    # No dark-theme color leaks on light production surface
+    for leak in ("#06101d", "#0c1c30", "#b8ebe0", "#e8c4c9", "#6d8fa5"):
+        assert leak not in css
 
 
 def test_review_remains_user_triggered_and_fail_closed():
