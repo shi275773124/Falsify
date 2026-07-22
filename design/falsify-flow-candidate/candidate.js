@@ -3,7 +3,7 @@
   const copyCommand = "curl -sS https://falsify.site/examples/sample-block-report.json | python -m json.tool";
   const translations = {
     en: {
-      menuLabel:"Menu",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",
+      menuLabel:"Menu",menuCloseLabel:"Close",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",
       heroTitle:"Looks green isn't proof.",
       heroEyebrow:"TWO PAINS · THREE LAYERS",
       heroPrimary:"Install GitHub Action",heroSecondary:"Watch a claim get blocked",
@@ -93,7 +93,7 @@
       footer:"Sign-off only — does not deploy or trade for you."
     },
     zh: {
-      menuLabel:"菜单",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",
+      menuLabel:"菜单",menuCloseLabel:"关闭",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",
       heroTitle:"看起来绿了，还不够。",
       heroEyebrow:"两个痛点 · 三层白话",
       heroPrimary:"安装 GitHub Action",heroSecondary:"看一条声明被拦下",
@@ -222,12 +222,26 @@
     const email = Array.from({ length: (encoded.length - 2) / 2 }, (_, index) => String.fromCharCode(Number.parseInt(encoded.slice(index * 2 + 2, index * 2 + 4), 16) ^ key)).join("");
     if (email.includes("@")) link.href = `mailto:${email}`;
   });
+  const menu = document.querySelector(".menu"), nav = document.querySelector("nav");
+  const syncMenuLabel = () => {
+    if (!menu) return;
+    const t = translations[language];
+    const open = Boolean(nav && nav.classList.contains("open"));
+    menu.textContent = open ? t.menuCloseLabel : t.menuLabel;
+  };
+  const setMenuOpen = (open) => {
+    if (!nav || !menu) return;
+    nav.classList.toggle("open", open);
+    menu.setAttribute("aria-expanded", String(open));
+    syncMenuLabel();
+  };
   const render = () => {
     const t = translations[language];
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     document.documentElement.setAttribute("data-flow-lang", language);
     document.querySelector(".lang").textContent = language === "zh" ? "EN" : "中文";
     document.querySelectorAll("[data-i18n]").forEach((el) => {
+      if (el === menu) return;
       const value = t[el.dataset.i18n];
       if (value) el.textContent = value;
     });
@@ -235,6 +249,7 @@
       const value = t[el.dataset.i18nHtml];
       if (value) renderHeroTitle(el, value);
     });
+    syncMenuLabel();
     syncLinks();
     wireContactEmails();
     restoreCloudflareEmailLinks();
@@ -255,11 +270,6 @@
   });
   window.addEventListener("load",function(){if(window.ScrollTrigger)ScrollTrigger.refresh()});
   render();
-  const menu = document.querySelector(".menu"), nav = document.querySelector("nav");
-  const setMenuOpen = (open) => {
-    nav.classList.toggle("open", open);
-    menu.setAttribute("aria-expanded", String(open));
-  };
   menu.addEventListener("click", (event) => {
     event.stopPropagation();
     setMenuOpen(!nav.classList.contains("open"));
