@@ -47,4 +47,9 @@ def test_mobile_menu_and_delivery_section_are_preserved():
     # Menu opens via setMenuOpen helper; outside click + Escape close it.
     assert "setMenuOpen" in js and 'classList.toggle("open"' in js
     assert 'event.key === "Escape"' in js or 'event.key==="Escape"' in js
+    assert "menuCloseLabel" in js and "syncMenuLabel" in js
     assert 'id="delivery"' in html and "delivery-list" in html and ".status-badge" in css
+    assert "overflow-x:clip" in css.replace(" ", "")
+    assert "minmax(0,1fr)" in css.replace(" ", "")
+    assert "footer a{" in css or "footer a{" in css.replace("\n", "")
+    assert "min-height:44px" in css
