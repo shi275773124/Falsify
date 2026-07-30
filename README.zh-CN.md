@@ -112,14 +112,18 @@ Falsify 要求结论回到可检查证据：原始产物、代码 diff、命令�
 ## 三层框架
 
 ```text
-Falsify = 对抗审 + 框架审 + Cutline
+Falsify = L0 Brooks-Lint（框架审） + L1 对抗审 + Cutline
 ```
+
+公开门禁回路：**Frame → L0 Brooks-Lint → Attack → Recompute → Cutline → Receipt**（回执必须含 `brooks_lint` 证明块）。详见 [架构](./docs/01-architecture.zh-CN.md)、[Brooks-Lint](./docs/09-brooks-lint.md)。
 
 | 层 | 白话 | 发现什么 | 产出 |
 |---|---|---|---|
-| 对抗审 | 专打「看起来没问题」 | false truth、false risk、假绿、第二个模型同意当证据 | 对抗式 findings |
-| 框架审（Brooks-Lint） | 专抓「以后会烂掉」 | hidden state、重复权威、脆弱回滚、过度工程 | 结构性审计目标 |
+| L0 框架审（Brooks-Lint） | 专抓「以后会烂掉」/ 削弱可审计性 | hidden state、重复权威、脆弱回滚、过度工程 | 结构性 findings → Cutline |
+| L1 对抗审 | 专打「看起来没问题」 | false truth、false risk、假绿、第二个模型同意当证据 | 对抗式 findings |
 | Cutline / 风险裁刀 | 该改改，该记记，该删删 | 把所有风险都当 P0，或用「简化」删掉真实风险 | Must Fix / Known Debt / Delete |
+
+营销可继续用「框架审计」；协议名是 **Brooks-Lint（L0）**。**`falsify lint` 不是 Brooks-Lint**——它只是 markdown 标签/阻断器静态检查。
 
 最终输出（每张回执都带 `claim_scope` 与 `authority_ceiling`；开源回执为 `EPISTEMIC_ONLY`、`capital_authority: NONE`）：
 
@@ -139,10 +143,10 @@ python -m falsify demo
 
 # 无 Falsify API key。真审查走你的 provider key（BYOK）或已登录的 agent CLI。
 
-# 无 API key：本地 tag/blocker lint。
+# 无 API key：本地 markdown 标签/阻断器 lint（不是 Brooks-Lint / L0）。
 python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
-# 真实模型审计。
+# 真实模型审计。承载声明的 review 默认先跑 L0 Brooks-Lint，再跑对抗审。
 export DEEPSEEK_API_KEY=sk-...
 python -m falsify review report.md --provider deepseek
 

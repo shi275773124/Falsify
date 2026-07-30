@@ -34,12 +34,15 @@ Falsify asks: *is this claim defensible against the authority path?*
 One inspectable loop:
 
 1. **Frame** — name the claim, owner, authority path, and claim ceiling  
-2. **Attack** — seek the cheapest counterproof (deterministic checks first)  
-3. **Recompute / re-read** — hit the real state, calculation, command, or raw source  
-4. **Cutline** — Must Fix / Known Debt / Delete  
-5. **Receipt** — preserve verdict, evidence path, policy/tool versions, and freshness limits  
+2. **L0 Brooks-Lint (Framework)** — structural decay / auditability surface before adversarial attack (marketing alias:「框架审计」; protocol name is Brooks-Lint)  
+3. **Attack** — seek the cheapest counterproof (deterministic checks first)  
+4. **Recompute / re-read** — hit the real state, calculation, command, or raw source  
+5. **Cutline** — Must Fix / Known Debt / Delete (includes L0 structural Must Fix)  
+6. **Receipt** — preserve verdict, evidence path, policy/tool versions, freshness limits, and a **`brooks_lint` block** proving L0 ran (or was explicitly scope-refused / skipped with hard cap)
 
-`PASS` is not permanent. Receipts expire when environment, artifacts, policy, freshness, or authority path change.
+`PASS` is not permanent. Receipts expire when environment, artifacts, policy, freshness, or authority path change. Claim-bearing `review` / `run` without L0 proof cannot yield `PASS` / `PASS_WITH_DEBT`.
+
+**Not the same tool:** `falsify lint` is a **markdown tag/blocker static check** (L2 gate path). It is **not** Brooks-Lint. See [Brooks-Lint](./09-brooks-lint.md).
 
 ## What multi-agent review is (and is not)
 
@@ -94,7 +97,9 @@ Three writers can share one truth for research. The **gate** still bottoms out i
 ## Related docs
 
 - [Getting Started](./00-getting-started.md)
+- [Brooks-Lint (L0 Framework)](./09-brooks-lint.md)
 - [GitHub Action install](./14-github-action-install.md)
-- [Adversarial Review](./05-adversarial-review.md) (optional attacker layer)
+- [Adversarial Review](./05-adversarial-review.md) (L1 attacker layer)
 - [Cutline / 风险裁刀](./06-risk-scalpel.md)
+- [Skills packs](./17-skills.md)
 - [Open Core boundary](./12-open-core-boundary.md)

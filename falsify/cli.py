@@ -173,6 +173,58 @@ from the brief. Rules:
 - Your output must be auditable by a skeptic reviewer.
 """
 
+BROOKS_SKILL_ID = "falsify-brooks-lint"
+BROOKS_SKILL_VERSION = "0.1.0"
+
+BROOKS_SYSTEM = """You are Brooks-Lint (L0): the structural / framework auditor for Falsify.
+You do NOT rewrite the draft. You do NOT perform full adversarial claim attack
+(that is L1). Your job is structural decay, auditability surface, and evidence
+hygiene before the skeptic runs.
+
+Checklist (structural):
+- missing ownership / claim framing / authority path
+- untagged or untraceable prose that cannot be audited
+- claims without a verification path (path:line, diff, or command output)
+- hidden debt, silent TODOs, or "trust me" acceptance evidence
+- scope creep: reviewing the wrong surface or inventing files not in subject
+- Light Mode: when the subject is tiny/docs-only, still emit a real status
+
+Evidence Gate (chris-improvements):
+- Every Must Fix / Known Debt finding MUST cite evidence as one of:
+  path:line | unified diff hunk | command + output excerpt
+- No evidence → do not invent; either Scope Refuse or mark evidence gap clearly.
+
+Scope Refusal:
+- If the subject has no code/diff/command surface to lint structurally, refuse
+  scope rather than fabricating findings. Still emit a terminal status.
+
+Light Mode:
+- Prefer a short structural pass when the subject is a small doc with clear tags;
+  do not invent deep framework debt.
+
+Output rules:
+- Start findings with [BROOKS-LINT] (one tag per finding block).
+- Every finding must include:
+  Cutline: Must Fix | Known Debt | Delete
+  Evidence needed:
+  Minimal action:
+  Upgrade trigger: (required for Known Debt)
+- Declare mode on its own line: BROOKS_MODE: full | light | scope_refused
+- End with EXACTLY one terminal status line, nothing after it:
+  BROOKS_STATUS: RAN
+  or
+  BROOKS_STATUS: SCOPE_REFUSED
+  or
+  BROOKS_STATUS: SKIPPED
+"""
+
+_BROOKS_STATUS_RE = re.compile(
+    r"(?im)^BROOKS_STATUS:\s*(RAN|SCOPE_REFUSED|SKIPPED|ERROR)\s*$"
+)
+_BROOKS_MODE_RE = re.compile(
+    r"(?im)^BROOKS_MODE:\s*(full|light|scope_refused|skipped)\s*$"
+)
+
 EXIT = {"PASS": 0, "PASS_WITH_DEBT": 0, "BLOCK": 1}
 LEGACY_VERDICTS = {"PROCEED": "PASS", "HOLD": "BLOCK", "ARCHIVE": "BLOCK"}
 PUBLIC_VERDICTS = ("PASS", "PASS_WITH_DEBT", "BLOCK")
@@ -413,20 +465,23 @@ def severity_for_cutline(cutline):
     return "low"
 
 
-def parse_findings(text):
+def parse_findings(text, tag_prefix="[AGENT-B"):
     """Best-effort parser for tagged audit findings.
 
     Expected finding block shape:
-      [AGENT-B audit] <issue>
+      [AGENT-B audit] <issue>   (or [BROOKS-LINT] for L0)
       Cutline: Must Fix|Known Debt|Delete
       Evidence needed: ...
       Minimal action: ...
       Upgrade trigger: ...   (optional / required for Known Debt)
     """
     findings = []
-    blocks = [b.strip() for b in re.split(r"\n\s*\n", text) if "[AGENT-B" in b]
+    blocks = [b.strip() for b in re.split(r"\n\s*\n", text or "") if tag_prefix in b]
+    # Escape for regex; tag_prefix is a literal substring like [AGENT-B or [BROOKS-LINT]
+    tag_re = re.escape(tag_prefix)
+    issue_re = re.compile(rf"{tag_re}[^\]]*\]\s*(.+)")
     for b in blocks:
-        m_issue = re.search(r"\[AGENT-B[^\]]*\]\s*(.+)", b)
+        m_issue = issue_re.search(b)
         m_cut = re.search(r"Cutline:\s*(Must Fix|Known Debt|Delete)", b)
         m_gap = re.search(r"Evidence needed:\s*(.+)", b)
         m_min = re.search(r"Minimal action:\s*(.+)", b)
@@ -441,8 +496,152 @@ def parse_findings(text):
             "evidence_gap": (m_gap.group(1).strip() if m_gap else ""),
             "minimal_action": (m_min.group(1).strip() if m_min else ""),
             "upgrade_trigger": (m_upg.group(1).strip() if m_upg else ""),
+            "layer": "brooks_lint" if "BROOKS" in tag_prefix.upper() else "adversarial",
         })
     return findings
+
+
+def parse_brooks_findings(text):
+    """Parse L0 Brooks-Lint findings tagged [BROOKS-LINT]."""
+    return parse_findings(text, tag_prefix="[BROOKS-LINT")
+
+
+def parse_brooks_status(text):
+    """Return (status, mode) from L0 raw text. Missing status → ERROR."""
+    m = _BROOKS_STATUS_RE.search(text or "")
+    status = m.group(1).upper() if m else "ERROR"
+    mm = _BROOKS_MODE_RE.search(text or "")
+    if mm:
+        mode = mm.group(1).lower()
+    elif status == "SCOPE_REFUSED":
+        mode = "scope_refused"
+    elif status == "SKIPPED":
+        mode = "skipped"
+    else:
+        mode = "full"
+    return status, mode
+
+
+def brooks_l0_satisfied(brooks_block):
+    """True when receipt proves L0 ran with RAN or SCOPE_REFUSED."""
+    if not brooks_block:
+        return False
+    if not brooks_block.get("ran"):
+        return False
+    return brooks_block.get("status") in ("RAN", "SCOPE_REFUSED")
+
+
+def build_brooks_receipt(
+    *,
+    raw="",
+    status="ERROR",
+    mode="full",
+    ran=None,
+    findings=None,
+    skip_reason=None,
+    include_raw=True,
+):
+    """Build the falsify.review.v1 brooks_lint block."""
+    findings = list(findings or [])
+    must_fix = sum(1 for f in findings if (f.get("cutline") or "") == "Must Fix")
+    if ran is None:
+        ran = status in ("RAN", "SCOPE_REFUSED")
+    raw = raw or ""
+    block = {
+        "ran": bool(ran),
+        "mode": mode,
+        "status": status,
+        "skill_id": BROOKS_SKILL_ID,
+        "skill_version": BROOKS_SKILL_VERSION,
+        "findings_count": len(findings),
+        "must_fix_count": must_fix,
+        "raw_hash": sha256_text(raw),
+        "skip_reason": skip_reason,
+    }
+    if include_raw:
+        block["raw"] = raw
+    return block
+
+
+def run_brooks_lint(subject_text, args, *, label="CURRENT DRAFT"):
+    """Phase-0 Brooks-Lint (L0). Returns (receipt_block, findings).
+
+    --skip-brooks: diagnostic skip; ran=false; cannot satisfy l0_brooks_ran.
+    """
+    if getattr(args, "skip_brooks", False):
+        reason = getattr(args, "skip_brooks_reason", None) or "flag:--skip-brooks"
+        block = build_brooks_receipt(
+            raw="",
+            status="SKIPPED",
+            mode="skipped",
+            ran=False,
+            findings=[],
+            skip_reason=reason,
+            include_raw=True,
+        )
+        return block, []
+
+    user = review_prompt(
+        (label, subject_text),
+        instructions=(
+            "Run Brooks-Lint (L0) structural audit only. "
+            "Do not issue a final claim VERDICT line — emit BROOKS_STATUS."
+        ),
+    )
+    result = llm(BROOKS_SYSTEM, user, args, dry_run=getattr(args, "dry_run", False),
+                 return_meta=True)
+    if result is None:  # dry-run
+        block = build_brooks_receipt(
+            raw="",
+            status="SKIPPED",
+            mode="skipped",
+            ran=False,
+            findings=[],
+            skip_reason="dry_run",
+            include_raw=True,
+        )
+        return block, []
+
+    if isinstance(result, tuple):
+        raw, _meta = result
+    else:
+        raw = result
+    status, mode = parse_brooks_status(raw)
+    findings = parse_brooks_findings(raw)
+    # Scope-refuse text without explicit status still counts if status parsed.
+    if status == "ERROR" and re.search(r"scope.?refus", raw or "", re.I):
+        status, mode = "SCOPE_REFUSED", "scope_refused"
+    ran = status in ("RAN", "SCOPE_REFUSED")
+    block = build_brooks_receipt(
+        raw=raw or "",
+        status=status,
+        mode=mode,
+        ran=ran,
+        findings=findings,
+        skip_reason=None if ran else (f"brooks_status={status}"),
+        include_raw=True,
+    )
+    return block, findings
+
+
+def format_brooks_summary_for_skeptic(brooks_block, brooks_findings):
+    """Compact L0 summary injected into the L1 skeptic user prompt."""
+    lines = [
+        "--- L0 Brooks-Lint (already executed; do not re-run as L0) ---",
+        f"status={brooks_block.get('status')} mode={brooks_block.get('mode')} "
+        f"ran={brooks_block.get('ran')} must_fix={brooks_block.get('must_fix_count')}",
+    ]
+    for i, f in enumerate(brooks_findings or [], 1):
+        lines.append(
+            f"  L0-{i}: [{f.get('cutline')}] {f.get('issue')} "
+            f"(evidence: {f.get('evidence_gap') or 'n/a'})"
+        )
+    if not brooks_findings:
+        lines.append("  (no L0 structured findings)")
+    lines.append(
+        "Merge L0 Must Fix into your adjudication: any L0 Must Fix forces BLOCK."
+    )
+    return "\n".join(lines)
 
 
 def must_fix_override(audit, verdict):
@@ -473,13 +672,21 @@ def adjudicate_llm_audit(
     subject_hashes=None,
     evidence_hashes=None,
     satisfied_extra=None,
+    brooks_lint=None,
+    extra_findings=None,
 ):
     """Shared claim-bearing path: LLM audit text → authority kernel decision.
 
     All of review / run / high-risk gate adapters must call this (or
     finalize_authority directly). No entry may parse_verdict + sys.exit alone.
+
+    ``brooks_lint`` is the L0 receipt block. When present and satisfied, the
+    ``l0_brooks_ran`` obligation is marked. L0 Must Fix findings (via
+    ``extra_findings``) merge into the finding set so semantic rules block PASS.
     """
     findings = parse_findings(audit or "")
+    if extra_findings:
+        findings = list(extra_findings) + list(findings)
     strict = bool(getattr(args, "strict_known_debt_trigger", True))
     meta = dict(completion_meta or {})
     # Tests / local fixtures that inject audit text without transport meta:
@@ -493,6 +700,16 @@ def adjudicate_llm_audit(
         completion_meta=meta,
         strict_known_debt_trigger=strict,
     )
+    satisfied = list(satisfied_extra or [])
+    if brooks_l0_satisfied(brooks_lint):
+        if "l0_brooks_ran" not in satisfied:
+            satisfied.append("l0_brooks_ran")
+
+    evidence = dict(evidence_hashes or {})
+    evidence["raw_review"] = leg.get("raw_sha256") or sha256_text(audit or "")
+    if brooks_lint and brooks_lint.get("raw_hash"):
+        evidence["brooks_lint"] = brooks_lint["raw_hash"]
+
     decision = finalize_authority(
         claim_text=claim_text or "",
         claim_scope=claim_scope,
@@ -507,16 +724,17 @@ def adjudicate_llm_audit(
         completion_status=leg["completion_status"],
         subject_manifest=subject_manifest,
         subject_hashes=subject_hashes,
-        evidence_hashes=dict(evidence_hashes or {}, **{
-            "raw_review": leg.get("raw_sha256") or sha256_text(audit or ""),
-        }),
+        evidence_hashes=evidence,
         verdict_override=leg.get("verdict_override"),
-        satisfied_obligations=list(satisfied_extra or []),
+        satisfied_obligations=satisfied,
     )
     return decision, findings, leg
 
 
-def review_json_payload(audit, verdict, args, decision=None, findings=None, completion_meta=None):
+def review_json_payload(
+    audit, verdict, args, decision=None, findings=None, completion_meta=None,
+    brooks_lint=None,
+):
     """Build the stable v1 payload; authority fields come from the kernel."""
     provider = getattr(args, "provider", None) or setting("FALSIFY_PROVIDER") or ""
     model = getattr(args, "model", None) or setting("FALSIFY_MODEL") or ""
@@ -530,6 +748,7 @@ def review_json_payload(audit, verdict, args, decision=None, findings=None, comp
             claim_scope=getattr(args, "claim_scope", "document_logic") or "document_logic",
             claim_text=getattr(args, "claim_text", "") or "",
             completion_meta=completion_meta,
+            brooks_lint=brooks_lint,
         )
     validation_errors = list(
         (decision.get("verdict_override") and []) or []
@@ -539,6 +758,16 @@ def review_json_payload(audit, verdict, args, decision=None, findings=None, comp
     fval = validate_structured_findings(findings)
     validation_errors = fval.get("errors") or []
     strict = bool(getattr(args, "strict_known_debt_trigger", True))
+    if brooks_lint is None:
+        brooks_lint = build_brooks_receipt(
+            raw="",
+            status="SKIPPED",
+            mode="skipped",
+            ran=False,
+            findings=[],
+            skip_reason="brooks_lint_not_provided",
+            include_raw=True,
+        )
     return {
         "schema_version": "falsify.review.v1",
         "verdict": decision["effective_verdict"],
@@ -558,6 +787,7 @@ def review_json_payload(audit, verdict, args, decision=None, findings=None, comp
         "kernel_id": KERNEL_ID,
         "findings": findings,
         "raw_review": audit,
+        "brooks_lint": brooks_lint,
         "meta": {
             "provider": provider,
             "model": model,
@@ -566,6 +796,13 @@ def review_json_payload(audit, verdict, args, decision=None, findings=None, comp
             "strict_known_debt_trigger": strict,
             "validation": {"ok": not validation_errors, "errors": validation_errors},
             "completion_meta": completion_meta or {},
+            "brooks_lint": {
+                "ran": brooks_lint.get("ran"),
+                "status": brooks_lint.get("status"),
+                "mode": brooks_lint.get("mode"),
+                "skill_id": brooks_lint.get("skill_id"),
+                "raw_hash": brooks_lint.get("raw_hash"),
+            },
         },
         "authority": decision,
     }
@@ -904,6 +1141,17 @@ def git_show(ref, path):
 
 def cmd_review(args):
     cur = read_input(args.file)
+
+    # Phase-0: Brooks-Lint (L0) before adversarial L1.
+    print("[0/1] Brooks-Lint (L0)…", file=sys.stderr)
+    brooks_block, brooks_findings = run_brooks_lint(cur, args, label="CURRENT DRAFT")
+    if getattr(args, "dry_run", False) and not getattr(args, "skip_brooks", False):
+        # dry-run short-circuits LLM; if L0 also dry-ran, stop before L1.
+        if brooks_block.get("skip_reason") == "dry_run":
+            return
+
+    brooks_summary = format_brooks_summary_for_skeptic(brooks_block, brooks_findings)
+
     if getattr(args, "against", None):
         old = git_show(args.against, args.file)
         system = SKEPTIC_SYSTEM + REVERSAL_ADDENDUM
@@ -912,9 +1160,11 @@ def cmd_review(args):
             ("CURRENT VERSION", cur),
             instructions="Audit the CURRENT version for what would ship wrong, AND run "
                          "the reversal check against the PREVIOUS version.")
+        user = brooks_summary + "\n\n" + user
     else:
         system = SKEPTIC_SYSTEM
         user = review_prompt(("CURRENT DRAFT", cur))
+        user = brooks_summary + "\n\n" + user
     result = llm(system, user, args, dry_run=args.dry_run, return_meta=True)
     if result is None:  # dry-run
         return
@@ -951,10 +1201,13 @@ def cmd_review(args):
         executable_evidence_verdict="UNKNOWN",
         production_path_verdict="UNKNOWN",
         subject_binding_verdict="UNKNOWN",
+        brooks_lint=brooks_block,
+        extra_findings=brooks_findings,
     )
     payload = review_json_payload(
         out, decision.get("model_verdict") or "BLOCK", args,
         decision=decision, findings=findings, completion_meta=completion_meta,
+        brooks_lint=brooks_block,
     )
     if getattr(args, "json", False):
         print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -983,6 +1236,24 @@ def cmd_draft(args):
         print(out)
 
 
+def cmd_brooks(args):
+    """L0-only Brooks-Lint. Emits JSON with the brooks_lint receipt block."""
+    text = read_input(args.file)
+    block, findings = run_brooks_lint(text, args, label="SUBJECT")
+    payload = {
+        "schema_version": "falsify.brooks.v1",
+        "brooks_lint": block,
+        "findings": findings,
+        "skill_id": BROOKS_SKILL_ID,
+        "target": getattr(args, "file", ""),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    # Nonzero when ERROR or Must Fix present (CI-friendly structural fail).
+    if block.get("status") == "ERROR" or block.get("must_fix_count", 0) > 0:
+        sys.exit(1)
+    sys.exit(0)
+
+
 def cmd_run(args):
     brief = read_input(args.file)
     drafter_args = role_args(args, "drafter")
@@ -994,15 +1265,27 @@ def cmd_run(args):
         print("[warn] author == reviewer; independent review is weakened", file=sys.stderr)
         if risk_tier in ("high", "production", "quant"):
             independence = "BLOCK"
-    print("[1/2] Agent A drafting…", file=sys.stderr)
+    print("[1/3] Agent A drafting…", file=sys.stderr)
     draft = llm(AUTHOR_SYSTEM, f"Draft from this brief:\n\n{brief}", drafter_args)
     if draft is None:
         return
     if args.out:
         Path(args.out).write_text(draft, encoding="utf-8")
-    print("[2/2] Agent B (Skeptic) reviewing…", file=sys.stderr)
+
+    # Phase-0 L0 on the draft before L1 skeptic.
+    print("[2/3] Brooks-Lint (L0)…", file=sys.stderr)
+    # Brooks uses reviewer identity (same endpoint as L1).
+    for attr in ("skip_brooks", "skip_brooks_reason", "dry_run", "strict_known_debt_trigger"):
+        if hasattr(args, attr):
+            setattr(reviewer_args, attr, getattr(args, attr))
+    brooks_block, brooks_findings = run_brooks_lint(
+        draft, reviewer_args, label="CURRENT DRAFT")
+    brooks_summary = format_brooks_summary_for_skeptic(brooks_block, brooks_findings)
+
+    print("[3/3] Agent B (Skeptic) reviewing…", file=sys.stderr)
+    skeptic_user = brooks_summary + "\n\n" + review_prompt(("CURRENT DRAFT", draft))
     result = llm(
-        SKEPTIC_SYSTEM, review_prompt(("CURRENT DRAFT", draft)),
+        SKEPTIC_SYSTEM, skeptic_user,
         reviewer_args, return_meta=True,
     )
     if result is None:
@@ -1023,6 +1306,8 @@ def cmd_run(args):
         claim_text=getattr(args, "claim_text", "") or "",
         completion_meta=completion_meta,
         independence_verdict=independence,
+        brooks_lint=brooks_block,
+        extra_findings=brooks_findings,
     )
     print(audit)
     if decision.get("verdict_override"):
@@ -1030,7 +1315,8 @@ def cmd_run(args):
     print(
         f"\n=== Verdict: {decision['effective_verdict']} "
         f"(ceiling={decision.get('authority_ceiling')}, "
-        f"capital={decision.get('capital_authority')}) ===",
+        f"capital={decision.get('capital_authority')}, "
+        f"l0={brooks_block.get('status')}) ===",
         file=sys.stderr,
     )
     sys.exit(exit_code_for_decision(decision))
@@ -1438,6 +1724,8 @@ def main():
     pr.add_argument("--against", metavar="GIT_REF",
                     help="also flag unexplained reversals vs this earlier version (e.g. HEAD~1)")
     pr.add_argument("--dry-run", action="store_true")
+    pr.add_argument("--skip-brooks", action="store_true",
+                    help="skip Brooks-Lint L0 (diagnostic only; cannot PASS claim-bearing review)")
     pr.add_argument("--risk-tier", default="normal",
                     choices=["normal", "high", "production", "quant"],
                     help="authority risk tier (high/production/quant fail-closed)")
@@ -1451,6 +1739,17 @@ def main():
     pd.add_argument("-o", "--out")
     add_api_flags(pd)
     pd.set_defaults(func=cmd_draft)
+
+    pb = sub.add_parser(
+        "brooks",
+        help="Brooks-Lint L0 only (structural; JSON receipt, not full claim authority)",
+    )
+    pb.add_argument("file", help="file path, or - for stdin")
+    pb.add_argument("--dry-run", action="store_true")
+    pb.add_argument("--skip-brooks", action="store_true",
+                    help="emit skipped receipt without calling a model")
+    add_api_flags(pb)
+    pb.set_defaults(func=cmd_brooks)
 
     prun = sub.add_parser("run", help="full loop: draft then review")
     prun.add_argument("file", help="file path, or - for stdin")
@@ -1468,6 +1767,8 @@ def main():
     prun.add_argument("--claim-scope", default="document_logic")
     prun.add_argument("--strict-known-debt-trigger", action=argparse.BooleanOptionalAction,
                       default=True)
+    prun.add_argument("--skip-brooks", action="store_true",
+                      help="skip Brooks-Lint L0 (diagnostic only; cannot PASS claim-bearing run)")
     prun.set_defaults(func=cmd_run)
 
     pi = sub.add_parser("init", help="write a .falsify config template")

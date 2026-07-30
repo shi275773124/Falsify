@@ -35,6 +35,7 @@ CLAIM_BEARING_FUNCS = frozenset({
 ALLOWED_BARE_EXIT_FUNCS = frozenset({
     "die",
     "cmd_lint",  # L2 only; must not print PASS/SHIPPABLE
+    "cmd_brooks",  # L0-only structural JSON; not claim-bearing authority
     "cmd_draft",
     "cmd_init",
     "main",

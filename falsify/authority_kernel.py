@@ -316,6 +316,7 @@ def required_obligations_for(
 ) -> list[str]:
     tier = (risk_tier or "normal").lower()
     if entry == "gate" and tier in ("normal", "auto"):
+        # Pure L2 markdown lint path — no Brooks-Lint (L0) obligation.
         return ["l2_lint_clean", "authority_ceiling_declared"]
 
     obs = [
@@ -324,6 +325,9 @@ def required_obligations_for(
         "no_must_fix",
         "audit_coverage_proof",
     ]
+    # Claim-bearing review/run must prove Brooks-Lint (L0) ran (or scope-refused).
+    if entry in ("review", "run"):
+        obs.insert(0, "l0_brooks_ran")
     if tier in HIGH_RISK_TIERS or authority_ceiling in (
         "QUANT_PROMOTION",
         "PRODUCTION_LIVE",
@@ -465,6 +469,11 @@ def finalize_authority(
     missing = [o for o in req if o not in sat]
 
     if missing and (high or ceiling in ("QUANT_PROMOTION", "PRODUCTION_LIVE")):
+        effective = "BLOCK"
+        if not verdict_override:
+            verdict_override = "missing_obligations: " + ",".join(missing)
+    elif missing and entry in ("review", "run") and "l0_brooks_ran" in missing:
+        # Without L0 proof, claim-bearing review/run cannot PASS / PASS_WITH_DEBT.
         effective = "BLOCK"
         if not verdict_override:
             verdict_override = "missing_obligations: " + ",".join(missing)
