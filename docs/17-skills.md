@@ -8,10 +8,14 @@ Workflow packs are local, repeatable review instructions?not hosted services and
 
 | Pack | Use it when |
 |---|---|
+| [Brooks-Lint (L0 Framework)](../skills/falsify-brooks-lint/) | Structural decay / auditability review before adversarial attack; product L0 layer. See [Brooks-Lint](./09-brooks-lint.md). |
 | [Deployment Claim Review](../skills/falsify-deployment-claim/) | A deploy sounds successful but you need evidence of the target state. |
 | [AI PR Review](../skills/falsify-ai-pr-review/) | A human or agent PR claims work is complete. |
 | [Research Report Audit](../skills/falsify-research-report/) | A memo may rely on stale, cherry-picked, or unsupported evidence. |
 | [Agent Safety Check](../skills/falsify-agent-safety-check/) | An agent says it finished a consequential task. |
+| [Live Production Gate](../skills/falsify-live-production-gate/) | Live/cron restore or production-shaped claims (pattern export). |
+
+**Note:** Installing the Brooks-Lint pack is not Claiming Falsify. Claim-bearing authority still exits through `python -m falsify review` (default L0) or `python -m falsify brooks`. `falsify lint` is a markdown tag/blocker check only — not Brooks-Lint.
 
 ## Install in Claude Code
 

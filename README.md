@@ -94,14 +94,18 @@ Falsify forces the review to bottom out in raw artifacts: code, diffs, command o
 ## The framework
 
 ```text
-Falsify = Adversarial Review + Framework review + Cutline
+Falsify = L0 Brooks-Lint (Framework) + L1 Adversarial Review + Cutline
 ```
+
+Public gate loop: **Frame → L0 Brooks-Lint → Attack → Recompute → Cutline → Receipt** (receipt must include a `brooks_lint` proof block). Details: [Architecture](./docs/01-architecture.md), [Brooks-Lint](./docs/09-brooks-lint.md).
 
 | Layer | Plain language | What it catches | Output |
 |---|---|---|---|
-| Adversarial Review | red-teams "looks fine" | false truth, false risk, silent failure, stale data, fake acceptance, second-model agreement theater | tagged findings |
-| Framework (Brooks-Lint) | catches what will rot later | hidden state, implicit authority, duplicated control paths, brittle rollback, over-engineering | concrete review targets |
+| L0 Framework (Brooks-Lint) | catches what will rot later / weakens auditability | hidden state, implicit authority, duplicated control paths, brittle rollback, over-engineering | structural findings → Cutline |
+| L1 Adversarial Review | red-teams "looks fine" | false truth, false risk, silent failure, stale data, fake acceptance, second-model agreement theater | tagged findings |
 | Cutline / 风险裁刀 | Must Fix / Debt / Delete | every risk treated as P0, or real risk deleted as "simplicity" | Must Fix / Known Debt / Delete |
+
+Marketing may keep「框架审计」; the protocol name is **Brooks-Lint (L0)**. **`falsify lint` is not Brooks-Lint** — it is a markdown tag/blocker static check only.
 
 Final decision (every receipt carries `claim_scope` and `authority_ceiling`; OSS receipts are `EPISTEMIC_ONLY` with `capital_authority: NONE`):
 
@@ -164,10 +168,11 @@ python -m falsify demo
 
 # No Falsify API key. Live review uses your provider key (BYOK) or a logged-in agent CLI.
 
-# No API key: local tag/blocker lint.
+# No API key: local markdown tag/blocker lint (NOT Brooks-Lint / L0).
 python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
 # Real model-backed review through an OpenAI-compatible provider.
+# Default claim-bearing review runs L0 Brooks-Lint before adversarial attack.
 export DEEPSEEK_API_KEY=sk-...
 python -m falsify review report.md --provider deepseek
 
