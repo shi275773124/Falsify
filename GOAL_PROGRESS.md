@@ -3,7 +3,7 @@
 ## Baseline State
 
 - UTC start: 2026-06-27
-- Repository: `C:\Users\CHRIS\Documents\New project\Falsify`
+- Repository: `.`
 - Initial `git status --short`:
   - `?? assets/make-moments-card.py`
   - `?? assets/moments-wechat-v1.html`
@@ -94,10 +94,10 @@
 
 ## Screenshot Paths
 
-- `C:\Users\CHRIS\Documents\New project\Falsify\.verification-shots\mobile-360x800-v5.png`
-- `C:\Users\CHRIS\Documents\New project\Falsify\.verification-shots\mobile-390x844-v5.png`
-- `C:\Users\CHRIS\Documents\New project\Falsify\.verification-shots\tablet-768x1024-v5.png`
-- `C:\Users\CHRIS\Documents\New project\Falsify\.verification-shots\desktop-1440x1000-v5.png`
+- `.\.verification-shots\mobile-360x800-v5.png`
+- `.\.verification-shots\mobile-390x844-v5.png`
+- `.\.verification-shots\tablet-768x1024-v5.png`
+- `.\.verification-shots\desktop-1440x1000-v5.png`
 
 Regenerate: `py -3.12 scripts/capture-verification-shots.py --suffix v5 --lang zh`
 

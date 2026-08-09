@@ -1,0 +1,10 @@
+{
+  "vault_root": "..",
+  "allowlist": true,
+  "operator_pins": "live",
+  "explicit_vault_root": true,
+  "profile": "cheap",
+  "preflight_errors": [
+    "cheap profile is non-acceptance; D9 D10 D11 D12 cannot emit BACKTEST_PACK_CHECK_PASS or acceptance_eligible=true"
+  ]
+}

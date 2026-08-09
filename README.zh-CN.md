@@ -1,34 +1,40 @@
 # Falsify
 
-> **先审，再信。**
+**看起来绿了，还不够。**
 
-> **Open core：** 协议、CLI、模板与 JSON schema 为 [MIT](./LICENSE)。Team 版覆盖托管治理、报告留存与企业集成 — 不包含协议本身。详见 [Open Core 边界](./docs/12-open-core-boundary.md)。
+先审，再信；先证据，再放行。
 
-Falsify 是面向 AI 时代工作的**决策闸门（decision gate）**：用于代码、研究与生产决策的对抗式审查。
+两个痛点。三层白话。
 
-它强制让决策回到底层证据，并将风险切成 **Must Fix**、**Known Debt** 或 **Delete**。
+| 痛点 | Falsify 怎么做 |
+|------|----------------|
+| **AI 幻觉与假绿** — 日志绿了、另一个模型也同意，仍可能不安全 | **对抗审** — 专打「看起来没问题」 |
+| **长期腐烂 / 过度工程** — 隐状态、脆弱回滚、流程表演 | **框架审 + Cutline** — 专抓「以后会烂掉」；该改改、该记记、该删删 |
 
-Falsify 不是“另一个模型说看起来没问题”。它是一套协议，用来把可辩护的决策与自信噪音分开。
+```text
+对抗审   →  专打「看起来没问题」
+框架审   →  专抓「以后会烂掉」
+Cutline  →  该改改 / 该记记 / 该删删
+回执     →  PASS / PASS_WITH_DEBT / BLOCK
+```
 
-传统 code review / lint 能拦住很多问题，但仍主要在问：**「这个 diff 看起来对不对？」**  
-Falsify 在问：**「这个决策是否可辩护？」**
+> 只做审查签收，不自动部署、不下单。
 
-[English](./README.md) · [线上站点](https://falsify.zjdeng.xyz/) · [Getting Started](./docs/00-getting-started.zh-CN.md) · [Skills 安装](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[English](./README.md) · [线上站点](https://falsify.site/) · [Getting Started](./docs/00-getting-started.zh-CN.md) · [Skills 安装](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
-## 目录
+## 快速开始
 
-- [入口路径](#入口路径)
-- [Skills（4 个工作流）](#skills4-个工作流)
-- [文档](#文档)
-- [快速开始](#快速开始)
-
-## 入口路径
+```bash
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo
+```
 
 1. 在 [Claude Code 或 Cursor 安装 skill](./docs/17-skills.md) — 从 [`skills/`](./skills/) 复制文件夹（BYOK；无需 Falsify API key）。
-2. 用 `python falsify.py demo` 或 [首页工作台](https://falsify.zjdeng.xyz/#try) 跑样例审查。
-3. 当 PR 文档需要闸门时，安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md)。
+2. 安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md) — [一屏分享包](./docs/github-action-share-pack.md) · [假绿卡片](./examples/real-cases/SHARE-CARDS.md)。
+3. 可选打开[首页格式演示](https://falsify.site/#try) — 仅看回执形态，不是完整门禁能力。
 4. 在一个高风险产物上跑 Falsify，再决定是否放行。
-5. 工作流重复或 stakes 升高时，讨论 Audit Sprint 或 Design Partner pilot。
 
 ## Skills（4 个工作流）
 
@@ -43,10 +49,40 @@ v0 skills pack 把证据纪律封装为可重复签收工作流 — 不是提示
 
 **安装：** [Skills 指南（Claude Code / Cursor / BYOK）](./docs/17-skills.md) · [GitHub 浏览 `skills/`](https://github.com/shi275773124/Falsify/tree/main/skills)
 
+## Open core 与「声称做过 Falsify」
+
+| 表面 | 仓库/位置 | 开源？ | 角色 |
+|------|-----------|--------|------|
+| **本仓** | [Falsify](https://github.com/shi275773124/Falsify) | **MIT 子集** | 协议、入门 CLI、签收 packs、文档、站点、可选 quant |
+| **Agent skill 壳** | [falsify-skill](https://github.com/shi275773124/falsify-skill) | MIT 壳 | 安装入口 — **不含** Pro 生产脚本 |
+| **Pro 运行时** | 私有（操作机 skill 树） | **闭源** | 生产/量化强制闸门、事故抗体、live 接线 |
+| **对外版本** | `falsify/__init__.py` → `VERSION` | 公开 | 仅表示 OSS 产品版，不是 Pro skill 版 |
+
+> **Open core（不是全部开源）：** 协议、入门 CLI、模板与 JSON schema 为 [MIT](./LICENSE)。**生产强制、真金 fixture 库、私有运行时 skill 默认闭源（Pro）。** 详见 [Open Core 边界](./docs/12-open-core-boundary.md)、[Pro vs OSS](./docs/18-pro-vs-oss.md)、[ROOTFIX](./docs/ROOTFIX-architecture.md)。
+
+**声称做过 Falsify** = 跑过权威出口并保留命令与产物——不只是安装 skill。真金强制在 **Pro**，不在本 MIT 树。见 [skills/README.md](./skills/README.md)。
+
+## 交付状态（今天能拿到什么）
+
+LLM 负责攻击声明并签署边界内裁决；**authority adapter** 负责核对物理事实；**统一 kernel** 决定该裁决能否授权动作。每个交付物都标明状态——这里没有任何东西会把一次审查悄悄变成生产或付款闸门。
+
+| 交付物 | 状态 | 内容 |
+|---|---|---|
+| **Falsify Review** | **AVAILABLE · 开源** | 对抗式 LLM 审查，签发边界内的认知层裁决：CLI、本地 demo、JSON 裁决格式、GitHub Action 模板、文档、示例、入门 skills。 |
+| **Falsify Authority Gate** | **需要 ADAPTER** | 对真实权威路径执行可执行的证据检查；只有这样 `PASS` 才能承载动作。目前没有公开的 adapter——没有它，所有裁决只停留在认知层。 |
+| **Audit Sprint** | **AVAILABLE · 服务** | 针对一个高风险产物：声明清单、kill-shots、证据包，以及签署的裁决回执（[交付物模板](./templates/audit-sprint.md)）。 |
+| **Production / Quant Pro** | **DESIGN PARTNER · 私有** | 按具体权威路径集成（部署、数据、执行）。小规模试点，不自助开放。 |
+| **Team / Enterprise** | **TARGET · 未交付** | Dashboard、SSO、RBAC、留存、托管集成。路线图目标，不是已交付功能。 |
+
+License/商业边界：本仓含 MIT `LICENSE`。商业化工作流封装、托管集成、支持、私有部署路径，以及受控的 Falsify 品牌/认证标识，仍属商业边界事项。
+
 ## 文档
 
 - [Getting Started](./docs/00-getting-started.zh-CN.md)
 - [Skills 安装（Claude Code / Cursor）](./docs/17-skills.md)
+- [ROOTFIX 根治架构](./docs/ROOTFIX-architecture.md)
+- [版本轨](./docs/VERSIONING.md)
+- [裁决词统一](./docs/verdict-vocabulary.md)
 - [Brooks-Lint](./docs/09-brooks-lint.md)
 - [Adversarial Review](./docs/05-adversarial-review.md)
 - [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
@@ -76,16 +112,20 @@ Falsify 要求结论回到可检查证据：原始产物、代码 diff、命令�
 ## 三层框架
 
 ```text
-Falsify = Brooks-Lint + Adversarial Review + Cutline / 风险裁刀
+Falsify = L0 Brooks-Lint（框架审） + L1 对抗审 + Cutline
 ```
 
-| 层 | 发现什么 | 产出 |
-|---|---|---|
-| Brooks-Lint | hidden state、implicit authority、duplicated control paths、brittle rollback、unverifiable acceptance、AI summary 替代 raw evidence | 结构性审计目标 |
-| Adversarial Review | false truth、false risk、silent failure、stale data、permission drift、fake acceptance evidence、semantic verdict nudge、prompt-only audit theater、monitor failure laundering | 对抗式 findings |
-| Cutline / 风险裁刀 | 把所有风险都当 P0，或用“简化”删除真实风险 | Must Fix / Known Debt / Delete |
+公开门禁回路：**Frame → L0 Brooks-Lint → Attack → Recompute → Cutline → Receipt**（回执必须含 `brooks_lint` 证明块）。详见 [架构](./docs/01-architecture.zh-CN.md)、[Brooks-Lint](./docs/09-brooks-lint.md)。
 
-最终输出：
+| 层 | 白话 | 发现什么 | 产出 |
+|---|---|---|---|
+| L0 框架审（Brooks-Lint） | 专抓「以后会烂掉」/ 削弱可审计性 | hidden state、重复权威、脆弱回滚、过度工程 | 结构性 findings → Cutline |
+| L1 对抗审 | 专打「看起来没问题」 | false truth、false risk、假绿、第二个模型同意当证据 | 对抗式 findings |
+| Cutline / 风险裁刀 | 该改改，该记记，该删删 | 把所有风险都当 P0，或用「简化」删掉真实风险 | Must Fix / Known Debt / Delete |
+
+营销可继续用「框架审计」；协议名是 **Brooks-Lint（L0）**。**`falsify lint` 不是 Brooks-Lint**——它只是 markdown 标签/阻断器静态检查。
+
+最终输出（每张回执都带 `claim_scope` 与 `authority_ceiling`；开源回执为 `EPISTEMIC_ONLY`、`capital_authority: NONE`）：
 
 - `PASS`：证据成立，没有当前阻塞项。
 - `PASS_WITH_DEBT`：没有当前阻塞项，且每个 Known Debt 都有升级触发条件。
@@ -99,19 +139,19 @@ cd Falsify
 python -m pip install -e .[dev]
 
 # 无 API key：本地 fixture demo。
-python falsify.py demo
+python -m falsify demo
 
 # 无 Falsify API key。真审查走你的 provider key（BYOK）或已登录的 agent CLI。
 
-# 无 API key：本地 tag/blocker lint。
-python falsify.py lint examples/comparison-case-study/05-final-excerpt.md
+# 无 API key：本地 markdown 标签/阻断器 lint（不是 Brooks-Lint / L0）。
+python -m falsify lint examples/comparison-case-study/05-final-excerpt.md
 
-# 真实模型审计。
+# 真实模型审计。承载声明的 review 默认先跑 L0 Brooks-Lint，再跑对抗审。
 export DEEPSEEK_API_KEY=sk-...
-python falsify.py review report.md --provider deepseek
+python -m falsify review report.md --provider deepseek
 
 # 一个模型写，另一个模型审。
-python falsify.py run brief.md --drafter claude --reviewer deepseek
+python -m falsify run brief.md --drafter claude --reviewer deepseek
 ```
 
 本地网站：

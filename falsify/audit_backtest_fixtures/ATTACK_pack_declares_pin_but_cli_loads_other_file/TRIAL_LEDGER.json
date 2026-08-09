@@ -1,0 +1,7 @@
+{
+  "n_trials": 2,
+  "trials": [
+    "trials/trial_1.json",
+    "trials/trial_2.json"
+  ]
+}

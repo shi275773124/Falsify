@@ -216,8 +216,8 @@ are kept in the original audit's artifact directory. Numbers above are
 verbatim.
 
 If you want the full audit harness adapted to your strategy, see the
-[Falsify reviewer prompt templates](../../templates/prompts/) and the
-[main case library](../cases/README.md) for how to wire two adversarial
+[Falsify reviewer prompt templates](https://github.com/shi275773124/Falsify/tree/main/templates/prompts) and the
+[main case library](https://github.com/shi275773124/Falsify/tree/main/examples/cases) for how to wire two adversarial
 reviewers in your own workflow.
 
 > Bottom line: a single AI happily produced a "Sharpe 4 paper-candidate".

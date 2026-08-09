@@ -1,0 +1,6 @@
+{
+  "vault_root": "_forged_vault",
+  "allowlist": false,
+  "operator_pins": "none",
+  "explicit_vault_root": true
+}

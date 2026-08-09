@@ -108,7 +108,7 @@ See `templates/obsidian-git-settings.md` for the exact config snippet.
 
 Both agents need to read `AGENTS.md` at the start of every session. How depends on the agent:
 
-- **Hermes Agent**: drop `AGENTS.md` in the directory the agent reads at startup (typically `~/.hermes/profiles/<profile>/`)
+- **Hermes Agent**: drop `AGENTS.md` in the directory the agent reads at startup (typically your agent's profile directory)
 - **Claude Code**: `CLAUDE.md` in repo root works (Claude Code auto-loads)
 - **Cursor**: `.cursorrules` file in repo root
 - **Custom agent**: include `AGENTS.md` content in the system prompt

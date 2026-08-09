@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <title>Falsify — AI generates. Falsify questions.</title>
+  <meta name="description" content="AI can generate code. Falsify questions it before production — with evidence, not confidence. PASS / PASS_WITH_DEBT / BLOCK.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://falsify.site/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Falsify">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://falsify.site/">
+  <meta property="og:title" content="Falsify — AI generates. Falsify questions.">
+  <meta property="og:description" content="Evidence before conclusions. Confidence is not evidence. PASS / PASS_WITH_DEBT / BLOCK.">
+  <meta property="og:image" content="https://falsify.site/static/img/og-share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Falsify — AI generates. Falsify questions.">
+  <meta name="twitter:description" content="Evidence before conclusions. Confidence is not evidence.">
+  <meta name="twitter:image" content="https://falsify.site/static/img/og-share.png">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <script src="/assets/flow/i18n-boot.js"></script>
+  <link rel="stylesheet" href="/assets/flow/home.css?v=v2-deploy-20260724">
+  <script src="/assets/flow/home.js?v=v2-deploy-20260724" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="Falsify home">
+    <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#0B0B0F" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#635BFF"/></svg>
+    <span class="brand-wordmark">falsify.site</span>
+  </a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="site-nav" data-i18n="menuLabel">Menu</button>
+  <nav id="site-nav">
+    <a href="#how" data-i18n="navHow">How it works</a>
+    <a href="#proof" data-i18n="navProof">Real cases</a>
+    <a href="#delivery" data-i18n="navScenes">Scenes</a>
+    <a href="/docs/" data-lang-path="/docs/" data-i18n="navDocs">Docs</a>
+    <a href="#partner" data-i18n="navPartner">Partner</a>
+    <button class="lang" type="button">中文</button>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Screen 1: Brand claim + product demo -->
+  <section class="hero" id="top">
+    <div class="shell hero-inner">
+      <div class="hero-copy">
+        <h1 class="hero-title" data-i18n-html="heroTitle">AI generates.<br><em>falsify</em> questions.</h1>
+        <p class="hero-sub" data-i18n="heroSub">Before code reaches production, check for hallucination, hidden complexity, and long-term maintenance risk.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="heroPrimary">Start review</a>
+          <a class="button ghost" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer" data-i18n="heroSecondary">View on GitHub</a>
+        </div>
+        <p class="hero-brandline" data-i18n="heroBrandline">It does not decide for you. It makes decisions have evidence.</p>
+      </div>
+
+      <div class="product-stage" aria-label="Product demo: AI code to verdict to maintainable code">
+        <div class="stage-glow" aria-hidden="true"></div>
+        <div class="stage-window">
+          <div class="stage-chrome" aria-hidden="true">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="stage-chrome-label" data-i18n="stageLabel">falsify review · live path</span>
+          </div>
+          <div class="stage-body">
+            <div class="stage-pane is-raw">
+              <p class="stage-pane-label" data-i18n="stageRaw">AI raw output</p>
+              <pre class="stage-code"><code><span class="cm">// “looks fine” — 9 deps, no proof</span>
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="fn">constructor</span>(repo, logger, cache,
+    bus, metrics, retry, breaker,
+    validator, config) { <span class="cm">/* … */</span> }
+  <span class="kw">async</span> <span class="fn">getUser</span>(id) {
+    <span class="cm">// intent buried under ceremony</span>
+  }
+}</code></pre>
+            </div>
+            <div class="stage-flow" aria-hidden="true">
+              <span class="flow-label" data-i18n="stageReview">review · evidence · cut</span>
+              <span class="flow-blade"></span>
+              <span class="flow-verdicts">
+                <span class="v-chip is-pass">PASS</span>
+                <span class="v-chip is-debt">PASS_WITH_DEBT</span>
+                <span class="v-chip is-block">BLOCK</span>
+              </span>
+            </div>
+            <div class="stage-pane is-clean">
+              <p class="stage-pane-label" data-i18n="stageClean">Maintainable result</p>
+              <pre class="stage-code"><code><span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="fn">constructor</span>(
+    <span class="kw">private</span> repo: UserRepo
+  ) {}
+
+  <span class="kw">async</span> <span class="fn">getUser</span>(id: <span class="type">string</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.repo.find(id)
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 2: Quiet thesis -->
+  <section class="thesis" id="thesis" aria-labelledby="thesis-line">
+    <div class="shell thesis-inner">
+      <p class="thesis-kicker" data-i18n="thesisKicker">Confidence is not evidence.</p>
+      <h2 id="thesis-line" class="thesis-line" data-i18n-html="thesisLine">AI can generate code.<br>It cannot prove the code is reliable.</h2>
+      <p class="thesis-follow" data-i18n="thesisFollow">先证据，后结论。</p>
+    </div>
+  </section>
+
+  <!-- Screen 3: How it works — visual climax -->
+  <section class="how" id="how">
+    <div class="shell">
+      <header class="how-head">
+        <p class="section-kicker" data-i18n="howKicker">How it works</p>
+        <h2 class="section-title" data-i18n="howTitle">Three layers. One question: where is the evidence?</h2>
+      </header>
+      <ol class="how-chain" data-illuminate>
+        <li class="how-step" data-step="1">
+          <span class="how-num">01</span>
+          <div>
+            <h3 data-i18n="how1Title">Adversarial</h3>
+            <p data-i18n="how1Text">Challenge every “looks fine.”</p>
+          </div>
+        </li>
+        <li class="how-connector" aria-hidden="true"><span class="chain-line"></span></li>
+        <li class="how-step" data-step="2">
+          <span class="how-num">02</span>
+          <div>
+            <h3 data-i18n="how2Title">Framework</h3>
+            <p data-i18n="how2Text">Find structure that will rot later.</p>
+          </div>
+        </li>
+        <li class="how-connector" aria-hidden="true"><span class="chain-line"></span></li>
+        <li class="how-step" data-step="3">
+          <span class="how-num">03</span>
+          <div>
+            <h3 data-i18n="how3Title">Cutline</h3>
+            <p data-i18n="how3Text">Decide: fix, record debt, or delete.</p>
+          </div>
+        </li>
+      </ol>
+      <div class="verdict-climax" aria-label="Verdict states">
+        <p class="verdict-climax-kicker" data-i18n="verdictKicker">The receipt</p>
+        <div class="verdict-brand">
+          <article class="verdict-asset is-pass">
+            <h3 class="verdict-word"><span class="verdict-accent">PASS</span></h3>
+            <p data-i18n="vPass">Evidence sufficient</p>
+          </article>
+          <article class="verdict-asset is-debt">
+            <h3 class="verdict-word"><span class="verdict-accent">PASS<br>WITH DEBT</span></h3>
+            <p data-i18n="vDebt">May continue — debt recorded</p>
+          </article>
+          <article class="verdict-asset is-block">
+            <h3 class="verdict-word"><span class="verdict-accent">BLOCK</span></h3>
+            <p data-i18n="vBlock">Not allowed to the next stage</p>
+          </article>
+        </div>
+      </div>
+      <p class="how-boundary" data-i18n="howBoundary">Sign-off only. Does not deploy or trade for you. PASS / PASS_WITH_DEBT / BLOCK.</p>
+    </div>
+  </section>
+
+  <!-- Screen 4: Real cases with punch -->
+  <section class="proof" id="proof">
+    <div class="shell">
+      <header class="proof-head">
+        <p class="section-kicker" data-i18n="proofKicker">Evidence</p>
+        <h2 class="section-title proof-brand" data-i18n="proofTitle">Evidence first. Framework later.</h2>
+        <p class="section-lead" data-i18n="proofLead">Each case looked green on the surface. Each failed when claim met evidence.</p>
+      </header>
+      <div class="case-board">
+        <article class="case-card case-featured">
+          <h3 data-i18n="case1Title">Today’s signal, weeks-old inputs</h3>
+          <dl>
+            <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case1Surface">Cron OK · today’s timestamp · verify PASS</dd></div>
+            <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case1Evidence">Underlying panel CSVs had stopped updating weeks earlier</dd></div>
+            <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-block">BLOCK</span></dd></div>
+          </dl>
+        </article>
+        <div class="case-more" id="case-more" hidden>
+          <article class="case-card">
+            <h3 data-i18n="case2Title">Tests all green — model still wrong</h3>
+            <dl>
+              <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case2Surface">Saved returns passed DSR, PBO, permutation</dd></div>
+              <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case2Evidence">Missing-data policy had already reshaped the evidence surface</dd></div>
+              <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-block">BLOCK</span></dd></div>
+            </dl>
+          </article>
+          <article class="case-card">
+            <h3 data-i18n="case3Title">Code updated — production still old</h3>
+            <dl>
+              <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case3Surface">Vault mirror contained the fix</dd></div>
+              <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case3Evidence">Deploy record and live runtime path disagreed</dd></div>
+              <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-debt">PASS_WITH_DEBT</span></dd></div>
+            </dl>
+          </article>
+        </div>
+        <button class="case-toggle" type="button" id="case-toggle" aria-expanded="false" aria-controls="case-more">
+          <span data-i18n="caseViewAll">View all 3 cases</span>
+          <span class="case-toggle-arrow" aria-hidden="true">↓</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 5: Scenarios (not pricing) -->
+  <section class="scenes" id="delivery">
+    <div class="shell">
+      <header class="scenes-head">
+        <p class="section-kicker" data-i18n="scenesKicker">Where it lands</p>
+        <h2 class="section-title" data-i18n="scenesTitle">Scenes you remember — not a package catalog.</h2>
+      </header>
+      <div class="delivery-list scene-grid">
+        <article class="scene-card">
+          <p class="scene-tag status-badge is-available" data-i18n="d1Status">AVAILABLE · OSS</p>
+          <h3 data-i18n="d1Name">Falsify Review</h3>
+          <p data-i18n="d1Text">Locally question every “looks fine” — terminal, review, receipt.</p>
+        </article>
+        <article class="scene-card">
+          <p class="scene-tag status-badge is-available" data-i18n="d2Status">AVAILABLE · OSS</p>
+          <h3 data-i18n="d2Name">Authority Gate</h3>
+          <p data-i18n="d2Text">Automation continues only when evidence is sufficient — gate, sign, chain.</p>
+        </article>
+        <article class="scene-card">
+          <p class="scene-tag status-badge is-roadmap" data-i18n="d3Status">IN THE WORKS</p>
+          <h3 data-i18n="d3Name">Audit Sprint</h3>
+          <p data-i18n="d3Text">High-risk work does not ship on feeling — pack, kill-shot, verdict.</p>
+        </article>
+        <article class="scene-card">
+          <p class="scene-tag status-badge is-roadmap" data-i18n="d4Status">ON THE ROADMAP</p>
+          <h3 data-i18n="d4Name">Production / Quant Pro</h3>
+          <p data-i18n="d4Text">Wire into systems where a wrong pass costs real money.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="close" id="close">
+    <div class="shell close-inner">
+      <h2 class="close-title" data-i18n-html="closeTitle">Open source.<br>Review first.</h2>
+      <p class="close-lead" data-i18n="closeLead">Install the GitHub Action. Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="closePrimary">Install GitHub Action</a>
+        <a class="button ghost" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="partner" id="partner" aria-labelledby="partner-title">
+    <div class="shell partner-inner">
+      <p class="section-kicker" id="partner-title" data-i18n="contactKicker">Partner with the founder</p>
+      <p class="partner-name">Chris Shi</p>
+      <p class="partner-lead" data-i18n="contactLead">Design partnerships, integrations, research — reach Chris directly.</p>
+      <div class="partner-links">
+        <a class="button primary" href="https://x.com/aishikejian" target="_blank" rel="noopener noreferrer" data-i18n="contactTwitter">X / Twitter</a>
+        <a class="button ghost" href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-i18n="contactEmail">Email</a>
+        <a class="button ghost" href="https://github.com/shi275773124/Falsify" target="_blank" rel="noopener noreferrer" data-i18n="contactGithub">GitHub</a>
+      </div>
+      <p class="partner-email"><span data-i18n="contactEmailLabel">Email</span>: <a href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-email-text="1">shi275773124@gmail.com</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="shell footer-inner">
+    <a class="brand" href="#top" aria-label="Falsify home">
+      <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#0B0B0F" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#635BFF"/></svg>
+      <span class="brand-wordmark">Falsify</span>
+    </a>
+    <p data-i18n="footer">Sign-off only — does not deploy or trade for you.</p>
+    <div class="footer-links">
+      <a href="/docs/" data-lang-path="/docs/" data-i18n="footerDocs">Docs</a>
+      <a href="#partner" data-i18n="footerContact">Partner</a>
+      <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
+      <a href="/examples/sample-block-report.json" data-i18n="footerSample">Sample receipt</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

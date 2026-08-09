@@ -108,7 +108,7 @@ git config user.email "you@yourdomain.com"
 
 两个 agent 每次开会话都要读 `AGENTS.md`。怎么读看 agent：
 
-- **Hermes Agent**：把 `AGENTS.md` 放进 agent 启动时读的目录（通常 `~/.hermes/profiles/<profile>/`）
+- **Hermes Agent**：把 `AGENTS.md` 放进 agent 启动时读的目录（通常你的 agent profile 目录）
 - **Claude Code**：repo 根目录 `CLAUDE.md`（Claude Code 自动加载）
 - **Cursor**：repo 根目录 `.cursorrules`
 - **自研 agent**：把 `AGENTS.md` 内容塞进 system prompt

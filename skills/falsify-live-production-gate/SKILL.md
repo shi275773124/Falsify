@@ -109,6 +109,18 @@ Anonymized case study: [`examples/real-cases/02-derived-freshness-stale-panel.md
 - Publish input provenance manifest next to signal/target artifacts.
 - Register metric replacement as strategy change with diff artifact before faithful-restore claims.
 
+## Authority exit (Claiming Falsify)
+
+This pack defines **what to attack**. It does **not** replace the product CLI.
+
+Claiming Falsify requires running an authority exit and keeping the artifact:
+
+- `python -m falsify review …` / `python -m falsify demo`
+- Quant (optional): `python -m falsify.quant_gate …` after `pip install falsify[quant]`
+- CI: templates under repo `templates/`
+
+See `skills/README.md` and `docs/ROOTFIX-architecture.md`.
+
 ## Commercial Upgrade Path
 
 Move to Audit Sprint when one live executor controls material capital or customer-facing automation SLA.

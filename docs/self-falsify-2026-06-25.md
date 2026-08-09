@@ -97,7 +97,7 @@
 | "Neutral referee" / 消除偏差 | **Not in public repo marketing** (vault-only in `创作/Falsify 发布物料.md`). No 20.5k★ star count in repo. |
 | Open-core feasible | **Honest** — Known Debt in `docs/12-open-core-boundary.md`: analogy only; upgrade trigger on first paying customer. |
 | CLI edits drafts | `falsify run` drafts then reviews — **not** "CLI无改稿"; repo does not claim CLI is read-only. |
-| breakout20 / Sharpe evidence | `examples/real-cases/01-fictional-horizon-quant-audit.md` exists; homepage now links explicitly. |
+| Sharpe evidence | `examples/real-cases/01-fictional-horizon-quant-audit.md` exists; homepage now links explicitly. |
 
 ### Cutline — Repo
 
@@ -137,7 +137,7 @@
 
 ```powershell
 # Branch tests
-cd "C:\Users\CHRIS\Documents\New project\Falsify"
+cd /path/to/Falsify
 py -3.11 -m pytest tests/ -q
 # → 50 passed in 0.96s
 

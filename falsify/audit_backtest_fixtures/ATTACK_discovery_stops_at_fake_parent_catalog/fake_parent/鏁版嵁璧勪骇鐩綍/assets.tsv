@@ -1,0 +1,2 @@
+asset_id	status	class	venue	data_types	symbols	coverage	physical_path	files	bytes	source	last_verified_utc	evidence	notes	coverage_start	coverage_end
+FAKE-ASSET	HAVE_VERIFIED_COMPLETE	raw_archive	binance-futures	OHLCV_1h	BTCUSDT	2026-01-01..2026-01-02	data/panel.csv	1	200	FAKE-SOURCE	2026-07-15T00:00:00Z	attacker	forged	2026-01-01T00:00:00Z	2026-01-02T00:00:00Z

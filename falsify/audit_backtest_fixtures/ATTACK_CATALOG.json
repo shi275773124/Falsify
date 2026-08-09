@@ -1,0 +1,810 @@
+{
+  "catalog_id": "falsify.audit_backtest.attack_catalog.v0.5-design-rem3-cheap-non-acceptance",
+  "command": "falsify audit-backtest",
+  "profiles": [
+    "cheap",
+    "strict",
+    "data-only"
+  ],
+  "acceptance_profiles": [
+    "strict",
+    "data-only"
+  ],
+  "non_acceptance_profiles": [
+    "cheap",
+    "catalog-diag"
+  ],
+  "generated_at_utc": "2026-07-15T22:55:00Z",
+  "status": "PHASE0_DESIGN_REM3_CHEAP_NON_ACCEPTANCE / NO_RUNTIME_CHANGE / NOT_CLI_IMPLEMENTATION / FIXTURES_SKETCH_ONLY",
+  "authority": false,
+  "purpose": "Machine-listed negative suite that future `falsify audit-backtest --strict` MUST execute. Red-light-first: any ACCEPT on an attack fixture = suite FAIL. Focus: wrong data / silent corruption — primary kill surface. rem3: cheap cannot emit unqualified BACKTEST_PACK_CHECK_PASS.",
+  "design_gate": "AUDIT_BACKTEST_DESIGN_GATE_A",
+  "implementation_gate": "AUDIT_BACKTEST_IMPLEMENTATION_GATE_B",
+  "reference_contract": "FALSIFY_AUDIT_BACKTEST_CLI_CONTRACT.md",
+  "data_authority": "FALSIFY_AUDIT_BACKTEST_DATA_AUTHORITY.md",
+  "fixture_status": "sketch — binary fixtures materialize at Gate B; each entry is implementable without invention",
+  "non_claims": [
+    "not_gate_a_pass",
+    "not_runtime_cli",
+    "not_deploy_auth",
+    "not_strategy_is_good",
+    "not_live_or_capital_pass",
+    "catalog_is_design_input_only",
+    "not_activation_package_reopen"
+  ],
+  "valid_fixtures": [
+    {
+      "id": "VALID_minimal_registered_pack",
+      "path": "fixtures/VALID_minimal_registered_pack/",
+      "expected": "ACCEPT",
+      "notes": "Honest minimal pack: registered asset_id in assets.tsv sketch, pin matches, coverage ⊆ registered, fee model present if net claim, inventory hash closed. Not strategy authority."
+    }
+  ],
+  "attack_fixtures": [
+    {
+      "id": "ATTACK_unregistered_asset_claimed_present",
+      "path": "fixtures/ATTACK_unregistered_asset_claimed_present/",
+      "expected": "REJECT",
+      "family": "registration",
+      "check_ids": [
+        "D1"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "unregistered_unknown_promoted",
+      "data_lie": true,
+      "fixture_sketch": {
+        "DATA_BINDINGS.json": {
+          "asset_id": "FAKE-VENUE-NEVER-REGISTERED-V1",
+          "physical_path": "pack_local/data.parquet",
+          "status_claim": "HAVE_VERIFIED_COMPLETE"
+        },
+        "assets_tsv_row": "ABSENT"
+      },
+      "must_surface_errors_matching": [
+        "UNREGISTERED_UNKNOWN",
+        "asset_id",
+        "assets.tsv"
+      ]
+    },
+    {
+      "id": "ATTACK_path_exists_wrong_venue_proxy",
+      "path": "fixtures/ATTACK_path_exists_wrong_venue_proxy/",
+      "expected": "REJECT",
+      "family": "venue_identity",
+      "check_ids": [
+        "D2",
+        "D10"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "binance_as_lighter_class",
+      "data_lie": true,
+      "fixture_sketch": {
+        "claim_venue": "lighter",
+        "catalog_venue": "binance-usdm",
+        "physical_path_exists": true,
+        "notes": "Files real; venue/class mismatch — proxy data sold as target venue"
+      },
+      "must_surface_errors_matching": [
+        "venue",
+        "mismatch",
+        "proxy"
+      ]
+    },
+    {
+      "id": "ATTACK_coverage_hole_nan_drop_theater",
+      "path": "fixtures/ATTACK_coverage_hole_nan_drop_theater/",
+      "expected": "REJECT",
+      "family": "coverage_gaps",
+      "check_ids": [
+        "D3",
+        "D6"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "silent_dropna_over_holes",
+      "data_lie": true,
+      "fixture_sketch": {
+        "claimed_window": "2026-01-01/2026-03-31 continuous",
+        "actual": "7-day hole mid-window",
+        "policy": "dropna without gap ledger",
+        "claim_continuous_history": true
+      },
+      "must_surface_errors_matching": [
+        "gap",
+        "missing",
+        "continuous",
+        "dropna"
+      ]
+    },
+    {
+      "id": "ATTACK_timestamp_tz_shift_or_bar_plus_one",
+      "path": "fixtures/ATTACK_timestamp_tz_shift_or_bar_plus_one/",
+      "expected": "REJECT",
+      "family": "alignment_lookahead",
+      "check_ids": [
+        "D5",
+        "D7"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "tz_or_bar_shift_lookahead",
+      "data_lie": true,
+      "fixture_sketch": {
+        "panel_a_tz": "UTC",
+        "panel_b_tz": "UTC+8 labeled as UTC",
+        "or": "signal join only aligns at lag +1 bar while claim asserts lag 0 contemporaneous"
+      },
+      "must_surface_errors_matching": [
+        "timezone",
+        "bar",
+        "shift",
+        "look-ahead"
+      ]
+    },
+    {
+      "id": "ATTACK_survivorship_universe",
+      "path": "fixtures/ATTACK_survivorship_universe/",
+      "expected": "REJECT",
+      "family": "universe",
+      "check_ids": [
+        "D4"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "survivorship_bias_universe",
+      "data_lie": true,
+      "fixture_sketch": {
+        "universe": "symbols alive only at end of window",
+        "claim_window": "includes pre-listing dates",
+        "pit_membership_column": false
+      },
+      "must_surface_errors_matching": [
+        "survivorship",
+        "listing",
+        "universe",
+        "PIT"
+      ]
+    },
+    {
+      "id": "ATTACK_restated_ohlc_as_pit",
+      "path": "fixtures/ATTACK_restated_ohlc_as_pit/",
+      "expected": "REJECT",
+      "family": "pit_vs_restated",
+      "check_ids": [
+        "D9",
+        "D7"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "restated_sold_as_point_in_time",
+      "data_lie": true,
+      "fixture_sketch": {
+        "claim": "point-in-time OHLC",
+        "data": "restated revision without asof/revision_id",
+        "pit_markers": "absent"
+      },
+      "must_surface_errors_matching": [
+        "point-in-time",
+        "restated",
+        "asof",
+        "revision"
+      ]
+    },
+    {
+      "id": "ATTACK_fee_zero_theater_on_net_claim",
+      "path": "fixtures/ATTACK_fee_zero_theater_on_net_claim/",
+      "expected": "REJECT",
+      "family": "costs",
+      "check_ids": [
+        "D8"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "fee_zero_net_theater",
+      "data_lie": true,
+      "fixture_sketch": {
+        "claim_metrics": "net_sharpe / net_pnl",
+        "fee_rate": 0,
+        "venue_fee_free_declaration": false,
+        "slippage_model": "absent"
+      },
+      "must_surface_errors_matching": [
+        "fee",
+        "net",
+        "0",
+        "slippage"
+      ]
+    },
+    {
+      "id": "ATTACK_trial_count_undercount",
+      "path": "fixtures/ATTACK_trial_count_undercount/",
+      "expected": "REJECT",
+      "family": "multiple_testing",
+      "check_ids": [
+        "D11"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "n_trials_undercount",
+      "data_lie": true,
+      "fixture_sketch": {
+        "claim_n_trials": 1,
+        "pack_contains": "12 parameter RESULT shards / grid files",
+        "claim_language": "multiplicity-adjusted robust"
+      },
+      "must_surface_errors_matching": [
+        "n_trials",
+        "trial",
+        "undercount",
+        "multiple"
+      ]
+    },
+    {
+      "id": "ATTACK_inventory_hash_drift_after_author_pass",
+      "path": "fixtures/ATTACK_inventory_hash_drift_after_author_pass/",
+      "expected": "REJECT",
+      "family": "integrity_drift",
+      "check_ids": [
+        "D0",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "post_pass_inventory_drift",
+      "data_lie": true,
+      "fixture_sketch": {
+        "stored_receipt": "AUTHOR_PASS bound to inventory_sha A",
+        "live_files": "mutated → inventory_sha B",
+        "claim": "still cites old PASS"
+      },
+      "must_surface_errors_matching": [
+        "inventory",
+        "drift",
+        "sha256",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "ATTACK_selftest_as_acceptance",
+      "path": "fixtures/ATTACK_selftest_as_acceptance/",
+      "expected": "REJECT",
+      "family": "authority_ceiling",
+      "check_ids": [
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "author_selftest_equals_pack_pass",
+      "data_lie": false,
+      "authority_lie": true,
+      "fixture_sketch": {
+        "pack_verdict": "BACKTEST_PACK_CHECK_PASS",
+        "sole_evidence": "AUTHOR_SELFTEST_PASS.json",
+        "independent_checks": "not run / empty attack suite"
+      },
+      "must_surface_errors_matching": [
+        "SELFTEST",
+        "authority",
+        "acceptance",
+        "independent"
+      ]
+    },
+    {
+      "id": "ATTACK_freeze_qa_promoted_full_archive",
+      "path": "fixtures/ATTACK_freeze_qa_promoted_full_archive/",
+      "expected": "REJECT",
+      "family": "coverage_overclaim",
+      "check_ids": [
+        "D3",
+        "D1"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "p0_qa_slice_as_full_have",
+      "data_lie": true,
+      "fixture_sketch": {
+        "evidence": "90d freeze P0_QA_PASS class",
+        "claim": "HAVE_VERIFIED_COMPLETE full multi-year continuous",
+        "catalog_note": "freeze QA ≠ full archive without separate completeness evidence"
+      },
+      "must_surface_errors_matching": [
+        "freeze",
+        "QA",
+        "full",
+        "HAVE_VERIFIED_COMPLETE"
+      ]
+    },
+    {
+      "id": "ATTACK_locator_only_as_have",
+      "path": "fixtures/ATTACK_locator_only_as_have/",
+      "expected": "REJECT",
+      "family": "registration_status",
+      "check_ids": [
+        "D1",
+        "D2"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "locator_only_promoted_have",
+      "data_lie": true,
+      "fixture_sketch": {
+        "assets_tsv_status": "LOCATOR_ONLY_NO_DATA",
+        "claim": "backtest on historical L2 raw",
+        "physical_data_files": "absent or empty shell"
+      },
+      "must_surface_errors_matching": [
+        "LOCATOR_ONLY",
+        "HAVE",
+        "no_data"
+      ]
+    },
+    {
+      "id": "ATTACK_forward_fill_across_calendar_holes",
+      "path": "fixtures/ATTACK_forward_fill_across_calendar_holes/",
+      "expected": "REJECT",
+      "family": "coverage_gaps",
+      "check_ids": [
+        "D6"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "ffill_theater",
+      "data_lie": true,
+      "fixture_sketch": {
+        "holes": "multi-hour collector gaps",
+        "policy": "ffill without max_ffill cap / without synthetic marker",
+        "claim": "continuous_history=true"
+      },
+      "must_surface_errors_matching": [
+        "ffill",
+        "forward-fill",
+        "hole",
+        "synthetic"
+      ]
+    },
+    {
+      "id": "ATTACK_gross_labeled_as_net",
+      "path": "fixtures/ATTACK_gross_labeled_as_net/",
+      "expected": "REJECT",
+      "family": "costs",
+      "check_ids": [
+        "D8"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "gross_as_net_relabel",
+      "data_lie": true,
+      "fixture_sketch": {
+        "metrics_field": "net_pnl",
+        "computation": "identical to gross",
+        "fee_model": "missing",
+        "gross_only_flag": false
+      },
+      "must_surface_errors_matching": [
+        "gross",
+        "net",
+        "fee_model"
+      ]
+    },
+    {
+      "id": "ATTACK_broken_provenance_chain",
+      "path": "fixtures/ATTACK_broken_provenance_chain/",
+      "expected": "REJECT",
+      "family": "provenance",
+      "check_ids": [
+        "D10"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "source_to_pack_chain_break",
+      "data_lie": true,
+      "fixture_sketch": {
+        "source_id": "missing from sources.tsv",
+        "or": "archive path not matching DATA_BINDINGS pin",
+        "folder_name_only": true
+      },
+      "must_surface_errors_matching": [
+        "provenance",
+        "source_id",
+        "sources.tsv",
+        "chain"
+      ]
+    },
+    {
+      "id": "ATTACK_pack_local_fake_catalog",
+      "path": "fixtures/ATTACK_pack_local_fake_catalog/",
+      "expected": "REJECT",
+      "family": "registration",
+      "check_ids": [
+        "D1",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "pack_ships_substitute_assets_tsv",
+      "data_lie": true,
+      "fixture_sketch": {
+        "pack_contains": "assets.tsv with fake HAVE_VERIFIED_COMPLETE for unregistered id",
+        "vault_assets_tsv": "row ABSENT",
+        "claim": "PASS via pack-local catalog",
+        "must_fail_reason": "D1 resolves vault catalog only; pack-local catalog cannot green-light"
+      },
+      "must_surface_errors_matching": [
+        "UNREGISTERED_UNKNOWN",
+        "pack-local",
+        "catalog",
+        "assets.tsv"
+      ]
+    },
+    {
+      "id": "ATTACK_derived_cache_as_raw_authority",
+      "path": "fixtures/ATTACK_derived_cache_as_raw_authority/",
+      "expected": "REJECT",
+      "family": "registration_status",
+      "check_ids": [
+        "D1",
+        "D2"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "derived_sold_as_raw",
+      "data_lie": true,
+      "fixture_sketch": {
+        "assets_tsv_status": "DERIVED_CACHE",
+        "claim": "raw panel HAVE_VERIFIED_COMPLETE continuous",
+        "derived_only_flag": false
+      },
+      "must_surface_errors_matching": [
+        "DERIVED",
+        "raw",
+        "HAVE"
+      ]
+    },
+    {
+      "id": "ATTACK_source_available_not_downloaded_as_have",
+      "path": "fixtures/ATTACK_source_available_not_downloaded_as_have/",
+      "expected": "REJECT",
+      "family": "registration_status",
+      "check_ids": [
+        "D1",
+        "D2"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "source_available_promoted_have",
+      "data_lie": true,
+      "fixture_sketch": {
+        "assets_tsv_status": "SOURCE_AVAILABLE_NOT_DOWNLOADED",
+        "claim": "backtest on full history HAVE",
+        "physical_files": "absent"
+      },
+      "must_surface_errors_matching": [
+        "SOURCE_AVAILABLE_NOT_DOWNLOADED",
+        "HAVE",
+        "not_downloaded"
+      ]
+    },
+    {
+      "id": "ATTACK_sparse_status_continuous_claim",
+      "path": "fixtures/ATTACK_sparse_status_continuous_claim/",
+      "expected": "REJECT",
+      "family": "coverage_overclaim",
+      "check_ids": [
+        "D1",
+        "D3"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "sparse_as_continuous",
+      "data_lie": true,
+      "fixture_sketch": {
+        "assets_tsv_status": "HAVE_VERIFIED_SPARSE",
+        "claim": "continuous full-window usable history",
+        "gap_ledger": "absent"
+      },
+      "must_surface_errors_matching": [
+        "SPARSE",
+        "continuous",
+        "sample"
+      ]
+    },
+    {
+      "id": "ATTACK_verdict_emits_strategy_or_live_token",
+      "path": "fixtures/ATTACK_verdict_emits_strategy_or_live_token/",
+      "expected": "REJECT",
+      "family": "authority_ceiling",
+      "check_ids": [
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "ceiling_overclaim_in_cli_verdict",
+      "data_lie": false,
+      "authority_lie": true,
+      "fixture_sketch": {
+        "cli_verdict_field": "STRATEGY_PASS or LIVE_OK or CAPITAL_PASS or GATE_A_PASS",
+        "must": "CLI rejects pack attempt to set forbidden tokens as own verdict; D12 lint FAIL"
+      },
+      "must_surface_errors_matching": [
+        "authority",
+        "ceiling",
+        "forbidden",
+        "verdict"
+      ]
+    },
+    {
+      "id": "ATTACK_external_fake_assets_tsv_claims_HAVE",
+      "path": "fixtures/ATTACK_external_fake_assets_tsv_claims_HAVE/",
+      "expected": "REJECT",
+      "family": "catalog_binding",
+      "check_ids": [
+        "D1",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "external_out_of_vault_fake_assets_tsv",
+      "data_lie": true,
+      "codex_kill_shot": "KS-CODEX-1",
+      "fixture_sketch": {
+        "cli_attempt": "--assets-tsv C:/outside-vault/fake-assets.tsv (or any non-canonical path)",
+        "fake_row": "UNREGISTERED asset_id with HAVE_VERIFIED_COMPLETE",
+        "vault_assets_tsv": "row ABSENT",
+        "profile": "strict",
+        "must_fail_reason": "acceptance profiles forbid --assets-tsv; D1 binds only vault-canonical 数据资产目录/assets.tsv + pin"
+      },
+      "must_surface_errors_matching": [
+        "catalog",
+        "canonical",
+        "assets.tsv",
+        "UNREGISTERED_UNKNOWN",
+        "override"
+      ]
+    },
+    {
+      "id": "ATTACK_external_sources_tsv_wrong_venue_proxy",
+      "path": "fixtures/ATTACK_external_sources_tsv_wrong_venue_proxy/",
+      "expected": "REJECT",
+      "family": "catalog_binding",
+      "check_ids": [
+        "D10",
+        "D2"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "external_fake_sources_tsv_venue_proxy",
+      "data_lie": true,
+      "fixture_sketch": {
+        "cli_attempt": "--sources-tsv /tmp/fake-sources.tsv",
+        "fake_source_row": "source_id maps claim venue lighter to binance-usdm proxy archive",
+        "vault_sources_tsv": "different source_id / venue truth",
+        "must_fail_reason": "D10 resolves only vault-canonical 数据资产目录/sources.tsv after pin bind"
+      },
+      "must_surface_errors_matching": [
+        "sources.tsv",
+        "canonical",
+        "venue",
+        "proxy",
+        "provenance"
+      ]
+    },
+    {
+      "id": "ATTACK_catalog_hash_mismatch",
+      "path": "fixtures/ATTACK_catalog_hash_mismatch/",
+      "expected": "REJECT",
+      "family": "catalog_binding",
+      "check_ids": [
+        "D1",
+        "D10"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "catalog_pin_live_hash_mismatch",
+      "data_lie": true,
+      "fixture_sketch": {
+        "pack_declares": {
+          "catalog_assets_sha256": "aaaa… (stale or attacker-chosen)",
+          "catalog_sources_sha256": "bbbb…"
+        },
+        "live_vault_hashes": "different sha256 of real 数据资产目录/*.tsv",
+        "must_fail_reason": "§2.5 pin bind: live SHA-256 must match declared pin"
+      },
+      "must_surface_errors_matching": [
+        "catalog",
+        "sha256",
+        "pin",
+        "mismatch"
+      ]
+    },
+    {
+      "id": "ATTACK_pack_declares_pin_but_cli_loads_other_file",
+      "path": "fixtures/ATTACK_pack_declares_pin_but_cli_loads_other_file/",
+      "expected": "REJECT",
+      "family": "catalog_binding",
+      "check_ids": [
+        "D1",
+        "D10",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "pin_path_diverge_load_other_catalog",
+      "data_lie": true,
+      "fixture_sketch": {
+        "pack_declares_pin": "hash of vault-canonical assets.tsv",
+        "cli_loads": "different file path (symlink swap, --assets-tsv, wrong vault-root, or silent substitute)",
+        "loaded_file_hash": "≠ declared pin OR path ≠ 数据资产目录/assets.tsv under vault_root",
+        "must_fail_reason": "path + hash must both bind; pin alone without canonical path is insufficient if loader diverges"
+      },
+      "must_surface_errors_matching": [
+        "catalog",
+        "pin",
+        "path",
+        "loads",
+        "canonical"
+      ]
+    },
+    {
+      "id": "ATTACK_forged_vault_root_fake_catalog",
+      "path": "fixtures/ATTACK_forged_vault_root_fake_catalog/",
+      "expected": "REJECT",
+      "family": "vault_identity",
+      "check_ids": [
+        "D1",
+        "D10",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "forged_vault_root_mini_tree_pack_pin_launders_HAVE",
+      "data_lie": true,
+      "precodex_kill_shot": "K2_forged_vault_root_fake_catalog",
+      "closes": "KS-CODEX-1 semantic form via --vault-root",
+      "fixture_sketch": {
+        "attacker_builds": "temp mini-tree with 数据资产目录/assets.tsv + sources.tsv labeling unregistered asset HAVE_VERIFIED_COMPLETE",
+        "cli_attempt": "--vault-root <forged_mini_tree> --strict (acceptance profile)",
+        "pack_declares": "catalog_assets_sha256 + catalog_sources_sha256 = hashes of the forged TSVs",
+        "operator_identity_pin": "ABSENT or points at real vault hashes (≠ forged)",
+        "allowlist": "forged path NOT on operator allowlist",
+        "must_fail_reason": "§2.5.0 vault identity: free --vault-root + pack pin of forge cannot establish catalog authority; folder shape ≠ real vault"
+      },
+      "must_surface_errors_matching": [
+        "vault",
+        "identity",
+        "vault-root",
+        "forged",
+        "allowlist",
+        "UNREGISTERED_UNKNOWN"
+      ]
+    },
+    {
+      "id": "ATTACK_pack_only_pin_without_operator_or_vault_freeze_pin",
+      "path": "fixtures/ATTACK_pack_only_pin_without_operator_or_vault_freeze_pin/",
+      "expected": "REJECT",
+      "family": "vault_identity",
+      "check_ids": [
+        "D1",
+        "D10",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "pack_only_catalog_pin_as_sole_authority",
+      "data_lie": true,
+      "precodex_kill_shot": "K8_pack_pin_forged_catalog_authority",
+      "fixture_sketch": {
+        "pack_declares": "catalog_*_sha256 matching whatever live files are under attacker-chosen vault_root",
+        "cli_operator_pins": "ABSENT",
+        "vault_freeze_pin": "ABSENT or authored only by pack under audit",
+        "profile": "strict",
+        "must_fail_reason": "§2.5.2: pack pin alone insufficient under acceptance; require non-pack identity pin or allowlisted real root"
+      },
+      "must_surface_errors_matching": [
+        "pack-only",
+        "identity",
+        "operator",
+        "vault_freeze",
+        "pin"
+      ]
+    },
+    {
+      "id": "ATTACK_discovery_stops_at_fake_parent_catalog",
+      "path": "fixtures/ATTACK_discovery_stops_at_fake_parent_catalog/",
+      "expected": "REJECT",
+      "family": "vault_identity",
+      "check_ids": [
+        "D1",
+        "D10",
+        "D12"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "parent_walk_accepts_first_tsv_pair_without_identity",
+      "data_lie": true,
+      "fixture_sketch": {
+        "layout": "--root pack nested under forged parent that has 数据资产目录/*.tsv; real vault is a further ancestor",
+        "cli_attempt": "omit --vault-root; discovery walks parents",
+        "rem1_bug": "accept first parent with both TSV files",
+        "must_fail_reason": "§2.5.0 discovery harden: candidate parent accepted only if allowlisted or live hashes match non-pack identity pin; first fake parent without identity → REJECT/skip-fail-closed"
+      },
+      "must_surface_errors_matching": [
+        "discovery",
+        "parent",
+        "identity",
+        "catalog",
+        "fake"
+      ]
+    },
+    {
+      "id": "ATTACK_cheap_profile_unqualified_full_pass",
+      "path": "fixtures/ATTACK_cheap_profile_unqualified_full_pass/",
+      "expected": "REJECT",
+      "family": "profile_acceptance",
+      "check_ids": [
+        "D9",
+        "D10",
+        "D11",
+        "D12",
+        "PROFILE"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "cheap_partial_suite_emits_unqualified_full_pass",
+      "data_lie": true,
+      "authority_lie": true,
+      "codex_kill_shot": "KS-CODEX_profile_equivalence",
+      "closes": "rem2 Codex reaudit hard blocker: cheap D0-D8-only may emit same BACKTEST_PACK_CHECK_PASS as strict",
+      "fixture_sketch": {
+        "profile": "cheap",
+        "pack_has": "D9 PIT/restatement defect OR D10 provenance break OR D11 trial undercount OR D12 authority/inventory defect (any one sufficient)",
+        "cheap_scope": "D0-D8 green; D9-D12 only sample/heuristic or skipped",
+        "illegal_output": {
+          "exit_code": 0,
+          "verdict": "BACKTEST_PACK_CHECK_PASS",
+          "or": "ENGINE_CHECK_PASS",
+          "acceptance_eligible": true
+        },
+        "design_forbids": "CLI contract §2.2.1: cheap is non-acceptance; max ENGINE_CHECK_DIAG / BACKTEST_PACK_SCREEN_DIAG with exit >=1 and acceptance_eligible=false",
+        "must_fail_reason": "unqualified full-pack PASS token without mandatory full D0-D12 + full attack suite is REJECT; design forbids sharing PASS with strict/data-only"
+      },
+      "must_surface_errors_matching": [
+        "cheap",
+        "profile",
+        "acceptance_eligible",
+        "BACKTEST_PACK_CHECK_PASS",
+        "non-acceptance",
+        "D9",
+        "D10",
+        "D11",
+        "D12"
+      ]
+    },
+    {
+      "id": "ATTACK_output_path_mutates_pack",
+      "path": "fixtures/ATTACK_output_path_mutates_pack/",
+      "expected": "REJECT",
+      "family": "read_only_output",
+      "check_ids": [
+        "A2",
+        "B2"
+      ],
+      "severity": "CRITICAL",
+      "kill_class": "out_json_or_out_md_inside_root_overwrites_audited_input",
+      "data_lie": false,
+      "authority_lie": true,
+      "codex_kill_shot": "KS-CODEX_output_mutation",
+      "closes": "Gate B Codex AUDIT_FAIL: --out-json <root>/CLAIM.json returned exit 0 then mutated CLAIM.json",
+      "fixture_sketch": {
+        "mode": "runtime_mutation_or_cli_preflight",
+        "command_shape": "python scripts/audit_backtest.py --root <valid_clone> --strict <pins> --out-json <root>/CLAIM.json",
+        "must": [
+          "exit_code != 0 OR verdict != BACKTEST_PACK_CHECK_PASS",
+          "CLAIM.json sha256 unchanged",
+          "no write under --root for any out path"
+        ],
+        "implement_note": "Implemented as selftest mutation out_json_cannot_mutate_pack_claim + engine forbidden_output_path_errors; optional pack fixture not required if mutation is machine-checkable"
+      },
+      "must_surface_errors_matching": [
+        "out",
+        "root",
+        "read-only",
+        "ATTACK_output_path_mutates_pack",
+        "output"
+      ]
+    }
+  ],
+  "top10_primary_kill_shots": [
+    "ATTACK_output_path_mutates_pack",
+    "ATTACK_cheap_profile_unqualified_full_pass",
+    "ATTACK_unregistered_asset_claimed_present",
+    "ATTACK_forged_vault_root_fake_catalog",
+    "ATTACK_external_fake_assets_tsv_claims_HAVE",
+    "ATTACK_pack_only_pin_without_operator_or_vault_freeze_pin",
+    "ATTACK_pack_local_fake_catalog",
+    "ATTACK_catalog_hash_mismatch",
+    "ATTACK_path_exists_wrong_venue_proxy",
+    "ATTACK_coverage_hole_nan_drop_theater",
+    "ATTACK_selftest_as_acceptance"
+  ],
+  "suite_rules": {
+    "red_light_first": true,
+    "zero_attacks_invalid": true,
+    "any_attack_accept_fails_suite": true,
+    "valid_fixture_required": true,
+    "data_lie_default_severity": "CRITICAL"
+  }
+}

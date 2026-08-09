@@ -1,0 +1,11 @@
+{
+  "pit_membership": false,
+  "symbols": [
+    {
+      "symbol": "BTCUSDT",
+      "venue": "binance-futures",
+      "listing_date": "2026-01-15T00:00:00Z",
+      "delist_date": null
+    }
+  ]
+}

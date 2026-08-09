@@ -1,0 +1,9 @@
+{
+  "vault_root": "..",
+  "allowlist": true,
+  "operator_pins": "live",
+  "explicit_vault_root": true,
+  "preflight_errors": [
+    "external fake assets.tsv catalog override forbidden; UNREGISTERED_UNKNOWN"
+  ]
+}

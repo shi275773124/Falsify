@@ -1,0 +1,7 @@
+{
+  "vault_root": "..",
+  "allowlist": true,
+  "operator_pins": "live",
+  "explicit_vault_root": true,
+  "forbidden_output_path": "CLAIM.json"
+}

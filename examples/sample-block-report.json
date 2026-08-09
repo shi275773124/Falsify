@@ -1,6 +1,12 @@
 {
   "schema_version": "falsify.review.v1",
+  "claim_scope": "deployment_revision",
+  "llm_semantic_verdict": "PASS",
+  "evidence_verdict": "BLOCK",
+  "final_verdict": "BLOCK",
   "verdict": "BLOCK",
+  "authority_ceiling": "EPISTEMIC_ONLY",
+  "capital_authority": "NONE",
   "target": "reports/deploy.md",
   "scenario": "production",
   "findings": [
@@ -19,6 +25,7 @@
   ],
   "meta": {
     "provider": "deepseek",
-    "finish_reason": "stop"
+    "finish_reason": "stop",
+    "note": "Epistemic receipt: bounds what was proven for the scoped claim. An action-bearing PASS requires an authority adapter and the unified kernel."
   }
 }

@@ -1,0 +1,25 @@
+{
+  "schema_version": "falsify.audit_backtest.pack.v1",
+  "pack_id": "ATTACK_pack_only_pin_without_operator_or_vault_freeze_pin",
+  "attack_catalog_id": "falsify.audit_backtest.attack_catalog.v0.5-design-rem3-cheap-non-acceptance",
+  "catalog_assets_sha256": "3aac70561f06866525553349d948ccf44c40dad6b331e8721d2fdb0a246e6047",
+  "catalog_sources_sha256": "b17deffffebddbf75fdb9b444bf7d4d2f3e1ca75214ec0bd91227ef0bf683124",
+  "entities": {
+    "manifest": "PACK_MANIFEST.json",
+    "data_bindings": "DATA_BINDINGS.json",
+    "universe": "UNIVERSE.json",
+    "calendar": "SESSION_CALENDAR.json",
+    "bar_index": "BAR_INDEX.json",
+    "claim": "CLAIM.json",
+    "inventory": "INVENTORY.json",
+    "provenance": "PROVENANCE.json",
+    "cli_contract": "CLI_CONTRACT.md",
+    "attack_catalog": "ATTACK_CATALOG.json",
+    "fee_model": "FEE_MODEL.json",
+    "slippage_model": "SLIPPAGE_MODEL.json",
+    "pit_markers": "PIT_MARKERS.json",
+    "trial_ledger": "TRIAL_LEDGER.json",
+    "metrics": "METRICS.json",
+    "gap_report": "GAP_REPORT.json"
+  }
+}

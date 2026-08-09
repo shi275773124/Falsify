@@ -1,6 +1,6 @@
 # 14. Install Falsify GitHub Action (5 minutes)
 
-[Back to README](../README.md) · [BYOK + Policy](./11-byok-and-policy.md)
+[Back to README](../README.md) · [BYOK + Policy](./11-byok-and-policy.md) · **[Share pack (one screen)](./github-action-share-pack.md)** · [False-green cards](../examples/real-cases/SHARE-CARDS.md)
 
 This guide installs the PR gate in a **target repo** (the repo you want to protect), not necessarily the Falsify repo itself.
 
@@ -12,6 +12,8 @@ After install, every PR that changes decision docs will produce:
 - `falsify-report.json` (machine-readable)
 - `falsify-report.md` (human-readable)
 - a failing GitHub Check when verdict is `BLOCK`
+
+The OSS template is an **adversarial-review layer**, not production or deployment authority. It cannot grant a claim-bearing production PASS; that requires a separately deployed authority adapter, signer, and sandbox.
 
 ## Prerequisites
 
@@ -58,7 +60,7 @@ Open a PR. You should see:
 - PR comment `<!-- falsify-pr-summary -->` appears or updates
 - artifacts `falsify-report` uploaded
 
-Without API secrets, live review is skipped and lint still runs (advisory mode).
+Without API secrets, live review is unavailable. The template records `BLOCK` rather than laundering lint-only output into `PASS`; add BYOK credentials to run the model-backed review.
 
 ## Step 3 — (Optional) Enable BYOK live review (1 min)
 
@@ -94,17 +96,17 @@ Note: the current workflow prototype reads `TARGET_GLOBS` from workflow `env`. K
 
 ## Step 5 — Turn on required check (when ready)
 
-After 3–7 days of advisory comments:
+After observing the reports on non-consequential documents:
 
 1. Repo → **Settings** → **Branches** → branch protection rule
 2. Require status check: `falsify-pr-review` (or your workflow job name)
-3. Keep advisory mode first if your team is still tuning globs
+3. Do not make this OSS template a production/deployment authorization check. It is a review signal; use a separately implemented authority gate for claim-bearing PASS.
 
 ## Verification checklist
 
 Run these checks on your first PR:
 
-- [ ] Workflow exits green on a clean decision doc
+- [ ] Missing `FALSIFY_API_KEY` yields `BLOCK`, never a lint-only `PASS`
 - [ ] PR comment includes verdict + findings grouped by cutline
 - [ ] Artifact contains `falsify-report.json` with `schema_version: falsify.report.v0.1`
 - [ ] A deliberate weak claim returns `BLOCK` when live review is enabled
@@ -114,8 +116,8 @@ Run these checks on your first PR:
 
 | Mode | Secrets | Behavior |
 |---|---|---|
-| Advisory | none | lint runs, live review skipped, comment posted |
-| Live BYOK | `FALSIFY_*` set | review runs, `BLOCK` can fail check |
+| No evidence | none | lint runs, live review is skipped, verdict is `BLOCK` |
+| Live BYOK | `FALSIFY_*` set | model-backed review runs; this remains non-authoritative OSS review |
 | Strict debt | default on | missing Known Debt trigger becomes `BLOCK` |
 
 ## Troubleshooting
@@ -125,10 +127,10 @@ Run these checks on your first PR:
 - Your changed files do not match `TARGET_GLOBS`
 - Fix globs or move decision docs into covered paths
 
-**Workflow passes but comment says skipped live review**
+**Workflow BLOCKs because live review was skipped**
 
-- Expected without `FALSIFY_API_KEY`
-- Add BYOK secrets to enable live review
+- Expected without `FALSIFY_API_KEY`: no evidence, no PASS
+- Add BYOK secrets to enable the model-backed OSS review
 
 **Check fails with BLOCK unexpectedly**
 

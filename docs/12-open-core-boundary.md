@@ -8,6 +8,10 @@ Core principle:
 
 **Protocol open, workflow system paid.**
 
+For the OSS / Pro / Team three-layer map (naming, export policy, moat), see [Pro vs OSS](./18-pro-vs-oss.md).
+
+Structural cure for dual-repo / multi-version / claiming drift: [ROOTFIX architecture](./ROOTFIX-architecture.md), [VERSIONING](./VERSIONING.md), [verdict vocabulary](./verdict-vocabulary.md).
+
 ## Positioning
 
 Falsify is not an "AI code reviewer".  

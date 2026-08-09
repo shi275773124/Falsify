@@ -1,0 +1,10 @@
+{
+  "vault_root": "..",
+  "allowlist": false,
+  "operator_pins": "live",
+  "explicit_vault_root": false,
+  "pack_root": "fake_parent/pack",
+  "preflight_errors": [
+    "discovery fake parent catalog without identity must not establish authority"
+  ]
+}

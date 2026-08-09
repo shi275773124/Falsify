@@ -1,0 +1,30 @@
+{
+  "asset_ids": [
+    "LOCATOR-ASSET"
+  ],
+  "window_start": "2026-01-01T00:00:00Z",
+  "window_end": "2026-01-02T00:00:00Z",
+  "venue": "binance-futures",
+  "class": "raw_archive",
+  "data_types": [
+    "OHLCV_1h"
+  ],
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "continuous_history": true,
+  "missing_policy": "error",
+  "max_ffill_bars": 0,
+  "gap_ledger": "GAP_REPORT.json",
+  "synthetic_marked": true,
+  "net_metrics": true,
+  "gross_only": false,
+  "point_in_time": true,
+  "non_restated": true,
+  "n_trials": 2,
+  "claim_language": "multiplicity-adjusted robust mechanical fixture",
+  "verdict": "RESEARCH_BACKTEST_ONLY",
+  "acceptance_evidence": [
+    "INDEPENDENT_AUDIT_REQUIRED"
+  ]
+}

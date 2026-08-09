@@ -1,0 +1,25 @@
+{
+  "schema_version": "falsify.audit_backtest.pack.v1",
+  "pack_id": "ATTACK_catalog_hash_mismatch",
+  "attack_catalog_id": "falsify.audit_backtest.attack_catalog.v0.5-design-rem3-cheap-non-acceptance",
+  "catalog_assets_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "catalog_sources_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "entities": {
+    "manifest": "PACK_MANIFEST.json",
+    "data_bindings": "DATA_BINDINGS.json",
+    "universe": "UNIVERSE.json",
+    "calendar": "SESSION_CALENDAR.json",
+    "bar_index": "BAR_INDEX.json",
+    "claim": "CLAIM.json",
+    "inventory": "INVENTORY.json",
+    "provenance": "PROVENANCE.json",
+    "cli_contract": "CLI_CONTRACT.md",
+    "attack_catalog": "ATTACK_CATALOG.json",
+    "fee_model": "FEE_MODEL.json",
+    "slippage_model": "SLIPPAGE_MODEL.json",
+    "pit_markers": "PIT_MARKERS.json",
+    "trial_ledger": "TRIAL_LEDGER.json",
+    "metrics": "METRICS.json",
+    "gap_report": "GAP_REPORT.json"
+  }
+}

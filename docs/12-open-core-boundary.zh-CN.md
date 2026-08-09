@@ -8,6 +8,8 @@
 
 **协议开源，工作流系统收费。**
 
+OSS / Pro / Team 三层地图（命名、导出策略、护城河）见 [Pro vs OSS](./18-pro-vs-oss.zh-CN.md)。
+
 ## 定位
 
 Falsify 不是「AI 代码审查器」。  

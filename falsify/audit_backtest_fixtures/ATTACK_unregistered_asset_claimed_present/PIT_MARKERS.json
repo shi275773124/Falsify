@@ -1,0 +1,5 @@
+{
+  "asof_column": "asof",
+  "revision_id_column": "revision_id",
+  "restatable_fields": []
+}

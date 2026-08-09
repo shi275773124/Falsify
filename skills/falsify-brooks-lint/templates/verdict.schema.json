@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Falsify Verdict (Brooks-Lint L0)",
+  "type": "object",
+  "required": ["schema_version", "target", "scenario", "verdict", "summary", "findings", "minimal_action", "next_evidence"],
+  "properties": {
+    "schema_version": { "const": "falsify.review.v1" },
+    "target": { "type": "string" },
+    "scenario": { "type": "string" },
+    "layer": {
+      "type": "string",
+      "const": "brooks_lint",
+      "description": "Optional marker that this verdict is from the L0 Brooks-Lint framework layer"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["full", "light", "scope_refused"],
+      "description": "Brooks-Lint review mode"
+    },
+    "brooks_status": {
+      "type": "string",
+      "enum": ["RAN", "SCOPE_REFUSED", "SKIPPED", "ERROR"],
+      "description": "Terminal L0 status for receipt.brooks_lint.status"
+    },
+    "verdict": { "enum": ["PASS", "PASS_WITH_DEBT", "BLOCK"] },
+    "confidence": { "type": "string" },
+    "summary": { "type": "string" },
+    "must_fix": { "type": "array", "items": { "type": "string" } },
+    "known_debt": { "type": "array", "items": { "type": "string" } },
+    "delete": { "type": "array", "items": { "type": "string" } },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cutline", "issue", "minimal_action"],
+        "properties": {
+          "cutline": { "enum": ["Must Fix", "Known Debt", "Delete"] },
+          "issue": { "type": "string" },
+          "evidence": {
+            "type": "string",
+            "description": "Evidence Gate artifact: path:line, diff snippet, or command output"
+          },
+          "minimal_action": { "type": "string" },
+          "upgrade_trigger": { "type": "string" },
+          "structural": {
+            "type": "boolean",
+            "description": "True when the finding is structural/auditability (L0) rather than adversarial-only"
+          }
+        }
+      }
+    },
+    "minimal_action": { "type": "string" },
+    "next_evidence": { "type": "string" }
+  }
+}
