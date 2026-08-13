@@ -1,6 +1,10 @@
 # Falsify
 
+English | [中文](README.zh-CN.md)
+
 **Looks green isn't proof.**
+
+Official site: [https://falsify.site/](https://falsify.site/)
 
 Review first. Trust after. Evidence first. Ship after.
 
@@ -25,7 +29,7 @@ Receipt      →  PASS / PASS_WITH_DEBT / BLOCK
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[Chinese](./README.zh-CN.md) · [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
+[Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
 ## Quick start
 
@@ -299,6 +303,7 @@ To tune the gate for a PR:
 
 Falsify is evolving with real AI-agent, code review, and production-risk workflows. If you are working on similar problems, feel free to follow along or reach out.
 
+- Official site: https://falsify.site/
 - GitHub: https://github.com/shi275773124/Falsify
 - X / Twitter: https://x.com/aishikejian
 - Email: chrisshi168@icloud.com
