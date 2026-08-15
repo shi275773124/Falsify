@@ -364,7 +364,7 @@ html[lang="zh-CN"],html.lang-zh{font-family:var(--font-zh)}html[lang="zh-CN"] bo
 
 DOC_SECTIONS = [
     ("Start here", ["00-getting-started"]),
-    ("Use locally", ["11-byok-and-policy", "17-skills"]),
+    ("Use locally", ["11-byok-and-policy", "17-skills", "18-dsh-plugin"]),
     ("Add to CI", ["14-github-action-install", "15-ci-and-release-gate"]),
     ("Understand verdicts", ["01-architecture", "05-adversarial-review", "06-risk-scalpel", "08-examples", "verdict-vocabulary"]),
     ("Reference", ["20-cli-and-artifacts", "04-troubleshooting", "03-collaboration"]),
@@ -382,7 +382,7 @@ SITEMAP_CASE_STEMS = (
 )
 CASE_ALLOWLIST = set(SITEMAP_CASE_STEMS)
 
-DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-install", "01-architecture"]
+DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-install", "18-dsh-plugin", "01-architecture"]
 
 # Public docs surface: only these stems route. Anything else under docs/ is
 # internal material and must 404, even though doc_files() can see it on disk.
