@@ -41,7 +41,7 @@ Set `FALSIFY_PYTHON` if `python` is not the interpreter that has Falsify install
 ## Step 2 — Add the plugin (30 seconds)
 
 ```sh
-dsh plugin --profile web add "github:shi275773124/falsify-dsh#v0.1.0"
+dsh plugin --profile web add "github:shi275773124/falsify-dsh#v0.1.1"
 ```
 
 Only packages that declare `dsh.bundle.patch` become active profile layers. This package does.
