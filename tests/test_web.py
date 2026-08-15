@@ -123,6 +123,8 @@ def test_dsh_plugin_doc_is_public_and_homepage_lists_install_path():
     assert h.status_code == 200
     assert "Install Falsify DeepSeek plugin" in body
     assert "dsh plugin --profile web add" in body
+    assert "github:shi275773124/falsify-dsh#v0.1.1" in body
+    assert "falsify-dsh#v0.1.0" not in body
     assert "falsify this file" in body
     assert "claim_bearing" in body
     assert "<table>" in body
@@ -132,6 +134,8 @@ def test_dsh_plugin_doc_is_public_and_homepage_lists_install_path():
     zh_body = zh.wfile.getvalue().decode("utf-8")
     assert zh.status_code == 200
     assert "安装 Falsify DeepSeek 插件" in zh_body
+    assert "github:shi275773124/falsify-dsh#v0.1.1" in zh_body
+    assert "falsify-dsh#v0.1.0" not in zh_body
 
     sitemap = handler("/sitemap.xml")
     sitemap.do_GET()

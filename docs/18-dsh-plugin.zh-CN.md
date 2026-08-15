@@ -41,7 +41,7 @@ python -m falsify --help
 ## 步骤 2 — 添加插件（30 秒）
 
 ```sh
-dsh plugin --profile web add "github:shi275773124/falsify-dsh#v0.1.0"
+dsh plugin --profile web add "github:shi275773124/falsify-dsh#v0.1.1"
 ```
 
 只有声明了 `dsh.bundle.patch` 的包才会成为生效的 profile 层。本包有此声明。
