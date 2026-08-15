@@ -112,6 +112,46 @@ def test_github_action_markdown_renders_semantic_emphasis_and_table():
     assert "**target repo**" not in body and "| Secret | Example |" not in body
 
 
+def test_dsh_plugin_doc_is_public_and_homepage_lists_install_path():
+    assert "18-dsh-plugin" in serve.DOCS_ALLOWLIST
+    assert "18-dsh-plugin" in serve.DOC_FEATURED
+    assert "18-dsh-plugin" in dict(serve.DOC_SECTIONS)["Use locally"]
+
+    h = handler("/docs/18-dsh-plugin.html")
+    h.do_GET()
+    body = h.wfile.getvalue().decode("utf-8")
+    assert h.status_code == 200
+    assert "Install Falsify DeepSeek plugin" in body
+    assert "dsh plugin --profile web add" in body
+    assert "falsify this file" in body
+    assert "claim_bearing" in body
+    assert "<table>" in body
+
+    zh = handler("/docs/18-dsh-plugin.html?lang=zh")
+    zh.do_GET()
+    zh_body = zh.wfile.getvalue().decode("utf-8")
+    assert zh.status_code == 200
+    assert "安装 Falsify DeepSeek 插件" in zh_body
+
+    sitemap = handler("/sitemap.xml")
+    sitemap.do_GET()
+    sm = sitemap.wfile.getvalue().decode("utf-8")
+    assert sitemap.status_code == 200
+    assert "<loc>https://falsify.site/docs/18-dsh-plugin.html</loc>" in sm
+
+    home = handler("/")
+    home.do_GET()
+    homepage = home.wfile.getvalue().decode("utf-8")
+    assert home.status_code == 200
+    assert 'data-i18n="heroPrimary">Install GitHub Action</a>' in homepage
+    assert 'data-i18n="dshLink">Install DeepSeek plugin →</a>' in homepage
+    assert 'data-lang-path="/docs/18-dsh-plugin.html"' in homepage
+    js = (serve.FLOW_HOME_DIR / "candidate.js").read_text(encoding="utf-8")
+    assert 'dshLink:"Install DeepSeek plugin →"' in js
+    assert 'dshLink:"安装 DeepSeek 插件 →"' in js
+    assert "DeepSeek plugin" in js
+
+
 
 def test_assets_path_traversal_does_not_leak_repo():
     """MF-1: /assets/../ must not fall through to safe_repo_path(ROOT)."""
