@@ -14,21 +14,25 @@ cd Falsify
 python -m pip install -e .[dev]
 ```
 
-## 运行本地 demo
+## 运行本地 demo（不调模型、不探生产）
 
-Demo 不调用模型。它对 fixture 跑确定性本地规则，返回真实 Falsify 形态的裁决。
+先看这个可重放案例：agent 说部署成功、日志绿了，但观察到的线上版本不是目标版本。`demo` 只读你给的文件，不会访问生产。
 
 ```bash
-python -m falsify demo
+python -m falsify demo examples/deployment-revision-mismatch/claim-false.md
 ```
 
-预期输出形态：
+预期：`BLOCK`（exit 1）。日志被当成状态证明；声称提交 `95d7e2f` ≠ 观察到的 `41ac90b`。
 
-```text
-[AGENT-B audit] logs are treated as state verification
-Cutline: Must Fix
-VERDICT: BLOCK
+证据一致时不应误拦：
+
+```bash
+python -m falsify demo examples/deployment-revision-mismatch/claim-true.md
 ```
+
+预期：`PASS`（exit 0）。这个 PASS 仍是认知层，不授权部署。
+
+完整命令、发现和下一步：[案例说明](../examples/deployment-revision-mismatch/README.md)。
 
 ## 用模型审查文件
 

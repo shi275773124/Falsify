@@ -4,7 +4,7 @@
 
 | Command | Requires your key? | Use it for |
 |---|---:|---|
-| `falsify demo` | No | Confirm the local install with a deterministic false-green fixture. |
+| `falsify demo [FILE]` | No | Local rules on a claim file. Default fixture, or `examples/deployment-revision-mismatch/`. Does not call production. |
 | `falsify lint FILE` | No | Check collaboration tags and ship-blocker conventions. |
 | `falsify review FILE --provider NAME --json` | Yes, for provider-backed review | Produce a machine-readable verdict for one file. |
 | `falsify run BRIEF --drafter NAME --reviewer NAME` | Usually | Run a draft-and-review loop; keep the author and reviewer contexts independent where possible. |
@@ -29,7 +29,7 @@ The PR template writes and uploads:
 - `falsify-report.md` for people reading the PR;
 - a PR summary comment when the workflow runs on a pull request.
 
-Without `FALSIFY_API_KEY`, the template reports that live review was skipped and remains lint-only. That is an explicit advisory state, not a model verdict.
+Without `FALSIFY_API_KEY`, the template reports that live review was skipped and remains lint-only. That is an explicit advisory state, not a model verdict. The workflow in this repository scopes `falsify gate` to **changed Markdown decision docs**, not application source.
 
 ## Exit behavior
 

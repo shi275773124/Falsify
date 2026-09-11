@@ -39,19 +39,23 @@ The package installs the `falsify` command. If your shell does not find it, use 
 
 ## 2. See a real false green — no key required
 
+Start with the replay case: an agent says the deploy succeeded, logs are green, and the observed production revision is not the claimed commit. `demo` only reads the file you pass it. It does not call production.
+
 ```bash
-falsify demo
+python -m falsify demo examples/deployment-revision-mismatch/claim-false.md
 ```
 
-The demo uses a bundled fixture and deterministic local checks. It makes no network or model call. Its expected result is a `BLOCK`, because the fixture treats logs as proof of state:
+Expected: `BLOCK` (exit 1). Logs are treated as state; claimed commit `95d7e2f` ≠ observed `41ac90b`.
 
-```text
-[AGENT-B audit] logs are treated as state verification
-Cutline: Must Fix
-VERDICT: BLOCK
+Matching evidence should not be blocked:
+
+```bash
+python -m falsify demo examples/deployment-revision-mismatch/claim-true.md
 ```
 
-This is a safe first success: the tool caught a claim that sounded finished but lacked state evidence.
+Expected: `PASS` (exit 0). That PASS is still epistemic — it does not authorize a deploy.
+
+No API key. Commands, expected findings, and how to swap your own file: [the case README](../examples/deployment-revision-mismatch/README.md).
 
 ## 3. Configure a provider for a live review — your key required
 
@@ -108,7 +112,7 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000). The console is served from 
 
 ## 7. Add a PR gate when ready
 
-Copy the [GitHub Action template](./14-github-action-install.md) into the repository you want to protect. Start in advisory mode with narrow Markdown globs. Add your BYOK secret only when you want model-backed review, then make the check required after you have verified its behavior on real PRs.
+Copy the [GitHub Action template](./14-github-action-install.md) into the repository you want to protect. The template in this repo runs `falsify gate` over **changed Markdown decision docs** (not application code). Start in advisory mode with narrow Markdown globs. Add your BYOK secret only when you want model-backed review, then make the check required after you have verified its behavior on real PRs.
 
 ## Next
 

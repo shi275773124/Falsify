@@ -1,5 +1,7 @@
 # Examples
 
+Runnable first case (no API key, replay fixtures only): [deployment revision mismatch](../examples/deployment-revision-mismatch/README.md).
+
 These are synthetic examples, not customer cases.
 
 ## Example 1: logs are not state

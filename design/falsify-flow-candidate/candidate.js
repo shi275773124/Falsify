@@ -1,14 +1,14 @@
 (() => {
   "use strict";
-  const copyCommand = "curl -sS https://falsify.site/examples/sample-block-report.json | python -m json.tool";
+  const copyCommand = "python -m falsify demo examples/deployment-revision-mismatch/claim-false.md";
   const translations = {
     en: {
       menuLabel:"Menu",menuCloseLabel:"Close",navProof:"Real cases",navHow:"How it works",navDocs:"Docs",navGetStarted:"Get started",
-      heroTitle:"Looks green isn't proof.",
-      heroEyebrow:"TWO PAINS · THREE LAYERS",
-      heroPrimary:"Install GitHub Action",heroSecondary:"Watch a claim get blocked",
+      heroTitle:"AI generates.<br><em>falsify</em> questions.",
+      heroEyebrow:"EVIDENCE BEFORE CONCLUSIONS",
+      heroPrimary:"Start the case",heroSecondary:"View on GitHub",
       heroNote:"Sign-off only. Does not deploy or trade for you.",
-      brandThesis:"Review first. Trust after. Evidence first. Ship after.",
+      brandThesis:"Check AI output with evidence — hallucination, hidden complexity, maintenance risk.",
       evidenceChrome:"EVIDENCE",
       heroPainLabel:"THE PAIN",
       heroPain1:"AI hallucination and false-green still ship",
@@ -84,21 +84,21 @@
       runExample:"Run example",copyArtifact:"Copy reproduction command",
       resultTitle:"Ready to preview a format sample.",
       resultLead:"Run the example to see the verdict shape only — not evidence-backed verification.",
-      installLabel:"START HERE",installTitle:"Start by gating claims on GitHub.",
-      installLead:"Best first step: the GitHub Action reviews PR claims and decision docs and posts a PASS / PASS_WITH_DEBT / BLOCK receipt. Sign-off only — does not deploy or trade for you.",
-      actionLink:"Install GitHub Action →",dshLink:"Install DeepSeek plugin →",skillsLink:"Install a skill →",verdictLink:"Verdict contract →",
+      installLabel:"START HERE",installTitle:"Run the replay case locally.",
+      installLead:"No API key. The command reads a fixture file; it does not call production. False sample → BLOCK. Matching evidence → PASS.",
+      actionLink:"Open the getting-started case →",dshLink:"Install DeepSeek plugin →",skillsLink:"Install a skill →",verdictLink:"Verdict contract →",
       ctaTitle:"Review first. Trust after.",
       ctaLead:"Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK. Sign-off only.",
-      ctaPrimary:"Install GitHub Action",ctaSecondary:"See what you can get",
+      ctaPrimary:"Start the case",ctaSecondary:"See what you can get",
       footer:"Sign-off only — does not deploy or trade for you."
     },
     zh: {
       menuLabel:"菜单",menuCloseLabel:"关闭",navProof:"真实案例",navHow:"工作原理",navDocs:"文档",navGetStarted:"开始使用",
-      heroTitle:"看起来绿了，还不够。",
-      heroEyebrow:"两个痛点 · 三层白话",
-      heroPrimary:"安装 GitHub Action",heroSecondary:"看一条声明被拦下",
+      heroTitle:"AI 负责生成。<br><em>falsify</em> 负责质疑。",
+      heroEyebrow:"先证据，后结论",
+      heroPrimary:"开始这个案例",heroSecondary:"查看 GitHub",
       heroNote:"只做审查签收，不自动部署、不下单。",
-      brandThesis:"先审，再信；先证据，再放行。",
+      brandThesis:"用证据检查 AI 输出，识别幻觉、隐藏复杂度与维护风险。",
       evidenceChrome:"证据",
       heroPainLabel:"痛点",
       heroPain1:"AI 幻觉和假绿照样进生产",
@@ -174,12 +174,12 @@
       runExample:"运行示例",copyArtifact:"复制复现命令",
       resultTitle:"可以预览格式样例",
       resultLead:"运行示例只看判定长什么样——不是有证据背书的核验。",
-      installLabel:"从这里开始",installTitle:"先从 GitHub 拦住声明。",
-      installLead:"最稳的第一步：GitHub Action 审查 PR 声明与决策文档，给出 PASS / PASS_WITH_DEBT / BLOCK 回执。只做审查签收，不自动部署、不下单。",
-      actionLink:"安装 GitHub Action →",dshLink:"安装 DeepSeek 插件 →",skillsLink:"安装 Skill →",verdictLink:"查看判定约定 →",
+      installLabel:"从这里开始",installTitle:"先在本地跑可重放案例。",
+      installLead:"不需要 API key。命令只读 fixture 文件，不会访问生产。错误样本 → BLOCK。证据一致 → PASS。",
+      actionLink:"打开开始页案例 →",dshLink:"安装 DeepSeek 插件 →",skillsLink:"安装 Skill →",verdictLink:"查看判定约定 →",
       ctaTitle:"先审，再信。",
       ctaLead:"留下回执——PASS、PASS_WITH_DEBT 或 BLOCK。只做审查签收。",
-      ctaPrimary:"安装 GitHub Action",ctaSecondary:"看看能拿到什么",
+      ctaPrimary:"开始这个案例",ctaSecondary:"看看能拿到什么",
       footer:"只做审查签收，不自动部署、不下单。"
     }
   };

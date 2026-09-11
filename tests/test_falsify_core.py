@@ -1,6 +1,7 @@
 import argparse
 import json
 import importlib.metadata
+import os
 import pathlib
 import re
 import subprocess
@@ -13,6 +14,64 @@ import falsify.cli  # tests patch falsify.cli.llm — the symbol cmd_review/cmd_
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+CASE = ROOT / "examples" / "deployment-revision-mismatch"
+
+
+def _run_demo(*args):
+    return subprocess.run(
+        [sys.executable, "-m", "falsify", "demo", *args],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+
+
+def test_demo_false_sample_blocks_on_logs_and_revision_mismatch():
+    result = _run_demo(str(CASE / "claim-false.md"))
+    out = result.stdout + result.stderr
+    assert result.returncode == 1, out
+    assert "VERDICT: BLOCK" in out
+    assert "logs are treated as state verification" in out
+    assert "claimed revision does not match observed production revision" in out
+    assert "capital=NONE" in out
+
+
+def test_demo_true_sample_passes_without_false_green_patterns():
+    result = _run_demo(str(CASE / "claim-true.md"))
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "VERDICT: PASS" in out
+    assert "logs are treated as state verification" not in out
+    assert "capital=NONE" in out
+
+
+def test_demo_empty_file_is_block_not_pass(tmp_path):
+    empty = tmp_path / "empty.md"
+    empty.write_text("", encoding="utf-8")
+    result = _run_demo(str(empty))
+    out = result.stdout + result.stderr
+    assert result.returncode == 1, out
+    assert "no claim text was supplied" in out
+    assert "VERDICT: BLOCK" in out
+
+
+def test_review_without_provider_fails_closed_not_pass(tmp_path, monkeypatch):
+    claim = tmp_path / "claim.md"
+    claim.write_text("Deployment succeeded because the logs completed.\n", encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if "API_KEY" not in k and "FALSIFY_" not in k}
+    result = subprocess.run(
+        [sys.executable, "-m", "falsify", "review", str(claim), "--json"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=env,
+    )
+    out = result.stdout + result.stderr
+    assert result.returncode != 0, out
+    assert "VERDICT: PASS" not in out
+    assert "no endpoint" in out or "no API key" in out or "unknown provider" in out or "falsify:" in out
 
 
 def test_parse_verdict_uses_last_verdict_line_to_resist_draft_injection():

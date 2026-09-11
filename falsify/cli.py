@@ -798,10 +798,38 @@ LOCAL_RULES = (
 )
 
 
+_REV_CLAIMED_RE = re.compile(
+    r"claimed.{0,40}(?:commit|revision)\s*[:=]\s*([0-9a-f]{7,40})",
+    re.I,
+)
+_REV_OBSERVED_RE = re.compile(
+    r"observed.{0,50}(?:commit|revision)\s*[:=]\s*([0-9a-f]{7,40})",
+    re.I,
+)
+
+
+def _revision_mismatch(text):
+    claimed = _REV_CLAIMED_RE.search(text or "")
+    observed = _REV_OBSERVED_RE.search(text or "")
+    if not claimed or not observed:
+        return False
+    return claimed.group(1).lower() != observed.group(1).lower()
+
+
 def local_cutline_review(text):
     findings = []
+    raw = text or ""
+    if not raw.strip():
+        findings.append({
+            "finding": "no claim text was supplied",
+            "failure": "an empty file cannot prove a deployment or any other claim",
+            "cutline": "Must Fix",
+            "action": "paste the claim plus the raw evidence you actually have",
+            "trigger": "",
+        })
+        return "BLOCK", findings
     for pattern, finding, failure, cutline, action, trigger in LOCAL_RULES:
-        if pattern.search(text):
+        if pattern.search(raw):
             findings.append({
                 "finding": finding,
                 "failure": failure,
@@ -809,13 +837,28 @@ def local_cutline_review(text):
                 "action": action,
                 "trigger": trigger,
             })
+    if _revision_mismatch(raw):
+        findings.append({
+            "finding": "claimed revision does not match observed production revision",
+            "failure": "the claim names one commit; the attached observation names another",
+            "cutline": "Must Fix",
+            "action": "attach a post-deploy probe of the live revision, or change the claim to match what is actually running",
+            "trigger": "",
+        })
     verdict = "BLOCK" if any(f["cutline"] == "Must Fix" for f in findings) else "PASS"
     return verdict, findings
 
 
 def format_cutline_audit(verdict, findings):
     if not findings:
-        body = "[AGENT-B audit] No material failure mode found.\nCutline: Delete\nEvidence needed: none\nMinimal action: none"
+        body = (
+            "[AGENT-B audit] No material failure mode found.\n"
+            "Cutline: Delete\n"
+            "Evidence needed: none\n"
+            "Minimal action: none\n"
+            "Coverage: local demo rules scanned the supplied claim text; "
+            "no known false-green pattern matched"
+        )
     else:
         chunks = []
         for f in findings:
@@ -832,6 +875,11 @@ def format_cutline_audit(verdict, findings):
                 + ("\nUpgrade trigger: " + f["trigger"] if f["trigger"] else "")
             )
         body = "\n\n".join(chunks)
+        if verdict == "PASS":
+            body += (
+                "\nCoverage: local demo rules scanned the supplied claim text; "
+                "no known false-green pattern matched"
+            )
     return body + f"\nVERDICT: {verdict}"
 
 

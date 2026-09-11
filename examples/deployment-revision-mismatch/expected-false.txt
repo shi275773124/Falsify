@@ -1,0 +1,12 @@
+Expected from: python -m falsify demo examples/deployment-revision-mismatch/claim-false.md
+
+Exit: 1
+Verdict: BLOCK
+Authority ceiling: EPISTEMIC_CLAIM or EPISTEMIC_ONLY (demo is not capital authority)
+Capital authority: NONE
+
+Must Fix findings (all should appear):
+- logs are treated as state verification
+- claimed revision does not match observed production revision
+- second-model agreement is treated as proof
+- LLM probe metadata is missing

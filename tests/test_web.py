@@ -9,7 +9,8 @@ def handler(path, method="GET"):
     return h
 
 def test_production_root_is_formal_console():
-    assert "Looks green isn't proof" in serve.PAGE
+    assert "AI generates." in serve.PAGE
+    assert "falsify" in serve.PAGE.lower()
     assert "/docs/" in serve.PAGE
     assert "/review" in Path(serve.FLOW_HOME_DIR / "candidate.js").read_text(encoding="utf-8")
     assert "<form" not in serve.PAGE
@@ -147,7 +148,8 @@ def test_dsh_plugin_doc_is_public_and_homepage_lists_install_path():
     home.do_GET()
     homepage = home.wfile.getvalue().decode("utf-8")
     assert home.status_code == 200
-    assert 'data-i18n="heroPrimary">Install GitHub Action</a>' in homepage
+    assert 'data-i18n="heroPrimary">Start the case</a>' in homepage
+    assert 'data-lang-path="/docs/00-getting-started.html"' in homepage
     assert 'data-i18n="dshLink">Install DeepSeek plugin →</a>' in homepage
     assert 'data-lang-path="/docs/18-dsh-plugin.html"' in homepage
     js = (serve.FLOW_HOME_DIR / "candidate.js").read_text(encoding="utf-8")
