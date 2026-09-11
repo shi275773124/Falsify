@@ -363,7 +363,7 @@ html[lang="zh-CN"],html.lang-zh{font-family:var(--font-zh)}html[lang="zh-CN"] bo
 
 
 DOC_SECTIONS = [
-    ("Start here", ["00-getting-started"]),  # first-run case: examples/deployment-revision-mismatch
+    ("Start here", ["00-getting-started"]),
     ("Use locally", ["11-byok-and-policy", "17-skills", "18-dsh-plugin"]),
     ("Add to CI", ["14-github-action-install", "15-ci-and-release-gate"]),
     ("Understand verdicts", ["01-architecture", "05-adversarial-review", "06-risk-scalpel", "08-examples", "verdict-vocabulary"]),

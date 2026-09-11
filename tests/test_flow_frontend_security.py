@@ -15,7 +15,7 @@ def test_provider_output_has_no_innerhtml_sink():
 
 def test_copy_command_is_stable_and_clipboard_fails_closed():
     js = _source("candidate.js")
-    for marker in ("deployment-revision-mismatch/claim-false.md", "copyCommand", "python -m falsify demo", 'typeof navigator === "undefined"', 'typeof navigator.clipboard.writeText !== "function"', "await navigator.clipboard.writeText(copyCommand)", "window.FalsifyFlow = { copyCommand, renderReceipt }"):
+    for marker in ("sample-block-report.json", "copyCommand", "python -m json.tool", 'typeof navigator === "undefined"', 'typeof navigator.clipboard.writeText !== "function"', "await navigator.clipboard.writeText(copyCommand)", "window.FalsifyFlow = { copyCommand, renderReceipt }"):
         assert marker in js
 
 def test_review_response_is_validated_before_json_use():
@@ -32,8 +32,8 @@ def test_public_copy_is_native_bounded_and_avoids_old_slogan():
     html, js = _source("index.html"), _source("candidate.js")
     for forbidden in ("Candidate only", "\u8fd9\u662f\u5019\u9009\u9875\u9762", "\u5148\u628a\u8bc1\u636e\u6446\u51fa\u6765\u3002", "\u518d\u8c08\u7ed3\u8bba\u3002"):
         assert forbidden not in html + js
-    # Narrative pins (zh): 对抗式 / 痛点 / 开始这个案例
-    for copy in ("\u5bf9\u6297\u5f0f", "\u75db\u70b9", "\u5f00\u59cb\u8fd9\u4e2a\u6848\u4f8b"):
+    # Narrative pins (zh): 对抗式 / 痛点 / 安装 GitHub Action
+    for copy in ("\u5bf9\u6297\u5f0f", "\u75db\u70b9", "\u5b89\u88c5 GitHub Action"):
         assert copy in js
 
 def test_chinese_interactive_states_are_native_and_complete():

@@ -30,9 +30,9 @@ def test_review_remains_user_triggered_and_fail_closed():
 def test_chinese_font_stack_and_utf8_document():
     html, js, css = source("index.html"), source("candidate.js"), source("candidate.css")
     assert '<meta charset="utf-8">' in html
-    # Narrative pins (zh): AI 负责生成 / 痛点
+    # Narrative pins (zh): 看起来绿了 / 痛点
     for codepoints in (
-        (0x8D1F, 0x8D23, 0x751F, 0x6210),  # 负责生成
+        (0x770B, 0x8D77, 0x6765, 0x7EFF, 0x4E86),  # 看起来绿了
         (0x75DB, 0x70B9),  # 痛点
     ):
         assert ''.join(map(chr, codepoints)) in js
