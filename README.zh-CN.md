@@ -2,48 +2,39 @@
 
 [English](README.md) | 中文
 
-**看起来绿了，还不够。**
+**AI 负责生成。Falsify 负责质疑。**
 
 官方站点：[https://falsify.site/](https://falsify.site/)
 
-先审，再信；先证据，再放行。
+Agent 说做完了。Falsify 检查证据是否支持这个结论。产出回执：`PASS` / `PASS_WITH_DEBT` / `BLOCK`。只做审查签收，不自动部署、不下单。
 
-两个痛点。三层白话。
+从这里开始（不需要 API key，不会访问生产）：
 
-| 痛点 | Falsify 怎么做 |
-|------|----------------|
-| **AI 幻觉与假绿** — 日志绿了、另一个模型也同意，仍可能不安全 | **对抗审** — 专打「看起来没问题」 |
-| **长期腐烂 / 过度工程** — 隐状态、脆弱回滚、流程表演 | **框架审 + Cutline** — 专抓「以后会烂掉」；该改改、该记记、该删删 |
-
-```text
-对抗审   →  专打「看起来没问题」
-框架审   →  专抓「以后会烂掉」
-Cutline  →  该改改 / 该记记 / 该删删
-回执     →  PASS / PASS_WITH_DEBT / BLOCK
+```bash
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo examples/deployment-revision-mismatch/claim-false.md
 ```
 
-> 只做审查签收，不自动部署、不下单。
-
-**证据驱动的决策闸门** — Falsify 是高风险声明的决策闸门：对抗审 + 框架审 + Cutline，然后给出签署回执。不是聊天机器人的第二意见。
+这份声明说部署成功是因为日志跑完了，但观察到的线上版本不是声称的提交。预期：`BLOCK`。证据一致的对照 `claim-true.md` 应为 `PASS`。说明见 [examples/deployment-revision-mismatch/README.md](./examples/deployment-revision-mismatch/README.md)。
 
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [线上站点](https://falsify.site/) · [快速开始](./docs/00-getting-started.zh-CN.md) · [Skills 安装](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
-## 快速开始
+## 回执是什么意思
 
-```bash
-git clone https://github.com/shi275773124/Falsify.git
-cd Falsify
-pip install -e ".[dev]"
-python -m falsify demo
-```
+| 裁决 | 含义 | 下一步 |
+|---|---|---|
+| `BLOCK` | 缺证据，或还有 Must Fix | 补探针 / 产物，或收窄声明 |
+| `PASS_WITH_DEBT` | 没有当前阻塞项，每条 Known Debt 都有升级触发条件 | 盯住触发条件 |
+| `PASS` | **你提交的**证据支持这个范围内的声明 | 留下回执。开源 PASS 是 `EPISTEMIC_ONLY`，不授权部署 |
 
-1. 在 [Claude Code 或 Cursor 安装 skill](./docs/17-skills.md) — 从 [`skills/`](./skills/) 复制文件夹（BYOK；无需 Falsify API key）。
-2. 安装 [GitHub Action](./docs/14-github-action-install.zh-CN.md) — [一屏分享包](./docs/github-action-share-pack.md) · [假绿卡片](./examples/real-cases/SHARE-CARDS.md)。
-3. 可选打开[首页格式演示](https://falsify.site/#try) — 仅看回执形态，不是完整门禁能力。
-4. 在一个高风险产物上跑 Falsify，再决定是否放行。
+`demo` 只审你传入的文件。本仓 GitHub Action 扫的是 **变更过的 Markdown 决策文档**，不是应用代码。模型审查（`falsify review`）需要你的 key 或已登录的 agent CLI；缺配置会失败，不会假装 PASS。
+
+完整首次路径：[快速开始](./docs/00-getting-started.zh-CN.md)。
 
 ## Skills（4 个工作流）
 

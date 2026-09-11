@@ -2,48 +2,39 @@
 
 English | [中文](README.zh-CN.md)
 
-**Looks green isn't proof.**
+**AI generates. Falsify questions.**
 
 Official site: [https://falsify.site/](https://falsify.site/)
 
-Review first. Trust after. Evidence first. Ship after.
+An agent says the work is done. Falsify is an Evidence-driven decision gate: it checks whether the evidence supports that conclusion. Output is a receipt: `PASS` / `PASS_WITH_DEBT` / `BLOCK`. Sign-off only — it does not deploy or trade for you. Must Fix / Known Debt / Delete stay on the Cutline.
 
-Two pains. Three layers.
+Start here (no API key; does not call production):
 
-| Pain | What Falsify does |
-|------|-------------------|
-| **AI hallucination & false-green** — logs green, another model agrees, still unsafe | **Adversarial review** — red-teams "looks fine" |
-| **Long-term rot / over-engineering** — hidden state, brittle rollback, process theater | **Framework review + Cutline** — catch what will rot later; Must Fix / Debt / Delete |
-
-```text
-Adversarial  →  red-teams "looks fine"
-Framework    →  catches what will rot later
-Cutline      →  Must Fix / Known Debt / Delete
-Receipt      →  PASS / PASS_WITH_DEBT / BLOCK
+```bash
+git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo examples/deployment-revision-mismatch/claim-false.md
 ```
 
-> Sign-off only. Does not deploy or trade for you.
-
-**Evidence-driven decision gate** — Falsify is a decision gate for high-risk claims: adversarial review + framework + Cutline, then a signed receipt. Not a chatbot second opinion.
+That file claims a deploy succeeded because logs completed, while the observed production revision is not the claimed commit. Expected: `BLOCK`. Matching evidence in `claim-true.md` should `PASS`. Case notes: [examples/deployment-revision-mismatch/README.md](./examples/deployment-revision-mismatch/README.md).
 
 
 [![falsify](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml/badge.svg)](https://github.com/shi275773124/Falsify/actions/workflows/falsify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [Live site](https://falsify.site/) · [Getting started](./docs/00-getting-started.md) · [Skills install](./docs/17-skills.md) · [Adversarial Review](./docs/05-adversarial-review.md) · [Cutline / 风险裁刀](./docs/06-risk-scalpel.md)
 
-## Quick start
+## What the receipt means
 
-```bash
-git clone https://github.com/shi275773124/Falsify.git
-cd Falsify
-pip install -e ".[dev]"
-python -m falsify demo
-```
+| Verdict | Meaning | Next |
+|---|---|---|
+| `BLOCK` | Missing evidence or a Must Fix remains | Add the probe / artifact, or narrow the claim |
+| `PASS_WITH_DEBT` | No blocker; every Known Debt has an upgrade trigger | Track the trigger |
+| `PASS` | The **supplied** evidence supports this scoped claim | Keep the artifact. OSS PASS is `EPISTEMIC_ONLY` — it does not authorize a deploy |
 
-1. **Install a skill** in [Claude Code or Cursor](./docs/17-skills.md) — copy a folder from [`skills/`](./skills/) (BYOK; no Falsify API key).
-2. Install the [GitHub Action](./docs/14-github-action-install.md) — [one-screen share pack](./docs/github-action-share-pack.md) · [false-green share cards](./examples/real-cases/SHARE-CARDS.md).
-3. Optionally open the [homepage format demo](https://falsify.site/#try) — receipt **shape only**, not full gate capability.
-4. Use Falsify on one high-risk claim before the decision ships.
+`demo` inspects the file you pass it. GitHub Action in this repo lints **changed Markdown decision docs**, not application code. Model review (`falsify review`) needs your key or a logged-in agent CLI; missing config fails closed.
+
+Full first-run: [Getting started](./docs/00-getting-started.md).
 
 ## Skills (4 workflows)
 
