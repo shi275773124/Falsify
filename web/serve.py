@@ -368,6 +368,7 @@ DOC_SECTIONS = [
     ("Add to CI", ["14-github-action-install", "15-ci-and-release-gate"]),
     ("Understand verdicts", ["01-architecture", "05-adversarial-review", "06-risk-scalpel", "08-examples", "verdict-vocabulary"]),
     ("Reference", ["20-cli-and-artifacts", "04-troubleshooting", "03-collaboration"]),
+    ("Measured capability", ["audit-power"]),
     ("Security & Contact", ["19-security-and-contact"]),
 ]
 
@@ -391,8 +392,8 @@ DOCS_ALLOWLIST = {stem for _section, stems in DOC_SECTIONS for stem in stems}
 CASE_DIR = ROOT / "examples" / "real-cases"
 
 DOC_SECTION_LABELS = {
-    "en": {"Start here": "Start here", "Use locally": "Use locally", "Add to CI": "Add to CI", "Understand verdicts": "Understand verdicts", "Reference": "Reference", "Security & Contact": "Security & Contact", "Featured": "Recommended next steps"},
-    "zh": {"Start here": "开始使用", "Use locally": "本地使用", "Add to CI": "接入 CI", "Understand verdicts": "理解裁决", "Reference": "参考资料", "Security & Contact": "安全与联系", "Featured": "推荐阅读"},
+    "en": {"Start here": "Start here", "Use locally": "Use locally", "Add to CI": "Add to CI", "Understand verdicts": "Understand verdicts", "Reference": "Reference", "Measured capability": "Measured capability", "Security & Contact": "Security & Contact", "Featured": "Recommended next steps"},
+    "zh": {"Start here": "开始使用", "Use locally": "本地使用", "Add to CI": "接入 CI", "Understand verdicts": "理解裁决", "Reference": "参考资料", "Measured capability": "实测能力", "Security & Contact": "安全与联系", "Featured": "推荐阅读"},
 }
 
 DOCS_CHROME = {
@@ -584,6 +585,7 @@ def llms_txt() -> str:
 - [Docs]({absolute_url("/docs/")}): install and architecture
 - [GitHub Action install]({absolute_url("/docs/14-github-action-install.html")}): 5-minute CI gate
 - [Getting started]({absolute_url("/docs/00-getting-started.html")})
+- [Audit power methodology]({absolute_url("/docs/audit-power.html")})
 - [Verdict vocabulary]({absolute_url("/docs/verdict-vocabulary.html")})
 - [GitHub repository](https://github.com/shi275773124/Falsify)
 
