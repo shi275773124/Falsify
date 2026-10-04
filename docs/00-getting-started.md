@@ -27,6 +27,13 @@ Give Falsify the claim and the evidence you have. A `BLOCK` is useful output: it
 
 There is no hosted Falsify organization console, shared receipt store, or managed gateway in this repository. Your files, provider configuration, and artifacts remain under your control.
 
+## 0. Try it in 60 seconds (no install)
+
+Before cloning anything, you can try the local rules and see a real verdict shape:
+
+- [Playground](https://falsify.site/playground/) — paste text, run the same four local rules the CLI uses, see the findings.
+- [GitHub Action quickstart](https://falsify.site/quickstart/) — generate the workflow YAML in three steps (repo + globs, no manual copy).
+
 ## 1. Install
 
 ```bash

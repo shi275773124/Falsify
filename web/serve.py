@@ -11,7 +11,10 @@ import os
 import posixpath
 import re
 import sys
+import threading
+import time
 import traceback
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -24,7 +27,7 @@ import falsify  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB_DIR = Path(__file__).resolve().parent
-ALLOWED_STATIC_EXTS = {".md", ".svg", ".png", ".gif", ".css", ".js", ".json", ".ico", ".webp", ".txt", ".xml"}
+ALLOWED_STATIC_EXTS = {".md", ".svg", ".png", ".gif", ".css", ".js", ".json", ".ico", ".webp", ".txt", ".xml", ".mp4", ".webm", ".yml", ".yaml"}
 STATIC_CTYPE = {
     ".svg": "image/svg+xml",
     ".png": "image/png",
@@ -40,6 +43,8 @@ STATIC_CTYPE = {
     ".xml": "application/xml; charset=utf-8",
     ".mp4": "video/mp4",
     ".webm": "video/webm",
+    ".yml": "text/yaml; charset=utf-8",
+    ".yaml": "text/yaml; charset=utf-8",
 }
 SITE_ORIGIN = os.environ.get("FALSIFY_SITE_ORIGIN", "https://falsify.site").rstrip("/")
 PROVIDER = os.environ.get("FALSIFY_PROVIDER")
@@ -300,8 +305,38 @@ def _markdown_to_html(text: str, title: str = "", untranslated: bool = False) ->
     return rendered
 
 
+
+
+# 2026-10-04 docs freshness: the release ships an allowlisted subset of docs/;
+# repo-relative links to unshipped pages (internal blueprints, ROOTFIX,
+# skills/, templates/, root README) 404 or hit private surfaces on falsify.site.
+# Rewrite them to canonical GitHub URLs; pages that became routable stay local.
+GITHUB_BLOB = "https://github.com/shi275773124/Falsify/blob/main"
+GITHUB_TREE = "https://github.com/shi275773124/Falsify/tree/main"
+
+_DOCS_LINK_REWRITE = {
+    "./09-brooks-lint.md": "./09-brooks-lint.html",
+    "./12-open-core-boundary.md": "./12-open-core-boundary.html",
+    "./10-team-delivery-and-business-model.md": f"{GITHUB_BLOB}/docs/10-team-delivery-and-business-model.md",
+    "./ROOTFIX-architecture.md": f"{GITHUB_BLOB}/docs/ROOTFIX-architecture.md",
+}
+
+
+def _rewrite_repo_links(text):
+    """Rewrite repo-relative links that 404 on the live site."""
+    for old, new in _DOCS_LINK_REWRITE.items():
+        text = text.replace(f"]({old})", f"]({new})")
+    text = re.sub(r"\]\(\.\./README\.zh-CN\.md\)", f"]({GITHUB_BLOB}/README.zh-CN.md)", text)
+    text = re.sub(r"\]\(\.\./README\.md\)", f"]({GITHUB_BLOB}/README.md)", text)
+    text = re.sub(r"\]\(\.\./skills/([^)/]+)/?\)", lambda m: f"]({GITHUB_TREE}/skills/{m.group(1)}/)", text)
+    text = text.replace("](../skills/)", f"]({GITHUB_TREE}/skills)")
+    text = re.sub(r"\]\(\.\./templates/([^)]+)\)", lambda m: f"]({GITHUB_BLOB}/templates/{m.group(1)})", text)
+    return text
+
+
 def render_markdown(text, title="Falsify docs", current_path=None, lang="en", untranslated=False):
     """Render a Markdown document into the docs shell."""
+    text = _rewrite_repo_links(text)
     notice_html = ""
     if untranslated:
         notice = DOCS_CHROME.get(lang, DOCS_CHROME["en"])["untranslated"]
@@ -371,6 +406,10 @@ DOC_SECTIONS = [
     ("Security & Contact", ["19-security-and-contact"]),
 ]
 
+# 2026-10-04 docs freshness: linked from other docs and the README, but not
+# nav-worthy (internal blueprint pages stay out of the public sidebar).
+DOCS_EXTRA_ROUTABLE = {"09-brooks-lint", "12-open-core-boundary"}
+
 # Public HTML surface for sitemap / GEO citation (not design-candidate mirrors).
 # Only these stems are routable HTML readers; other files under examples/real-cases/
 # remain on disk for raw .md download or internal drafts but must not get a case shell.
@@ -386,7 +425,7 @@ DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-in
 
 # Public docs surface: only these stems route. Anything else under docs/ is
 # internal material and must 404, even though doc_files() can see it on disk.
-DOCS_ALLOWLIST = {stem for _section, stems in DOC_SECTIONS for stem in stems}
+DOCS_ALLOWLIST = {stem for _section, stems in DOC_SECTIONS for stem in stems} | DOCS_EXTRA_ROUTABLE
 
 CASE_DIR = ROOT / "examples" / "real-cases"
 
@@ -421,9 +460,10 @@ def doc_has_zh(stem):
     path = doc_zh_path(stem)
     if not path.is_file():
         return False
-    # A previous Windows write replaced Chinese bytes with literal question marks.
-    # Never render that corruption: route to the readable English fallback instead.
-    return path.read_text(encoding="utf-8").count("?") < 8
+    # A previous Windows write replaced Chinese code points with literal
+    # question marks before the file reached the server. This is source
+    # corruption, not an HTTP decoding issue; do not render it as Chinese.
+    return path.read_text(encoding="utf-8-sig").count("?") < 8
 
 
 def doc_files():
@@ -442,7 +482,7 @@ def doc_title(stem, lang="en"):
     path = doc_zh_path(stem) if lang == "zh" and doc_has_zh(stem) else ROOT / "docs" / f"{stem}.md"
     if not path.is_file():
         return stem.replace("-", " ").title()
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
         line = line.strip()
         if line.startswith("# "):
             title = line[2:].strip()
@@ -481,6 +521,44 @@ def docs_nav_html(current=None, lang="en"):
 
 FLOW_HOME_DIR = ROOT / "design" / "falsify-flow-candidate"
 FLOW_DOCS_DIR = ROOT / "design" / "falsify-flow-docs"
+WORK_HOME_DIR = ROOT / "design" / "falsify-work-page"
+# —— Onboarding pages (2026-10-04): /playground/ /quickstart/ /sprint/ ——
+# Static HTML + page assets, loaded like WORK_PAGE with content fingerprints.
+PAGES_DIR = ROOT / "design" / "falsify-pages"
+PAGE_ASSET_DIR = ROOT / "web" / "static" / "pages"
+
+# —— Commercial work page & inquiry intake (2026-09-17) ——
+# Leads live OUTSIDE every public static root (web/static, examples, design,
+# assets): the only ways in are POST /api/inquiry and auth-gated GET /leads.
+INQUIRY_DIR = ROOT / "data" / "inquiries"
+INQUIRY_FILE = INQUIRY_DIR / "inquiries.jsonl"
+INQUIRY_NOTIFY_QUEUE = INQUIRY_DIR / "notify_queue.jsonl"
+WORK_VIEWS_FILE = INQUIRY_DIR / "work_views.jsonl"
+# Single config source for business facts. A fact stays None until Chris
+# confirms it; pages must render honestly without it (no placeholder prices).
+WORK_CONFIG = {
+    # 2026-09-18 Chris 确认试点起价 ¥3,000（HTML 片段级，可含 <b>）
+    "pilot_price_html": "¥3,000",
+    "wechat_enabled": False,   # show WeChat reply option only after a verified channel exists
+    "reply_sla": None,         # e.g. "1 个工作日内回复" only once it can actually be honored
+}
+INQUIRY_FLOW_TYPES = {"report", "audit", "cross-system", "other"}
+INQUIRY_SOURCES = {
+    "home_nav", "home_hero", "home_partner",
+    "work_hero", "work_steps", "work_form", "sprint_page", "direct", "test",
+}
+INQUIRY_DESC_MAX = 500
+INQUIRY_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+INQUIRY_IP_MAX = 5
+INQUIRY_IP_WINDOW = 3600.0
+INQUIRY_DAILY_GLOBAL = 50
+INQUIRY_DEDUP_WINDOW = 600.0
+INQUIRY_BODY_MAX = 8192
+_INQUIRY_LOCK = threading.Lock()
+_NOTIFY_LOCK = threading.Lock()
+_INQUIRY_IP_HITS = {}
+_INQUIRY_DEDUP = {}
+_INQUIRY_DAY = {"date": None, "count": 0}
 
 def flow_docs_href(stem, lang, canonical=False):
     prefix = "/docs" if canonical else "/design/falsify-flow-docs"
@@ -581,6 +659,10 @@ def llms_txt() -> str:
 
 ## Start
 - [Home]({absolute_url("/")}): product thesis, false-green cases, format demo
+- [Playground]({absolute_url("/playground/")}): local rule check on your text + real sample verdicts — no key
+- [GitHub Action quickstart]({absolute_url("/quickstart/")}): generate the workflow file from the authoritative template
+- [Audit Sprint]({absolute_url("/sprint/")}): fixed-fee, fixed-scope adversarial audit for one high-stakes decision
+- [Custom AI workflows for businesses]({absolute_url("/work/")}): paid single-workflow pilot — scope, pricing basis, inquiry
 - [Docs]({absolute_url("/docs/")}): install and architecture
 - [GitHub Action install]({absolute_url("/docs/14-github-action-install.html")}): 5-minute CI gate
 - [Getting started]({absolute_url("/docs/00-getting-started.html")})
@@ -604,6 +686,10 @@ def _lastmod_iso(path: Path) -> str:
 
 def sitemap_xml() -> str:
     entries = [("/", FLOW_HOME_DIR / "index.html")]
+    entries.append(("/work/", WORK_HOME_DIR / "index.html" if WORK_HOME_DIR.is_dir() else None))
+    for slug in ("playground", "quickstart", "sprint"):
+        p = PAGES_DIR / f"{slug}.html"
+        entries.append((f"/{slug}/", p if p.is_file() else None))
     entries.append(("/docs/", None))
     files = doc_files()
     for _section, stems in DOC_SECTIONS:
@@ -681,8 +767,9 @@ def flow_docs_shell(title, body, current=None, lang="en", canonical=False, path=
     menu_label = FLOW_DOCS_ZH["menu_open"] if is_zh else "Menu"
     language_label = FLOW_DOCS_ZH["language"] if is_zh else "Switch to Chinese"
     menu_close = FLOW_DOCS_ZH["menu_close"] if is_zh else "Menu"
-    contact_label = "联系" if is_zh else "Contact"
-    contact_href = f"{docs_prefix}19-security-and-contact.html{lang_query}"
+    home_label = "首页" if is_zh else "Home"
+    partner_label = "合作" if is_zh else "Partner"
+    partner_href = f"{flow_prefix}#partner" if not lang_query else f"{flow_prefix}{lang_query}#partner"
     if path is None:
         if current:
             path = f"{docs_prefix}{current}.html"
@@ -691,7 +778,14 @@ def flow_docs_shell(title, body, current=None, lang="en", canonical=False, path=
     # Design-candidate mirrors stay out of the public index.
     noindex = not canonical
     meta = flow_docs_meta_tags(title, description, path, lang=lang, noindex=noindex)
-    return f"""<!doctype html><html lang="{'zh-CN' if is_zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#020914"><title>{html_escape(title)} \u2014 Falsify Flow Docs</title>{meta}<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"><link rel="stylesheet" href="/design/falsify-flow-docs/candidate.css"></head><body><a class="skip" href="#main">{html_escape(skip)}</a><header class="flow-docs-header"><a class="flow-brand" href="{docs_prefix}{lang_query}" aria-label="Falsify home"><svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#020914"/><rect x="5" y="5" width="22" height="22" rx="5" fill="none" stroke="#58f5c6" stroke-width="2.2"/><path d="M9.5 16.5l4.5 4.5 8.5-10" fill="none" stroke="#58f5c6" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter"/></svg><span class="brand-wordmark">Falsify</span></a><div class="flow-header-actions"><a href="{flow_href}">Flow</a><a href="{docs_href}" aria-current="page">{html_escape(docs_label)}</a><a href="{contact_href}">{html_escape(contact_label)}</a><button id="flow-lang" type="button" aria-label="{html_escape(language_label)}">{button}</button><button id="docs-menu" type="button" aria-expanded="false" aria-controls="flow-sidebar" data-open-label="{html_escape(menu_label)}" data-close-label="{html_escape(menu_close)}">{html_escape(menu_label)}</button></div></header><div class="flow-docs-layout"><aside id="flow-sidebar" class="flow-docs-sidebar"><p class="sidebar-kicker">FLOW / DOCS</p>{flow_docs_nav_html(current, lang, canonical)}</aside><main id="main" class="flow-docs-main">{body}</main></div><script src="/design/falsify-flow-docs/candidate.js"></script></body></html>"""
+    brand_svg = (
+        '<svg class="brand-mark" width="28" height="28" viewBox="0 0 256 256" aria-hidden="true">'
+        '<path fill="#111315" d="M0 0H256V64L64 256H0Z"/>'
+        '<path fill="#FFFFFF" d="M256 64V88L88 256H64Z"/>'
+        '<path fill="#B7F34A" d="M256 88V256H88Z"/>'
+        "</svg>"
+    )
+    return f"""<!doctype html><html lang="{'zh-CN' if is_zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111315"><meta name="color-scheme" content="light"><title>{html_escape(title)} \u2014 Falsify Docs</title>{meta}<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"><link rel="stylesheet" href="/design/falsify-flow-docs/candidate.css?v=apple-docs-20260722-3"></head><body><a class="skip" href="#main">{html_escape(skip)}</a><header class="flow-docs-header"><a class="flow-brand" href="{flow_href}" aria-label="Falsify home">{brand_svg}<span class="brand-wordmark">Falsify</span></a><div class="flow-header-actions"><a href="{flow_href}">{html_escape(home_label)}</a><a href="{docs_href}" aria-current="page">{html_escape(docs_label)}</a><a href="{partner_href}">{html_escape(partner_label)}</a><button id="flow-lang" type="button" aria-label="{html_escape(language_label)}">{button}</button><button id="docs-menu" type="button" aria-expanded="false" aria-controls="flow-sidebar" data-open-label="{html_escape(menu_label)}" data-close-label="{html_escape(menu_close)}">{html_escape(menu_label)}</button></div></header><div class="flow-docs-layout"><aside id="flow-sidebar" class="flow-docs-sidebar"><p class="sidebar-kicker">DOCS</p>{flow_docs_nav_html(current, lang, canonical)}</aside><main id="main" class="flow-docs-main">{body}</main></div><script src="/design/falsify-flow-docs/candidate.js"></script></body></html>"""
 
 
 def flow_docs_index(lang="en", canonical=False):
@@ -832,17 +926,47 @@ def docs_shell(title, body_html, current_path=None, lang="en"):
 def resolve_doc_markdown(stem, lang="en"):
     en_path = ROOT / "docs" / f"{stem}.md"
     zh_path = doc_zh_path(stem)
-    if lang == "zh" and zh_path.is_file():
-        return zh_path.read_text(encoding="utf-8"), False
+    if lang == "zh" and doc_has_zh(stem):
+        return zh_path.read_text(encoding="utf-8-sig"), False
     if lang == "zh" and en_path.is_file():
-        return en_path.read_text(encoding="utf-8"), True
+        return en_path.read_text(encoding="utf-8-sig"), True
     if en_path.is_file():
-        return en_path.read_text(encoding="utf-8"), False
+        return en_path.read_text(encoding="utf-8-sig"), False
     return "", False
+
+
+
+
+# 2026-10-04 docs freshness: the release ships an allowlisted subset of docs/;
+# repo-relative links to unshipped pages (internal blueprints, ROOTFIX,
+# skills/, templates/, root README) 404 or hit private surfaces on falsify.site.
+# Rewrite them to canonical GitHub URLs; pages that became routable stay local.
+GITHUB_BLOB = "https://github.com/shi275773124/Falsify/blob/main"
+GITHUB_TREE = "https://github.com/shi275773124/Falsify/tree/main"
+
+_DOCS_LINK_REWRITE = {
+    "./09-brooks-lint.md": "./09-brooks-lint.html",
+    "./12-open-core-boundary.md": "./12-open-core-boundary.html",
+    "./10-team-delivery-and-business-model.md": f"{GITHUB_BLOB}/docs/10-team-delivery-and-business-model.md",
+    "./ROOTFIX-architecture.md": f"{GITHUB_BLOB}/docs/ROOTFIX-architecture.md",
+}
+
+
+def _rewrite_repo_links(text):
+    """Rewrite repo-relative links that 404 on the live site."""
+    for old, new in _DOCS_LINK_REWRITE.items():
+        text = text.replace(f"]({old})", f"]({new})")
+    text = re.sub(r"\]\(\.\./README\.zh-CN\.md\)", f"]({GITHUB_BLOB}/README.zh-CN.md)", text)
+    text = re.sub(r"\]\(\.\./README\.md\)", f"]({GITHUB_BLOB}/README.md)", text)
+    text = re.sub(r"\]\(\.\./skills/([^)/]+)/?\)", lambda m: f"]({GITHUB_TREE}/skills/{m.group(1)}/)", text)
+    text = text.replace("](../skills/)", f"]({GITHUB_TREE}/skills)")
+    text = re.sub(r"\]\(\.\./templates/([^)]+)\)", lambda m: f"]({GITHUB_BLOB}/templates/{m.group(1)})", text)
+    return text
 
 
 def render_markdown(text, title="Falsify docs", current_path=None, lang="en", untranslated=False):
     """Render a Markdown document into the docs shell."""
+    text = _rewrite_repo_links(text)
     notice_html = ""
     if untranslated:
         notice = DOCS_CHROME.get(lang, DOCS_CHROME["en"])["untranslated"]
@@ -911,6 +1035,8 @@ def _flow_asset_version() -> str:
         "flow-canvas.js",
         "flow-motion.js",
         "i18n-boot.js",
+        "falsify-audit-loop.mp4",
+        "falsify-audit-poster.png",
     ):
         p = FLOW_HOME_DIR / name
         if p.is_file():
@@ -935,6 +1061,258 @@ def load_flow_homepage():
 
 
 PAGE = load_flow_homepage()
+
+
+def _work_asset_version() -> str:
+    """Fingerprint from work-page asset content: automatic cache-bust."""
+    h = hashlib.sha256()
+    for name in ("work.css", "work.js"):
+        p = WORK_HOME_DIR / name
+        if p.is_file():
+            h.update(p.read_bytes())
+    return h.hexdigest()[:12]
+
+
+def load_work_homepage():
+    """Mount the /work/ page with content-fingerprinted asset URLs."""
+    html = (WORK_HOME_DIR / "index.html").read_text(encoding="utf-8-sig")
+    html = re.sub(
+        r'((?:href|src)="/assets/work/[^"?]+)(?:\?v=[^"]*)?"',
+        lambda m: f'{m.group(1)}?v={_work_asset_version()}"',
+        html,
+    )
+    html = re.sub(
+        r'((?:href|src)="/assets/flow/[^"?]+)(?:\?v=[^"]*)?"',
+        lambda m: f'{m.group(1)}?v={_flow_asset_version()}"',
+        html,
+    )
+    price_html = WORK_CONFIG.get("pilot_price_html") or ""
+    html = html.replace("__PILOT_PRICE__", html_escape(price_html))
+    if SITE_ORIGIN != "https://falsify.site":
+        html = html.replace("https://falsify.site", SITE_ORIGIN)
+    return html
+
+
+def _pages_asset_version() -> str:
+    """Fingerprint from onboarding-page asset content: automatic cache-bust."""
+    h = hashlib.sha256()
+    if PAGE_ASSET_DIR.is_dir():
+        for p in sorted(PAGE_ASSET_DIR.iterdir()):
+            if p.is_file():
+                h.update(p.read_bytes())
+    return h.hexdigest()[:12]
+
+
+def _load_static_page(filename: str):
+    """Load design/falsify-pages/<filename> with fingerprinted asset URLs."""
+    html = (PAGES_DIR / filename).read_text(encoding="utf-8-sig")
+    html = re.sub(
+        r'((?:href|src)="/static/pages/[^"?]+)(?:\?v=[^"]*)?"',
+        lambda m: f'{m.group(1)}?v={_pages_asset_version()}"',
+        html,
+    )
+    html = re.sub(
+        r'((?:href|src)="/assets/flow/[^"?]+)(?:\?v=[^"]*)?"',
+        lambda m: f'{m.group(1)}?v={_flow_asset_version()}"',
+        html,
+    )
+    if SITE_ORIGIN != "https://falsify.site":
+        html = html.replace("https://falsify.site", SITE_ORIGIN)
+    return html
+
+
+try:
+    WORK_PAGE = load_work_homepage()
+except OSError:
+    WORK_PAGE = None
+
+_PAGES_CACHE = {}
+
+
+def _page_cached(filename):
+    try:
+        html = _load_static_page(filename)
+    except OSError:
+        return None
+    _PAGES_CACHE[filename] = html
+    return html
+
+
+def _page(filename):
+    """Module-load-time page cache; refreshed on restart like WORK_PAGE."""
+    if filename not in _PAGES_CACHE:
+        return _page_cached(filename)
+    return _PAGES_CACHE[filename]
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _append_jsonl(path: Path, payload: dict) -> None:
+    """Append one JSON line and fsync — persistence is the success guarantee."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def _telegram_token():
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    if token:
+        return token.strip()
+    try:
+        for line in Path("/home/ubuntu/.hermes/.env").read_text(encoding="utf-8").splitlines():
+            if line.startswith("TELEGRAM_BOT_TOKEN="):
+                return line.split("=", 1)[1].strip() or None
+    except OSError:
+        return None
+    return None
+
+
+def _send_inquiry_notify(record: dict) -> str:
+    """Best-effort push via Chris's existing falsify alert channel.
+
+    Returns "sent" or "failed". Never raises; a failed push leaves the lead
+    in INQUIRY_NOTIFY_QUEUE so it is discoverable and retried on the next
+    inquiry — a notification miss must never lose the lead.
+    """
+    token = _telegram_token()
+    if not token:
+        return "failed"
+    chat_id = os.environ.get("FALSIFY_TG_CHAT_ID", "661734970")
+    text = (
+        f"🟡 falsify 询价 {record.get('id', '?')}\n"
+        f"类型: {record.get('flow_type', '?')} · 语言: {record.get('lang', '?')} · 来源: {record.get('source', '?')}\n"
+        f"回复方式: {record.get('contact_method', '?')}: {record.get('contact', '?')}\n"
+        f"描述: {record.get('description', '')}"
+    )
+    try:
+        import urllib.request
+
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=json.dumps({"chat_id": chat_id, "text": text}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            resp.read()
+        return "sent"
+    except Exception:  # noqa: BLE001 — notification must never break intake
+        return "failed"
+
+
+def _drain_notify_queue() -> None:
+    if not INQUIRY_NOTIFY_QUEUE.is_file():
+        return
+    try:
+        lines = INQUIRY_NOTIFY_QUEUE.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return
+    remaining = []
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if _send_inquiry_notify(record) != "sent":
+            remaining.append(line)
+    tmp = INQUIRY_NOTIFY_QUEUE.with_suffix(".tmp")
+    try:
+        tmp.write_text("\n".join(remaining) + ("\n" if remaining else ""), encoding="utf-8")
+        tmp.replace(INQUIRY_NOTIFY_QUEUE)
+    except OSError:
+        pass
+
+
+def _notify_lead_async(record: dict) -> None:
+    if record.get("source") == "test":
+        return
+
+    def _run():
+        with _NOTIFY_LOCK:
+            _drain_notify_queue()
+            if _send_inquiry_notify(record) != "sent":
+                try:
+                    _append_jsonl(INQUIRY_NOTIFY_QUEUE, record)
+                except OSError:
+                    pass  # lead itself is already persisted and visible on /leads
+
+    threading.Thread(target=_run, daemon=True).start()
+
+
+def _count_todays_inquiries(today: str) -> int:
+    if not INQUIRY_FILE.is_file():
+        return 0
+    try:
+        return sum(
+            1
+            for line in INQUIRY_FILE.read_text(encoding="utf-8").splitlines()
+            if line.strip().startswith(f'{{"created_at": "{today}')
+        )
+    except OSError:
+        return 0
+
+
+def _leads_rows(limit: int = 300):
+    queued = set()
+    if INQUIRY_NOTIFY_QUEUE.is_file():
+        try:
+            for line in INQUIRY_NOTIFY_QUEUE.read_text(encoding="utf-8").splitlines():
+                try:
+                    queued.add(json.loads(line).get("id"))
+                except (json.JSONDecodeError, AttributeError):
+                    continue
+        except OSError:
+            pass
+    rows = []
+    if INQUIRY_FILE.is_file():
+        try:
+            lines = INQUIRY_FILE.read_text(encoding="utf-8").splitlines()
+        except OSError:
+            lines = []
+        for line in lines[-limit:]:
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            record["notify_pending"] = record.get("id") in queued
+            rows.append(record)
+    rows.reverse()  # newest first
+    return rows
+
+
+def _leads_page() -> str:
+    rows = _leads_rows()
+    body_rows = []
+    for r in rows:
+        notify = "test·跳过" if r.get("source") == "test" else ("待重试" if r["notify_pending"] else "已处理")
+        body_rows.append(
+            "<tr>"
+            f"<td>{html_escape(str(r.get('created_at', '')))}</td>"
+            f"<td>{html_escape(str(r.get('id', '')))}</td>"
+            f"<td>{html_escape(str(r.get('flow_type', '')))}</td>"
+            f"<td>{html_escape(str(r.get('lang', '')))}</td>"
+            f"<td>{html_escape(str(r.get('source', '')))}</td>"
+            f"<td>{html_escape(str(r.get('contact_method', '')))}: {html_escape(str(r.get('contact', '')))}</td>"
+            f"<td>{html_escape(str(r.get('description', '')))}</td>"
+            f"<td>{html_escape(str(r.get('status', 'new')))}</td>"
+            f"<td>{html_escape(notify)}</td>"
+            "</tr>"
+        )
+    if not body_rows:
+        body_rows.append('<tr><td colspan="9">暂无询价</td></tr>')
+    return f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Falsify 询价线索</title>
+<link rel="stylesheet" href="/assets/flow/home.css?v={_flow_asset_version()}"><link rel="stylesheet" href="/assets/work/work.css?v={_work_asset_version()}"></head>
+<body><main class="shell leads-shell"><h1 class="section-title">询价线索台账</h1>
+<p class="leads-summary">共 {len(rows)} 条（最新在前，最多显示 300 条）。通知状态「待重试」= Telegram 推送失败，线索已保存，将在下一条询价时自动重推。</p>
+<div class="leads-table-wrap"><table class="leads-table"><thead><tr>
+<th>时间(UTC)</th><th>ID</th><th>类型</th><th>语言</th><th>来源</th><th>回复方式</th><th>描述</th><th>状态</th><th>通知</th>
+</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div></main></body></html>"""
 
 class H(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -1025,6 +1403,24 @@ class H(BaseHTTPRequestHandler):
                 filename = rel
         return _safe_under(FLOW_HOME_DIR, filename) if filename else None
 
+    def _work_asset(self, parsed):
+        """Serve only single-segment basenames under /assets/work/ (no escape)."""
+        prefix = "/assets/work/"
+        path = unquote(parsed.path)
+        if ".." in path.split("/"):
+            return None
+        if not path.startswith(prefix):
+            return None
+        rel = path[len(prefix):]
+        if "/" in rel or "\\" in rel or rel in {"", "."} or ".." in rel:
+            return None
+        rel = posixpath.normpath(rel)
+        if rel in {"", "."} or rel.startswith("..") or "/" in rel or "\\" in rel:
+            return None
+        if Path(rel).suffix.lower() not in ALLOWED_STATIC_EXTS:
+            return None
+        return _safe_under(WORK_HOME_DIR, rel)
+
     def _route(self, head=False):
         parsed = urlparse(self.path)
         lang = parse_lang(parsed.query)
@@ -1032,6 +1428,40 @@ class H(BaseHTTPRequestHandler):
 
         if path in {"/", "/index.html"}:
             return self._send(200, PAGE, "text/html", head=head, cache="no-cache")
+
+        if path == "/work":
+            self.send_response(301)
+            self.send_header("Location", "/work/")
+            self.send_header("Content-Length", "0")
+            for name, value in self.SECURITY_HEADERS.items():
+                self.send_header(name, value)
+            self.end_headers()
+            return
+        if path in {"/work/", "/work/index.html"}:
+            if WORK_PAGE is None:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            try:
+                _append_jsonl(WORK_VIEWS_FILE, {"ts": _utc_now_iso(), "lang": lang})
+            except OSError:
+                pass  # view logging must never break the page
+            return self._send(200, WORK_PAGE, "text/html", head=head, cache="no-cache")
+        if path in {"/playground", "/playground/", "/playground/index.html"}:
+            page = _page("playground.html")
+            if page is None:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            return self._send(200, page, "text/html", head=head, cache="no-cache")
+        if path in {"/quickstart", "/quickstart/", "/quickstart/index.html"}:
+            page = _page("quickstart.html")
+            if page is None:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            return self._send(200, page, "text/html", head=head, cache="no-cache")
+        if path in {"/sprint", "/sprint/", "/sprint/index.html"}:
+            page = _page("sprint.html")
+            if page is None:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            return self._send(200, page, "text/html", head=head, cache="no-cache")
+        if path == "/leads":
+            return self._send(200, _leads_page(), "text/html", head=head, cache="no-cache")
 
         if path == "/robots.txt":
             return self._send(200, robots_txt(), "text/plain", head=head, cache="public, max-age=3600")
@@ -1082,6 +1512,16 @@ class H(BaseHTTPRequestHandler):
 
         # MF-1: never map /assets/* through safe_repo_path(ROOT). Only /assets/flow/*
         # allowlisted basenames via _flow_asset; any other /assets/ path is 404.
+        if path.startswith("/assets/work/"):
+            target = self._work_asset(parsed)
+            if not target or not target.is_file():
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            suffix = target.suffix.lower()
+            ctype = STATIC_CTYPE.get(suffix)
+            if not ctype:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            return self._send(200, target.read_bytes(), ctype, head=head, cache="public, max-age=31536000, immutable")
+
         if path.startswith("/assets/"):
             target = self._flow_asset(parsed)
             if not target or not target.is_file():
@@ -1138,11 +1578,101 @@ class H(BaseHTTPRequestHandler):
         self._guarded()
 
     def do_OPTIONS(self):
-        # /review is same-origin only; do not advertise CORS methods or origins.
+        # /review and /api/inquiry are same-origin only; no CORS advertised.
         return self._json_error(405, "method_not_allowed", "OPTIONS is not supported.")
 
+    def _handle_inquiry(self):
+        """Persist a work inquiry; success is only returned after fsync.
+
+        Contact details and description stay inside the JSONL store — never
+        in URLs, view logs, or analytics. Notification is async and may fail
+        without losing the lead (queue + /leads pending marker).
+        """
+        try:
+            n = int(self.headers.get("Content-Length", 0))
+        except ValueError:
+            return self._json_error(400, "invalid_request", "Request body must be valid JSON.")
+        if n <= 0 or n > INQUIRY_BODY_MAX:
+            return self._json_error(413, "payload_too_large", "Request body is too large.")
+        try:
+            req = json.loads(self.rfile.read(n) or b"{}")
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return self._json_error(400, "invalid_json", "Request body must be valid JSON.")
+        if not isinstance(req, dict):
+            return self._json_error(400, "invalid_request", "Request body must be a JSON object.")
+
+        flow_type = req.get("flow_type")
+        if flow_type not in INQUIRY_FLOW_TYPES:
+            return self._json_error(400, "invalid_flow_type", "Flow type is not supported.")
+        description = req.get("description")
+        if not isinstance(description, str) or not description.strip():
+            return self._json_error(400, "empty_description", "Description is required.")
+        description = " ".join(description.split())
+        if len(description) > INQUIRY_DESC_MAX:
+            return self._json_error(400, "description_too_long", "Description is too long.")
+        allowed_methods = ("wechat", "email") if WORK_CONFIG.get("wechat_enabled") else ("email",)
+        contact_method = req.get("contact_method")
+        if contact_method not in allowed_methods:
+            return self._json_error(400, "invalid_contact_method", "Contact method is not supported.")
+        contact = req.get("contact")
+        if not isinstance(contact, str) or not contact.strip():
+            return self._json_error(400, "invalid_contact", "Contact is required.")
+        contact = contact.strip()
+        if contact_method == "email":
+            if len(contact) > 200 or not INQUIRY_EMAIL_RE.match(contact):
+                return self._json_error(400, "invalid_contact", "A valid email address is required.")
+        elif len(contact) > 64:
+            return self._json_error(400, "invalid_contact", "Contact is too long.")
+        lang = req.get("lang") if req.get("lang") in {"en", "zh"} else "en"
+        source = req.get("source") if req.get("source") in INQUIRY_SOURCES else "direct"
+
+        record = {
+            "id": uuid.uuid4().hex[:12],
+            "created_at": _utc_now_iso(),
+            "flow_type": flow_type,
+            "description": description,
+            "contact_method": contact_method,
+            "contact": contact,
+            "lang": lang,
+            "source": source,
+            "status": "new",
+        }
+
+        ip = self.client_address[0]
+        now_mono = time.monotonic()
+        dedup_key = hashlib.sha256(
+            "|".join((flow_type, description, contact_method, contact)).encode("utf-8")
+        ).hexdigest()
+        with _INQUIRY_LOCK:
+            today = time.strftime("%Y-%m-%d", time.gmtime())
+            if _INQUIRY_DAY["date"] != today:
+                _INQUIRY_DAY["date"] = today
+                _INQUIRY_DAY["count"] = _count_todays_inquiries(today)
+            if _INQUIRY_DAY["count"] >= INQUIRY_DAILY_GLOBAL:
+                return self._json_error(429, "rate_limited", "Too many inquiries right now. Please email directly.")
+            hits = [t for t in _INQUIRY_IP_HITS.get(ip, []) if now_mono - t < INQUIRY_IP_WINDOW]
+            if len(hits) >= INQUIRY_IP_MAX:
+                _INQUIRY_IP_HITS[ip] = hits
+                return self._json_error(429, "rate_limited", "Too many inquiries from your address. Please email directly.")
+            seen = _INQUIRY_DEDUP.get(dedup_key)
+            if seen and now_mono - seen[1] < INQUIRY_DEDUP_WINDOW:
+                return self._send(200, json.dumps({"ok": True, "id": seen[0], "duplicate": True}))
+            try:
+                _append_jsonl(INQUIRY_FILE, record)
+            except OSError:
+                return self._json_error(500, "storage_failed", "Could not save your inquiry. Please email directly.")
+            hits.append(now_mono)
+            _INQUIRY_IP_HITS[ip] = hits
+            _INQUIRY_DEDUP[dedup_key] = (record["id"], now_mono)
+            _INQUIRY_DAY["count"] += 1
+        _notify_lead_async(record)
+        return self._send(200, json.dumps({"ok": True, "id": record["id"]}))
+
     def do_POST(self):
-        if urlparse(self.path).path != "/review":
+        route = urlparse(self.path).path
+        if route == "/api/inquiry":
+            return self._handle_inquiry()
+        if route != "/review":
             return self._json_error(404, "not_found", "Resource not found.")
         try:
             try:
