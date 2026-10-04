@@ -421,7 +421,7 @@ SITEMAP_CASE_STEMS = (
 )
 CASE_ALLOWLIST = set(SITEMAP_CASE_STEMS)
 
-DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-install", "01-architecture"]
+DOC_FEATURED = ["00-getting-started", "11-byok-and-policy", "14-github-action-install", "18-dsh-plugin", "01-architecture"]
 
 # Public docs surface: only these stems route. Anything else under docs/ is
 # internal material and must 404, even though doc_files() can see it on disk.
