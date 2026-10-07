@@ -6,6 +6,13 @@
 
 Falsify 是本地 BYOK 审查工具链，产出签收回执：`PASS` / `PASS_WITH_DEBT` / `BLOCK`。只做审查签收，不自动部署、不下单。
 
+## 60 秒先试一下（无需安装）
+
+克隆之前，可以先在线体验本地规则与真实裁决形态：
+
+- [Playground](https://falsify.site/playground/) — 粘贴文本，跑与 CLI 相同的四条本地规则，看 findings。
+- [GitHub Action 快速开始](https://falsify.site/quickstart/) — 三步生成 workflow YAML（仓库 + globs，无需手动复制）。
+
 ## 安装
 
 ```bash

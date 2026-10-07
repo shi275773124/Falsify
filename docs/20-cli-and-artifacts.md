@@ -8,6 +8,8 @@
 | `falsify lint FILE` | No | Check collaboration tags and ship-blocker conventions. |
 | `falsify review FILE --provider NAME --json` | Yes, for provider-backed review | Produce a machine-readable verdict for one file. |
 | `falsify run BRIEF --drafter NAME --reviewer NAME` | Usually | Run a draft-and-review loop; keep the author and reviewer contexts independent where possible. |
+| `falsify brooks FILE` | No | Brooks-Lint L0 only: structural decay scan with a JSON receipt (not full claim authority). |
+| `falsify gate --base REF --tier TIER` | No | Risk gate over changed decision docs: normal=L2 lint; production=adapter path proof; quant=tools+report required (missing -> BLOCK). |
 | `falsify init` | No | Write a local configuration template. |
 
 A provider-backed review may use your provider API key or a locally authenticated compatible agent CLI. `demo` and `lint` do not call a model.

@@ -22,7 +22,7 @@ python -m pip install -e '.[dev]'
 python -m pytest tests -q
 ```
 
-Expected: all tests pass (currently 27).
+Expected: all tests pass.
 
 ## Release procedure
 

@@ -3,287 +3,132 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="color-scheme" content="light">
-  <title>Falsify — AI generates. Falsify questions.</title>
-  <meta name="description" content="AI can generate code. Falsify questions it before production — with evidence, not confidence. PASS / PASS_WITH_DEBT / BLOCK.">
+  <meta name="theme-color" content="#020914">
+  <meta name="color-scheme" content="dark">
+  <title>Falsify — Looks green isn't proof.</title>
+  <meta name="description" content="Looks green isn't proof. Adversarial review red-teams false-green; framework review + Cutline catch long-term rot. Review first. Trust after.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://falsify.site/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Falsify">
   <meta property="og:locale" content="en_US">
   <meta property="og:url" content="https://falsify.site/">
-  <meta property="og:title" content="Falsify — AI generates. Falsify questions.">
-  <meta property="og:description" content="Evidence before conclusions. Confidence is not evidence. PASS / PASS_WITH_DEBT / BLOCK.">
+  <meta property="og:title" content="Falsify — Looks green isn't proof.">
+  <meta property="og:description" content="Two pains: AI false-green → adversarial review; long-term rot → framework + Cutline. Review first. Trust after. Sign-off only.">
   <meta property="og:image" content="https://falsify.site/static/img/og-share.png">
+  <meta property="og:image:alt" content="Falsify — Looks green isn't proof.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Falsify — AI generates. Falsify questions.">
-  <meta name="twitter:description" content="Evidence before conclusions. Confidence is not evidence.">
+  <meta name="twitter:title" content="Falsify — Looks green isn't proof.">
+  <meta name="twitter:description" content="Review first. Trust after. Evidence first. Ship after. Adversarial · Framework · Cutline.">
   <meta name="twitter:image" content="https://falsify.site/static/img/og-share.png">
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png">
   <link rel="shortcut icon" href="/favicon.ico">
   <script src="/assets/flow/i18n-boot.js"></script>
-  <link rel="stylesheet" href="/assets/flow/home.css?v=v2-deploy-20260724">
-  <script src="/assets/flow/home.js?v=v2-deploy-20260724" defer></script>
+  <link rel="stylesheet" href="/assets/flow/home.css?v=ux-craft-20260721b">
+  <script src="/assets/flow/lenis.min.js?v=falsify-fix-20260712b" defer></script>
+  <script src="/assets/flow/gsap.min.js?v=falsify-fix-20260712b" defer></script>
+  <script src="/assets/flow/ScrollTrigger.min.js?v=falsify-fix-20260712b" defer></script>
+  <script src="/assets/flow/flow-canvas.js?v=falsify-fix-20260712b" defer></script>
+  <script src="/assets/flow/flow-motion.js?v=falsify-fix-20260712b" defer></script>
+  <script src="/assets/flow/home.js?v=ux-craft-20260721b" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
-  <a class="brand" href="#top" aria-label="Falsify home">
-    <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#0B0B0F" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#635BFF"/></svg>
-    <span class="brand-wordmark">falsify.site</span>
-  </a>
-  <button class="menu" type="button" aria-expanded="false" aria-controls="site-nav" data-i18n="menuLabel">Menu</button>
-  <nav id="site-nav">
-    <a href="#how" data-i18n="navHow">How it works</a>
-    <a href="#proof" data-i18n="navProof">Real cases</a>
-    <a href="#delivery" data-i18n="navScenes">Scenes</a>
-    <a href="/docs/" data-lang-path="/docs/" data-i18n="navDocs">Docs</a>
-    <a href="#partner" data-i18n="navPartner">Partner</a>
-    <button class="lang" type="button">中文</button>
-  </nav>
-</header>
-
+<header class="site-header"><a class="brand" href="#top" aria-label="Falsify home"><svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#d5e6f2" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#58f5c6"/></svg><span class="brand-wordmark">Falsify</span></a><button class="menu" type="button" aria-expanded="false" aria-controls="site-nav" data-i18n="menuLabel">Menu</button><nav id="site-nav"><a href="#proof" data-i18n="navProof">Real cases</a><a href="#how" data-i18n="navHow">How it works</a><a href="/docs/" data-lang-path="/docs/" data-i18n="navDocs">Docs</a><a href="#delivery" data-i18n="navGetStarted">Get started</a><button class="lang" type="button">中文</button></nav></header>
 <main id="main">
-  <!-- Screen 1: Brand claim + product demo -->
-  <section class="hero" id="top">
-    <div class="shell hero-inner">
-      <div class="hero-copy">
-        <h1 class="hero-title" data-i18n-html="heroTitle">AI generates.<br><em>falsify</em> questions.</h1>
-        <p class="hero-sub" data-i18n="heroSub">Before code reaches production, check for hallucination, hidden complexity, and long-term maintenance risk.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="heroPrimary">Start review</a>
-          <a class="button ghost" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer" data-i18n="heroSecondary">View on GitHub</a>
-        </div>
-        <p class="hero-brandline" data-i18n="heroBrandline">It does not decide for you. It makes decisions have evidence.</p>
-      </div>
-
-      <div class="product-stage" aria-label="Product demo: AI code to verdict to maintainable code">
-        <div class="stage-glow" aria-hidden="true"></div>
-        <div class="stage-window">
-          <div class="stage-chrome" aria-hidden="true">
-            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-            <span class="stage-chrome-label" data-i18n="stageLabel">falsify review · live path</span>
-          </div>
-          <div class="stage-body">
-            <div class="stage-pane is-raw">
-              <p class="stage-pane-label" data-i18n="stageRaw">AI raw output</p>
-              <pre class="stage-code"><code><span class="cm">// “looks fine” — 9 deps, no proof</span>
-<span class="kw">class</span> <span class="cls">UserService</span> {
-  <span class="fn">constructor</span>(repo, logger, cache,
-    bus, metrics, retry, breaker,
-    validator, config) { <span class="cm">/* … */</span> }
-  <span class="kw">async</span> <span class="fn">getUser</span>(id) {
-    <span class="cm">// intent buried under ceremony</span>
-  }
-}</code></pre>
-            </div>
-            <div class="stage-flow" aria-hidden="true">
-              <span class="flow-label" data-i18n="stageReview">review · evidence · cut</span>
-              <span class="flow-blade"></span>
-              <span class="flow-verdicts">
-                <span class="v-chip is-pass">PASS</span>
-                <span class="v-chip is-debt">PASS_WITH_DEBT</span>
-                <span class="v-chip is-block">BLOCK</span>
-              </span>
-            </div>
-            <div class="stage-pane is-clean">
-              <p class="stage-pane-label" data-i18n="stageClean">Maintainable result</p>
-              <pre class="stage-code"><code><span class="kw">class</span> <span class="cls">UserService</span> {
-  <span class="fn">constructor</span>(
-    <span class="kw">private</span> repo: UserRepo
-  ) {}
-
-  <span class="kw">async</span> <span class="fn">getUser</span>(id: <span class="type">string</span>) {
-    <span class="kw">return</span> <span class="kw">this</span>.repo.find(id)
-  }
-}</code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Screen 2: Quiet thesis -->
-  <section class="thesis" id="thesis" aria-labelledby="thesis-line">
-    <div class="shell thesis-inner">
-      <p class="thesis-kicker" data-i18n="thesisKicker">Confidence is not evidence.</p>
-      <h2 id="thesis-line" class="thesis-line" data-i18n-html="thesisLine">AI can generate code.<br>It cannot prove the code is reliable.</h2>
-      <p class="thesis-follow" data-i18n="thesisFollow">先证据，后结论。</p>
-    </div>
-  </section>
-
-  <!-- Screen 3: How it works — visual climax -->
-  <section class="how" id="how">
-    <div class="shell">
-      <header class="how-head">
-        <p class="section-kicker" data-i18n="howKicker">How it works</p>
-        <h2 class="section-title" data-i18n="howTitle">Three layers. One question: where is the evidence?</h2>
-      </header>
-      <ol class="how-chain" data-illuminate>
-        <li class="how-step" data-step="1">
-          <span class="how-num">01</span>
-          <div>
-            <h3 data-i18n="how1Title">Adversarial</h3>
-            <p data-i18n="how1Text">Challenge every “looks fine.”</p>
-          </div>
-        </li>
-        <li class="how-connector" aria-hidden="true"><span class="chain-line"></span></li>
-        <li class="how-step" data-step="2">
-          <span class="how-num">02</span>
-          <div>
-            <h3 data-i18n="how2Title">Framework</h3>
-            <p data-i18n="how2Text">Find structure that will rot later.</p>
-          </div>
-        </li>
-        <li class="how-connector" aria-hidden="true"><span class="chain-line"></span></li>
-        <li class="how-step" data-step="3">
-          <span class="how-num">03</span>
-          <div>
-            <h3 data-i18n="how3Title">Cutline</h3>
-            <p data-i18n="how3Text">Decide: fix, record debt, or delete.</p>
-          </div>
-        </li>
-      </ol>
-      <div class="verdict-climax" aria-label="Verdict states">
-        <p class="verdict-climax-kicker" data-i18n="verdictKicker">The receipt</p>
-        <div class="verdict-brand">
-          <article class="verdict-asset is-pass">
-            <h3 class="verdict-word"><span class="verdict-accent">PASS</span></h3>
-            <p data-i18n="vPass">Evidence sufficient</p>
-          </article>
-          <article class="verdict-asset is-debt">
-            <h3 class="verdict-word"><span class="verdict-accent">PASS<br>WITH DEBT</span></h3>
-            <p data-i18n="vDebt">May continue — debt recorded</p>
-          </article>
-          <article class="verdict-asset is-block">
-            <h3 class="verdict-word"><span class="verdict-accent">BLOCK</span></h3>
-            <p data-i18n="vBlock">Not allowed to the next stage</p>
-          </article>
-        </div>
-      </div>
-      <p class="how-boundary" data-i18n="howBoundary">Sign-off only. Does not deploy or trade for you. PASS / PASS_WITH_DEBT / BLOCK.</p>
-    </div>
-  </section>
-
-  <!-- Screen 4: Real cases with punch -->
-  <section class="proof" id="proof">
-    <div class="shell">
-      <header class="proof-head">
-        <p class="section-kicker" data-i18n="proofKicker">Evidence</p>
-        <h2 class="section-title proof-brand" data-i18n="proofTitle">Evidence first. Framework later.</h2>
-        <p class="section-lead" data-i18n="proofLead">Each case looked green on the surface. Each failed when claim met evidence.</p>
-      </header>
-      <div class="case-board">
-        <article class="case-card case-featured">
-          <h3 data-i18n="case1Title">Today’s signal, weeks-old inputs</h3>
-          <dl>
-            <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case1Surface">Cron OK · today’s timestamp · verify PASS</dd></div>
-            <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case1Evidence">Underlying panel CSVs had stopped updating weeks earlier</dd></div>
-            <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-block">BLOCK</span></dd></div>
-          </dl>
-        </article>
-        <div class="case-more" id="case-more" hidden>
-          <article class="case-card">
-            <h3 data-i18n="case2Title">Tests all green — model still wrong</h3>
-            <dl>
-              <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case2Surface">Saved returns passed DSR, PBO, permutation</dd></div>
-              <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case2Evidence">Missing-data policy had already reshaped the evidence surface</dd></div>
-              <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-block">BLOCK</span></dd></div>
-            </dl>
-          </article>
-          <article class="case-card">
-            <h3 data-i18n="case3Title">Code updated — production still old</h3>
-            <dl>
-              <div><dt data-i18n="caseSurface">Surface</dt><dd data-i18n="case3Surface">Vault mirror contained the fix</dd></div>
-              <div><dt data-i18n="caseEvidence">Evidence</dt><dd data-i18n="case3Evidence">Deploy record and live runtime path disagreed</dd></div>
-              <div><dt data-i18n="caseVerdict">Verdict</dt><dd><span class="stamp is-debt">PASS_WITH_DEBT</span></dd></div>
-            </dl>
-          </article>
-        </div>
-        <button class="case-toggle" type="button" id="case-toggle" aria-expanded="false" aria-controls="case-more">
-          <span data-i18n="caseViewAll">View all 3 cases</span>
-          <span class="case-toggle-arrow" aria-hidden="true">↓</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Screen 5: Scenarios (not pricing) -->
-  <section class="scenes" id="delivery">
-    <div class="shell">
-      <header class="scenes-head">
-        <p class="section-kicker" data-i18n="scenesKicker">Where it lands</p>
-        <h2 class="section-title" data-i18n="scenesTitle">Scenes you remember — not a package catalog.</h2>
-      </header>
-      <div class="delivery-list scene-grid">
-        <article class="scene-card">
-          <p class="scene-tag status-badge is-available" data-i18n="d1Status">AVAILABLE · OSS</p>
-          <h3 data-i18n="d1Name">Falsify Review</h3>
-          <p data-i18n="d1Text">Locally question every “looks fine” — terminal, review, receipt.</p>
-        </article>
-        <article class="scene-card">
-          <p class="scene-tag status-badge is-available" data-i18n="d2Status">AVAILABLE · OSS</p>
-          <h3 data-i18n="d2Name">Authority Gate</h3>
-          <p data-i18n="d2Text">Automation continues only when evidence is sufficient — gate, sign, chain.</p>
-        </article>
-        <article class="scene-card">
-          <p class="scene-tag status-badge is-roadmap" data-i18n="d3Status">IN THE WORKS</p>
-          <h3 data-i18n="d3Name">Audit Sprint</h3>
-          <p data-i18n="d3Text">High-risk work does not ship on feeling — pack, kill-shot, verdict.</p>
-        </article>
-        <article class="scene-card">
-          <p class="scene-tag status-badge is-roadmap" data-i18n="d4Status">ON THE ROADMAP</p>
-          <h3 data-i18n="d4Name">Production / Quant Pro</h3>
-          <p data-i18n="d4Text">Wire into systems where a wrong pass costs real money.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Final CTA -->
-  <section class="close" id="close">
-    <div class="shell close-inner">
-      <h2 class="close-title" data-i18n-html="closeTitle">Open source.<br>Review first.</h2>
-      <p class="close-lead" data-i18n="closeLead">Install the GitHub Action. Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK.</p>
-      <div class="hero-actions">
-        <a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="closePrimary">Install GitHub Action</a>
-        <a class="button ghost" href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="partner" id="partner" aria-labelledby="partner-title">
-    <div class="shell partner-inner">
-      <p class="section-kicker" id="partner-title" data-i18n="contactKicker">Partner with the founder</p>
-      <p class="partner-name">Chris Shi</p>
-      <p class="partner-lead" data-i18n="contactLead">Design partnerships, integrations, research — reach Chris directly.</p>
-      <div class="partner-links">
-        <a class="button primary" href="https://x.com/aishikejian" target="_blank" rel="noopener noreferrer" data-i18n="contactTwitter">X / Twitter</a>
-        <a class="button ghost" href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-i18n="contactEmail">Email</a>
-        <a class="button ghost" href="https://github.com/shi275773124/Falsify" target="_blank" rel="noopener noreferrer" data-i18n="contactGithub">GitHub</a>
-      </div>
-      <p class="partner-email"><span data-i18n="contactEmailLabel">Email</span>: <a href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-email-text="1">shi275773124@gmail.com</a></p>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="shell footer-inner">
-    <a class="brand" href="#top" aria-label="Falsify home">
-      <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#0B0B0F" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#635BFF"/></svg>
-      <span class="brand-wordmark">Falsify</span>
-    </a>
-    <p data-i18n="footer">Sign-off only — does not deploy or trade for you.</p>
-    <div class="footer-links">
-      <a href="/docs/" data-lang-path="/docs/" data-i18n="footerDocs">Docs</a>
-      <a href="#partner" data-i18n="footerContact">Partner</a>
-      <a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a>
-      <a href="/examples/sample-block-report.json" data-i18n="footerSample">Sample receipt</a>
-    </div>
+<section class="hero" id="top"><canvas id="flow-canvas" aria-hidden="true"></canvas><div class="flow-orbs" aria-hidden="true"><span class="flow-orb flow-orb-a"></span><span class="flow-orb flow-orb-b"></span><span class="flow-orb flow-orb-c"></span></div><div class="hero-spotlight" aria-hidden="true"></div><div class="hero-grain" aria-hidden="true"></div><div class="hero-veil"></div><div class="shell hero-grid"><div class="hero-copy"><p class="eyebrow" data-i18n="heroEyebrow">TWO PAINS · THREE LAYERS</p><h1 data-i18n-html="heroTitle">Looks green isn't proof.</h1><p class="brand-thesis" data-i18n="brandThesis">Review first. Trust after. Evidence first. Ship after.</p>
+<div class="hero-ps" aria-label="Pain and fix">
+  <div class="hero-ps-col is-pain">
+    <p class="hero-ps-label" data-i18n="heroPainLabel">THE PAIN</p>
+    <ul class="hero-ps-list">
+      <li data-i18n="heroPain1">AI hallucination and false-green still ship</li>
+      <li data-i18n="heroPain2">Code rots — or dies of over-engineering</li>
+    </ul>
   </div>
-</footer>
-</body>
-</html>
+  <div class="hero-ps-col is-fix">
+    <p class="hero-ps-label" data-i18n="heroSolveLabel">THE FIX</p>
+    <ul class="hero-ps-list">
+      <li data-i18n="heroSolve1">Adversarial review — red-teams “looks fine”</li>
+      <li data-i18n="heroSolve2">Framework + Cutline — stay maintainable, no bloat</li>
+    </ul>
+  </div>
+</div>
+<div class="hero-actions"><a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="heroPrimary">Install GitHub Action</a><a class="button ghost" href="#demo" data-i18n="heroSecondary">Watch a claim get blocked</a></div><p class="small-note" data-i18n="heroNote">Sign-off only. Does not deploy or trade for you.</p></div>
+<article class="receipt demo-receipt" id="demo" aria-label="False-green claim blocked by an evidence check — format demo" data-demo-kind="FORMAT DEMO ONLY" data-demo-state="claim"><div class="receipt-top"><span data-i18n="receiptExample">FALSIFY RECEIPT #0482</span><span class="receipt-phase" data-i18n="receiptPhase">01 CLAIM</span><button class="demo-toggle" type="button" aria-pressed="false" data-i18n="demoPlay">Run example</button></div><h2 class="proof-headline" data-i18n="proofHeadline">Agents say "trust me."</h2><div class="demo-stage" aria-live="polite"><div class="claim-card"><div class="claim-card-top"><span data-i18n="deployBot">DEPLOY BOT</span><span class="success-pill" data-i18n="successPill">SUCCESS</span></div><h3 data-i18n="demoClaim">Deployment completed successfully.</h3><dl class="claim-meta"><div><dt data-i18n="envLabel">ENVIRONMENT</dt><dd data-i18n="envValue">production</dd></div><div><dt data-i18n="commitLabel">COMMIT</dt><dd class="mono-ok">95d7e2f</dd></div></dl></div><div class="authority-line" data-i18n="authorityLine">EVIDENCE CHECK · ADAPTER PROBE · GET /v2/projects/.../services/payment-api</div><div class="commit-compare" aria-label="Claim vs production commit"><div class="commit-col"><span data-i18n="claimedCommit">CLAIMED COMMIT</span><b class="mono-ok">95d7e2f</b></div><div class="commit-ne" aria-hidden="true">≠</div><div class="commit-col is-prod"><span data-i18n="prodCommit">PRODUCTION COMMIT</span><b class="mono-bad">41ac90b</b></div></div><div class="evidence-conflict"><span data-i18n="conflictLabel">EVIDENCE CONFLICT</span><p data-i18n="conflictText">Live revision does not match the claimed commit.</p></div><div class="block-stamp">BLOCK</div><div class="receipt-actions"><p><span data-i18n="findingLabel">FINDING</span><b data-i18n="findingText">Deployed revision does not match claimed commit.</b></p><p class="ra-meta"><span data-i18n="scopeLabel">CLAIM SCOPE</span><b data-i18n="scopeValue">deployment_revision</b></p><p class="ra-meta"><span data-i18n="ceilingLabel">AUTHORITY CEILING</span><b data-i18n="ceilingValue">EPISTEMIC_ONLY — no action authorized</b></p><p class="ra-meta"><span data-i18n="capitalLabel">CAPITAL AUTHORITY</span><b data-i18n="capitalValue">NONE</b></p><p class="ra-meta"><span data-i18n="reproduceLabel">REPRODUCE LOCALLY</span><code>python -m falsify demo</code></p></div><pre class="receipt-json" aria-label="Receipt fields">{
+  "claim_scope": "deployment_revision",
+  "llm_semantic_verdict": <em class="j-pass">"PASS"</em>,
+  "evidence_verdict": <em class="j-block">"BLOCK"</em>,
+  "final_verdict": <em class="j-block">"BLOCK"</em>,
+  "authority_ceiling": "EPISTEMIC_ONLY",
+  "capital_authority": "NONE"
+}</pre></div><p class="demo-caption" data-i18n="demoCaption">Format demo: claim → attack → evidence check → verdict. Not live data — local fixture reproduces this false green.</p></article></div></section>
+<section class="clarity dark" data-reveal data-reveal-stagger><div class="shell clarity-grid"><article><b data-i18n="clarityUser">WHO</b><span data-i18n="clarityUserText">Teams shipping AI-written PRs, deploys, and decision docs</span></article><article><b data-i18n="clarityTrigger">WHEN</b><span data-i18n="clarityTriggerText">Before you merge or ship on an AI claim of "done"</span></article><article><b data-i18n="clarityAction">WHAT</b><span data-i18n="clarityActionText">Attack the claim, then verify it against executable evidence</span></article><article><b data-i18n="clarityArtifact">OUTPUT</b><span data-i18n="clarityArtifactText">A verdict receipt with claim scope and authority ceiling</span></article></div></section>
+
+<section class="paper cutline-band evidence-doc" data-reveal><div class="shell cutline-band-inner"><p class="doc-chrome" aria-hidden="true"><span data-i18n="evidenceChrome">EVIDENCE</span></p><p class="cutline-kicker" data-i18n="cutlineKicker">CUTLINE</p><h2 data-i18n-html="cutlineTitle">NO EVIDENCE.<br><em>NO PASS.</em></h2><p data-i18n="cutlineLead">A deployment claim is not a production fact. Falsify checks the claim against executable evidence — not against another summary.</p><div class="cutline-strip" aria-label="Claim vs evidence"><span><i data-i18n="stripClaim">CLAIM</i><b class="mono-ok">95d7e2f</b></span><span><i data-i18n="stripAuth">EVIDENCE</i><b class="mono-bad">41ac90b</b></span><span class="strip-verdict">BLOCK</span></div></div></section>
+<section class="paper section cases-section evidence-doc" id="proof" data-reveal><div class="shell"><div class="section-head"><p class="doc-chrome" aria-hidden="true"><span data-i18n="evidenceChrome">EVIDENCE</span></p><p class="eyebrow" data-i18n="proofLabel">THREE DOCUMENTED FALSE-GREENS</p><h2 data-i18n="proofTitle">Start with proof, not process.</h2><p data-i18n="proofLead">Each case looked green at the surface. Each failed when the claim met its real evidence or authority path.</p></div><div class="real-cases">
+<article><div class="case-number">01</div><p class="case-domain" data-i18n="caseOneDomain">LIVE EXECUTOR · DERIVED FRESHNESS</p><h3 data-i18n="caseOneTitle">Today's signal, weeks-old inputs</h3><dl><div><dt data-i18n="apparentGreen">APPARENT GREEN</dt><dd data-i18n="caseOneGreen">Cron OK, today's signal timestamp, executor verify PASS.</dd></div><div><dt data-i18n="realFailure">REAL FAILURE</dt><dd data-i18n="caseOneFail">Underlying panel CSVs had stopped updating weeks earlier.</dd></div><div><dt data-i18n="falsifyRequired">FALSIFY REQUIRED</dt><dd data-i18n="caseOneReq">Refresh and coverage gates, provenance manifest, and a permanent incident replay through the production wrapper.</dd></div></dl><a href="/examples/real-cases/02-derived-freshness-stale-panel" data-lang-path="/examples/real-cases/02-derived-freshness-stale-panel" data-i18n="inspectSource">Inspect source ↗</a></article>
+<article><div class="case-number">02</div><p class="case-domain" data-i18n="caseTwoDomain">QUANT RESEARCH · EVIDENCE INTEGRITY</p><h3 data-i18n="caseTwoTitle">A strict PASS overturned by hidden input assumptions</h3><dl><div><dt data-i18n="apparentGreen">APPARENT GREEN</dt><dd data-i18n="caseTwoGreen">Saved returns passed DSR, PBO, and permutation checks.</dd></div><div><dt data-i18n="realFailure">REAL FAILURE</dt><dd data-i18n="caseTwoFail">Coverage, row loss, and an implicit missing-data policy had already shaped the evidence surface.</dd></div><div><dt data-i18n="falsifyRequired">FALSIFY REQUIRED</dt><dd data-i18n="caseTwoReq">Calendar contract, row-loss audit, coverage manifest, and missing-policy variants before metric gates.</dd></div></dl><a href="/examples/real-cases/04-round3b-evidence-integrity-reversal" data-lang-path="/examples/real-cases/04-round3b-evidence-integrity-reversal"  data-i18n="inspectRepoContext">Inspect repository context ↗</a></article>
+<article><div class="case-number">03</div><p class="case-domain" data-i18n="caseThreeDomain">RUNTIME · MIRROR DRIFT</p><h3 data-i18n="caseThreeTitle">The mirror was fixed. The runtime was not.</h3><dl><div><dt data-i18n="apparentGreen">APPARENT GREEN</dt><dd data-i18n="caseThreeGreen">The vault mirror contained the v0.6.8 return-basis fix.</dd></div><div><dt data-i18n="realFailure">REAL FAILURE</dt><dd data-i18n="caseThreeFail">The actual second-profile runtime still executed the old version.</dd></div><div><dt data-i18n="falsifyRequired">FALSIFY REQUIRED</dt><dd data-i18n="caseThreeReq">Read and test the real runtime path, then verify runtime and mirror together.</dd></div></dl><a href="/examples/real-cases/05-second-runtime-v068-sync-false-green" data-lang-path="/examples/real-cases/05-second-runtime-v068-sync-false-green"  data-i18n="inspectArchitecture">Inspect the runtime evidence ↗</a></article>
+</div></div></section>
+<section class="dark distinction" id="difference" data-reveal><div class="shell"><div><p class="eyebrow" data-i18n="differenceLabel">THE CATEGORY LINE</p><h2 data-i18n="differenceTitle">Not another model opinion — a verdict with a boundary.</h2><p class="distinction-lead" data-i18n="differenceLead">The LLM attacks the claim and signs a bounded verdict. An authority adapter checks physical facts. The unified kernel decides what that verdict may authorize.</p></div><div class="comparison"><p><span data-i18n="bugScanner">Bug scanner</span><b data-i18n="bugScannerText">checks a diff for defects</b></p><p><span data-i18n="eval">Eval</span><b data-i18n="evalText">measures model behavior on a test set</b></p><p><span data-i18n="secondAi">Second model</span><b data-i18n="secondAiText">attacks the claim — never the source of truth</b></p><p class="is-falsify"><span>Falsify</span><b data-i18n="falsifyText">turns attacks into executable evidence checks and signs a verdict bounded to what was proven</b></p></div></div></section>
+<section class="paper section audit-power-section evidence-doc" id="audit-power" data-reveal><div class="shell"><div class="section-head"><p class="doc-chrome" aria-hidden="true"><span data-i18n="evidenceChrome">EVIDENCE</span></p><p class="eyebrow" data-i18n="powerLabel">MEASURED, NOT CLAIMED</p><h2 data-i18n="powerTitle">How strong is the auditor? We measure it.</h2><p data-i18n="powerLead">An auditor that cannot be attacked cannot be trusted. The private Falsify engine measures its own audit power with mutation probes, canary calibration, and red-team corpora — every number below is from a reproducible harness, not marketing.</p></div><div class="power-grid"><article class="power-card"><p class="power-value">16/16</p><h3 data-i18n="powerMkrName">Mutation kill rate</h3><p data-i18n="powerMkrText">16 classes of injected evidence tampering — wrong numbers, truncated data, stale panels, forged summaries — 100% caught, 0 survivors.</p></article><article class="power-card"><p class="power-value">52</p><h3 data-i18n="powerRedName">Red-team corpus</h3><p data-i18n="powerRedText">52 adversarial artifacts from an LLM red-team (32 attack classes) run against the audit engine — zero penetrations.</p></article><article class="power-card"><p class="power-value">100%</p><h3 data-i18n="powerChrName">Canary calibration</h3><p data-i18n="powerChrText">15 of 15 canary injections flagged across 5 calibration rounds — the auditor detects false calibration, not just bad data.</p></article><article class="power-card"><p class="power-value">6</p><h3 data-i18n="powerAuditName">Independent audit rounds</h3><p data-i18n="powerAuditText">Every engine change ships only after a non-author auditor tries to break it. Six consecutive BLOCK→fix→PASS rounds before v0.9.40 went live.</p></article></div><p class="power-footnote" data-i18n="powerFootnote">Private-engine figures, harness-generated receipts, updated 2026-10-02. Methodology &amp; receipts: <a href="/docs/audit-power.html" data-lang-path="/docs/audit-power.html" data-i18n="powerMethodLink">audit power methodology →</a></p></div></section>
+<section class="paper section evidence-doc" id="how" data-reveal><div class="shell"><div class="section-head"><p class="doc-chrome" aria-hidden="true"><span data-i18n="evidenceChrome">EVIDENCE</span></p><p class="eyebrow" data-i18n="howLabel">HOW IT WORKS</p><h2 data-i18n="howTitle">Three layers. One plain question: where is the evidence?</h2><p data-i18n="howLead">Adversarial red-teams "looks fine." Framework catches what will rot later. Cutline says Must Fix / Debt / Delete. Then PASS, PASS_WITH_DEBT, or BLOCK.</p></div>
+<ol class="process-flow" aria-label="Claim to verdict process">
+  <li class="flow-node" data-reveal data-reveal-stagger>
+    <span class="flow-num">01</span>
+    <h3 data-i18n="stepClaimTitle">Claim</h3>
+    <p data-i18n="stepClaim">Something asserts success — a deploy, a metric, a “done” without proof.</p>
+  </li>
+  <li class="flow-connector" aria-hidden="true"><span class="flow-arrow">→</span></li>
+  <li class="flow-node" data-reveal data-reveal-stagger>
+    <span class="flow-num">02</span>
+    <h3 data-i18n="stepAttackTitle">Adversarial</h3>
+    <p data-i18n="stepAttack">Red-teams what looks fine — AI hallucination, false-green, and confident claims without evidence.</p>
+  </li>
+  <li class="flow-connector" aria-hidden="true"><span class="flow-arrow">→</span></li>
+  <li class="flow-node" data-reveal data-reveal-stagger>
+    <span class="flow-num">03</span>
+    <h3 data-i18n="stepFrameTitle">Framework</h3>
+    <p data-i18n="stepFrame">Catches what will rot later — hidden state, duplicated authority, brittle rollback, over-engineering.</p>
+  </li>
+  <li class="flow-connector" aria-hidden="true"><span class="flow-arrow">→</span></li>
+  <li class="flow-node" data-reveal data-reveal-stagger>
+    <span class="flow-num">04</span>
+    <h3 data-i18n="stepCheckTitle">Cutline</h3>
+    <p data-i18n="stepCheck">Must Fix / Known Debt / Delete — what to change, what to record, what to remove.</p>
+  </li>
+  <li class="flow-connector" aria-hidden="true"><span class="flow-arrow">→</span></li>
+  <li class="flow-node is-verdict" data-reveal data-reveal-stagger>
+    <span class="flow-num">05</span>
+    <h3 data-i18n="stepVerdictTitle">Verdict</h3>
+    <p data-i18n="stepVerdict">Receipt: PASS, PASS_WITH_DEBT, or BLOCK — keep it, diff it, re-run it.</p>
+  </li>
+</ol>
+<p class="flow-boundary" data-i18n="stepGate">Sign-off only. Does not deploy or trade for you.</p>
+</div></section>
+<section class="dark section delivery" id="delivery" data-reveal><div class="shell"><div class="section-head"><p class="eyebrow" data-i18n="deliveryLabel">WHAT YOU CAN GET TODAY</p><h2 data-i18n="deliveryTitle">Same kernel. Different authority levels.</h2><p data-i18n="deliveryLead">Every offer states its status. Sign-off only — nothing here deploys or trades for you.</p></div><div class="delivery-list"><article><header><h3 data-i18n="d1Name">Falsify Review</h3><span class="status-badge is-available" data-i18n="d1Status">AVAILABLE · OSS</span></header><p data-i18n="d1Text">Adversarial LLM review with a bounded epistemic verdict. CLI, local demo, skills, DeepSeek plugin, and the GitHub Action template.</p></article><article><header><h3 data-i18n="d2Name">Falsify Authority Gate</h3><span class="status-badge is-adapter" data-i18n="d2Status">ADAPTER REQUIRED</span></header><p data-i18n="d2Text">Runs executable evidence checks against a real authority path. Only then can a PASS bear action. No public adapter ships today.</p></article><article><header><h3 data-i18n="d3Name">Audit Sprint</h3><span class="status-badge is-available" data-i18n="d3Status">AVAILABLE · SERVICE</span></header><p data-i18n="d3Text">Claim manifest, kill-shots, evidence pack, and a signed verdict receipt for one high-risk artifact.</p></article><article><header><h3 data-i18n="d4Name">Production / Quant Pro</h3><span class="status-badge is-partner" data-i18n="d4Status">IN PRODUCTION · PRIVATE</span></header><p data-i18n="d4Text">Battle-tested on live quant desks where a wrong PASS costs real money: signed rebind authority, fresh-canary order gates, sealed-candidate admission. Design-partner pilots only.</p></article><article><header><h3 data-i18n="d5Name">Team / Enterprise</h3><span class="status-badge is-target" data-i18n="d5Status">TARGET · NOT SHIPPED</span></header><p data-i18n="d5Text">Dashboard, SSO, RBAC, retention. Roadmap targets — not delivered features.</p></article></div></div></section>
+<section class="dark section compact-try" id="try" data-reveal><div class="shell try-grid"><div><p class="eyebrow" data-i18n="tryLabel">FORMAT PREVIEW</p><h2 data-i18n="tryTitle">Preview the receipt shape</h2><p data-i18n="tryLead">Same format as the hero demo — shape only, not a full gate or live probe.</p><div class="workbench-actions"><button class="button primary" type="button" id="run-example" data-i18n="runExample">Run example</button><button class="button ghost" type="button" id="copy-artifact" data-i18n="copyArtifact">Copy reproduction command</button></div><p id="copy-status" class="status" aria-live="polite"></p></div><output class="result-panel" id="result" aria-live="polite"><p class="result-label" data-i18n="resultLabel">FORMAT PREVIEW</p><h3 data-i18n="resultTitle">Ready to preview a format sample.</h3><p data-i18n="resultLead">Run the example to see the verdict shape only — not evidence-backed verification.</p></output></div><div class="hidden-review"><textarea id="claim">Deployment succeeded because logs completed. Another AI found no issue. No post-deploy state probe or rollback evidence was retained.</textarea><select id="scenario"><option value="production" selected>Production</option></select><button id="review-claim" type="button">Review</button></div></section>
+<section class="paper compact-meta evidence-doc" data-reveal><div class="shell meta-grid"><div><p class="doc-chrome" aria-hidden="true"><span data-i18n="evidenceChrome">EVIDENCE</span></p><p class="eyebrow" data-i18n="installLabel">START HERE</p><h2 data-i18n="installTitle">Start by gating claims on GitHub.</h2><p data-i18n="installLead">Best first step: the GitHub Action reviews PR claims and decision docs and posts a PASS / PASS_WITH_DEBT / BLOCK receipt. Sign-off only — does not deploy or trade for you.</p></div><pre><code>git clone https://github.com/shi275773124/Falsify.git
+cd Falsify
+pip install -e ".[dev]"
+python -m falsify demo</code></pre><div class="meta-links"><a href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="actionLink">Install GitHub Action →</a><a href="/docs/18-dsh-plugin.html" data-lang-path="/docs/18-dsh-plugin.html" data-i18n="dshLink">Install DeepSeek plugin →</a><a href="/docs/17-skills" data-lang-path="/docs/17-skills" data-i18n="skillsLink">Install a skill →</a><a href="/docs/verdict-vocabulary.html" data-lang-path="/docs/verdict-vocabulary.html" data-i18n="verdictLink">Verdict contract →</a><a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub →</a></div></div></section>
+<section class="cta" data-reveal><div class="shell"><p class="eyebrow">FALSIFY</p><h2 data-i18n="ctaTitle">Review first. Trust after.</h2><p data-i18n="ctaLead">Keep the receipt — PASS, PASS_WITH_DEBT, or BLOCK. Sign-off only.</p><div class="hero-actions cta-actions-centered"><a class="button primary" href="/docs/14-github-action-install.html" data-lang-path="/docs/14-github-action-install.html" data-i18n="ctaPrimary">Install GitHub Action</a><a class="button ghost" href="#delivery" data-i18n="ctaSecondary">See what you can get</a></div></div></section>
+<section class="founder-contact" aria-labelledby="founder-contact-title">
+  <div class="shell founder-contact-inner">
+    <div class="founder-contact-copy">
+      <p class="founder-contact-label" id="founder-contact-title" data-i18n="contactKicker">CONTACT THE FOUNDER</p>
+      <p class="founder-contact-lead" data-i18n="contactLead">Design partnerships, integrations, research collaboration, or product questions — reach Chris Shi directly.</p>
+    </div>
+    <div class="founder-contact-links" role="group" aria-label="Founder contact channels">
+      <a class="button primary founder-contact-btn" href="https://x.com/aishikejian" target="_blank" rel="noopener noreferrer" data-i18n="contactTwitter">X / Twitter</a>
+      <a class="button ghost founder-contact-btn" href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-i18n="contactEmail">Email</a>
+      <a class="button ghost founder-contact-btn" href="https://github.com/shi275773124/Falsify" target="_blank" rel="noopener noreferrer" data-i18n="contactGithub">GitHub</a>
+      <a class="founder-contact-security" href="/docs/19-security-and-contact.html" data-lang-path="/docs/19-security-and-contact.html" data-i18n="contactSecurity">Security reporting</a>
+    </div>
+    <p class="founder-contact-email-line"><span data-i18n="contactEmailLabel">Email</span>: <a href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-email-text="1">shi275773124@gmail.com</a></p>
+  </div>
+</section>
+</main>
+<footer><div class="shell"><a class="brand" href="#top" aria-label="Falsify home"><svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#d5e6f2" stroke-linecap="square" stroke-linejoin="miter"><path d="M22 13v12H7V10h11" stroke-width="2"/><path d="M11 20 L22.5 8.5" stroke-width="2.2"/></g><polygon points="23.5,3.9 26.2,5.5 26.2,8.5 23.5,10.1 20.8,8.5 20.8,5.5" fill="#58f5c6"/></svg><span class="brand-wordmark">Falsify</span></a><p data-i18n="footer">Sign-off only — does not deploy or trade for you.</p><div><a href="/docs/" data-lang-path="/docs/" data-i18n="footerDocs">Docs</a><a href="mailto:shi275773124@gmail.com?subject=Falsify%20inquiry" data-email="shi275773124@gmail.com" data-email-subject="Falsify inquiry" data-i18n="footerContact">Contact</a><a href="https://github.com/shi275773124/Falsify" rel="noopener noreferrer">GitHub</a><a href="https://x.com/aishikejian" target="_blank" rel="noopener noreferrer">X</a><a href="/examples/sample-block-report.json" data-i18n="footerSample">Sample receipt</a></div></div></footer>
+</body></html>
