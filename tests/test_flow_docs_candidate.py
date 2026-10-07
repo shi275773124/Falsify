@@ -1,4 +1,4 @@
-from io import BytesIO
+﻿from io import BytesIO
 from web import serve
 
 MOJIBAKE_MARKERS = ("\ufffd", "\u00c3", "\u00c2", "\u00e6\u2013\u2021", "\u00e4\u00b8")
@@ -30,7 +30,7 @@ def test_docs_index_uses_task_first_information_architecture():
 def test_flow_docs_chinese_index_uses_native_ui_copy_without_mojibake():
     h, body=decoded_body("/design/falsify-flow-docs/?lang=zh")
     assert h.status_code==200 and 'lang="zh-CN"' in body
-    for copy in ("Falsify 文档", "让无法自证的绿灯在变成事故前曝露。", "开始使用", "接入 CI", "理解裁决"):
+    for copy in ("Falsify 鏂囨。", "璁╂棤娉曡嚜璇佺殑缁跨伅鍦ㄥ彉鎴愪簨鏁呭墠鏇濋湶銆?, "寮€濮嬩娇鐢?, "鎺ュ叆 CI", "鐞嗚В瑁佸喅"):
         assert copy in body
     assert not any(marker in body for marker in MOJIBAKE_MARKERS)
     assert 'href="/design/falsify-flow-docs/?lang=zh" aria-current="page"' in body
@@ -45,16 +45,16 @@ def test_flow_doc_renders_markdown_with_active_sidebar_and_code():
 
 def test_flow_doc_chinese_uses_actual_translation_and_native_chrome():
     h, body=decoded_body("/design/falsify-flow-docs/00-getting-started.html?lang=zh")
-    assert h.status_code==200 and 'lang="zh-CN"' in body and "快速开始" in body
-    assert "跳到正文" in body and ">文档<" in body and "打开菜单" in body and "切换至中文" in body
+    assert h.status_code==200 and 'lang="zh-CN"' in body and "蹇€熷紑濮? in body
+    assert "璺冲埌姝ｆ枃" in body and ">鏂囨。<" in body and "鎵撳紑鑿滃崟" in body and "鍒囨崲鑷充腑鏂? in body
     assert not any(marker in body for marker in MOJIBAKE_MARKERS)
 
 
 def test_flow_docs_never_render_question_mark_corrupted_chinese_sources():
     expected_titles = {
-        "11-byok-and-policy": "本地使用与 BYOK",
-        "17-skills": "使用 Falsify 工作流包",
-        "20-cli-and-artifacts": "CLI 与产物参考",
+        "11-byok-and-policy": "鏈湴浣跨敤涓?BYOK",
+        "17-skills": "浣跨敤 Falsify 宸ヤ綔娴佸寘",
+        "20-cli-and-artifacts": "CLI 涓庝骇鐗╁弬鑰?,
     }
     for stem, title in expected_titles.items():
         h, body = decoded_body(f"/docs/{stem}.html?lang=zh")
