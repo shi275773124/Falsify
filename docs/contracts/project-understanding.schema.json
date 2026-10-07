@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://falsify.site/contracts/falsify.understanding.v1.schema.json",
+  "title": "Falsify project understanding artifact (falsify.understanding.v1)",
+  "description": "Reading-layer artifact produced alongside an existing falsify review. It NEVER changes the original verdict, authority, exit code, or findings. Contract reference for falsify/understanding.py (explicit runtime validation; this file documents the interface).",
+  "type": "object",
+  "required": ["schema_version", "generation_status", "audit_context", "scope", "sources", "project_model", "findings_explained", "unknowns", "user_notes", "generation_meta"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "falsify.understanding.v1"
+    },
+    "generation_status": {
+      "description": "Status of THIS artifact's generation only. 'available' never means the project is safe or verified.",
+      "enum": ["available", "unavailable", "invalid"]
+    },
+    "failure_reason": {
+      "type": "string",
+      "description": "Required when generation_status is not 'available'. Honest failure category + message. No fabricated sample content."
+    },
+    "audit_context": {
+      "type": "object",
+      "description": "Linkage to the ORIGINAL review receipt. Association only; proves nothing about authority validation.",
+      "required": ["review_schema_version", "verdict", "authority_ceiling", "claim_scope", "receipt_hash"],
+      "additionalProperties": false,
+      "properties": {
+        "review_schema_version": { "type": "string" },
+        "verdict": { "type": "string" },
+        "authority_ceiling": { "type": ["string", "null"] },
+        "claim_scope": { "type": ["string", "null"] },
+        "receipt_hash": {
+          "type": "string",
+          "description": "SHA256 over json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',',':')) UTF-8 bytes of the original review payload. Linkage only."
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["inputs", "not_covered"],
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "description": "Fixed by the program: subject file, receipt, explicit material list. The model cannot add.",
+          "items": { "type": "string" }
+        },
+        "not_covered": {
+          "type": "array",
+          "description": "What this artifact does NOT cover (program-fixed baseline).",
+          "items": { "type": "string" }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Built by the program from explicit inputs ONLY. Fixed IDs: SUBJECT, RECEIPT. Material list cannot use reserved IDs.",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "kind", "origin_path", "bytes_sha256", "content_state", "text", "text_sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,32}$" },
+          "role": { "enum": ["subject", "receipt", "material", "user_before"] },
+          "kind": { "enum": ["document", "code", "raw_output", "review_receipt"] },
+          "origin_path": { "type": "string" },
+          "bytes_sha256": { "type": "string", "description": "SHA256 of the original file bytes (snapshot identity)." },
+          "content_state": { "enum": ["included", "withheld"] },
+          "text": { "type": "string", "description": "Line-numbered text basis (lines numbered from 1). Empty string allowed only for withheld." },
+          "text_sha256": { "type": "string" }
+        }
+      }
+    },
+    "project_model": {
+      "type": "object",
+      "required": ["goal", "mechanism_chain", "assumptions"],
+      "additionalProperties": false,
+      "properties": {
+        "goal": { "$ref": "#/$defs/explained" },
+        "mechanism_chain": {
+          "type": "array",
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/explained" }
+        },
+        "assumptions": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["text", "epistemic_status", "refs"],
+            "additionalProperties": false,
+            "properties": {
+              "text": { "type": "string" },
+              "epistemic_status": { "$ref": "#/$defs/epistemic_status" },
+              "refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+              "if_wrong": { "type": "string", "description": "What breaks if this assumption fails." }
+            }
+          }
+        }
+      }
+    },
+    "findings_explained": {
+      "type": "array",
+      "description": "Each item references an ORIGINAL finding by index; explains mechanism meaning. Cannot alter the finding or its cutline.",
+      "items": {
+        "type": "object",
+        "required": ["finding_index", "text", "epistemic_status", "refs"],
+        "additionalProperties": false,
+        "properties": {
+          "finding_index": { "type": "integer", "minimum": 0 },
+          "text": { "type": "string" },
+          "epistemic_status": { "$ref": "#/$defs/epistemic_status" },
+          "refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+          "original_severity": { "type": "string" },
+          "original_cutline": { "type": "string" }
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "kind", "impact", "next_evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "text": { "type": "string" },
+          "kind": { "enum": ["not_reviewed", "missing_evidence", "cannot_explain"] },
+          "impact": { "type": "string", "description": "Which decisions this unknown can affect." },
+          "next_evidence": { "type": "string", "description": "The single next piece of evidence that would shrink it." }
+        }
+      }
+    },
+    "suggested_revisions": {
+      "type": "array",
+      "description": "System-suggested corrections to the user's prior understanding. Requires a real before input; none fabricated.",
+      "items": {
+        "type": "object",
+        "required": ["id", "before", "after", "basis", "basis_refs"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^rev[0-9]{1,3}$" },
+          "before": { "type": "string", "description": "User's own words (from --understanding-before), quoted verbatim." },
+          "after": { "type": "string", "description": "Suggested corrected statement." },
+          "basis": { "type": "string" },
+          "basis_refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } }
+        }
+      }
+    },
+    "reflection_prompts": {
+      "type": "array",
+      "maxItems": 2,
+      "description": "Conditional-change thought experiments. Marked as speculation; never claim measured results.",
+      "items": {
+        "type": "object",
+        "required": ["id", "question"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^prompt[0-9]{1,2}$" },
+          "question": { "type": "string" },
+          "basis_refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } }
+        }
+      }
+    },
+    "user_notes": {
+      "type": "object",
+      "description": "Maintained by program/user. The model must never fill in confirmations.",
+      "required": ["before_recorded", "answers", "revision_states"],
+      "additionalProperties": false,
+      "properties": {
+        "before_recorded": {
+          "type": ["string", "null"],
+          "description": "User's pre-review words verbatim, or null with UI showing the fixed string when not provided."
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["prompt_id", "answer"],
+            "additionalProperties": false,
+            "properties": {
+              "prompt_id": { "type": "string" },
+              "answer": { "type": "string" },
+              "recorded_at": { "type": "string" }
+            }
+          }
+        },
+        "revision_states": {
+          "type": "array",
+          "description": "Per-suggested-revision state: pending/confirmed/retracted with timestamps. Only user actions change these.",
+          "items": {
+            "type": "object",
+            "required": ["revision_id", "state"],
+            "additionalProperties": false,
+            "properties": {
+              "revision_id": { "type": "string" },
+              "state": { "enum": ["pending", "confirmed", "retracted"] },
+              "changed_at": { "type": "string" },
+              "user_wording": { "type": "string", "description": "User's own rewrite if they edited the suggestion." }
+            }
+          }
+        }
+      }
+    },
+    "generation_meta": {
+      "type": "object",
+      "required": ["tool", "generated_at", "provider", "model", "base", "error_category"],
+      "additionalProperties": false,
+      "properties": {
+        "tool": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "provider": { "type": "string" },
+        "model": { "type": "string" },
+        "base": { "type": "string" },
+        "completion_meta": { "type": "object" },
+        "error_category": {
+          "enum": ["none", "provider_unavailable", "model_output_invalid", "truncated", "materials_invalid", "write_failed"]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "epistemic_status": {
+      "enum": ["source_observation", "claim", "inference", "unknown"]
+    },
+    "ref": {
+      "type": "object",
+      "required": ["source_id", "start_line", "end_line", "quote"],
+      "additionalProperties": false,
+ "properties": {
+        "source_id": { "type": "string" },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "quote": { "type": "string", "description": "Verbatim excerpt; must match the cited line range. Omitted only for withheld sources (empty string)." }
+      }
+    },
+    "explained": {
+      "type": "object",
+      "required": ["text", "epistemic_status", "refs"],
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" },
+        "epistemic_status": { "$ref": "#/$defs/epistemic_status" },
+        "refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } }
+      }
+    }
+  }
+}

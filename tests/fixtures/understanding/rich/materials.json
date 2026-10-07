@@ -1,0 +1,7 @@
+{
+  "sources": [
+    {"id": "ARCH", "path": "architecture.md", "kind": "document"},
+    {"id": "CODE", "path": "billing.py", "kind": "code"},
+    {"id": "PROBE", "path": "probe-output.txt", "kind": "raw_output"}
+  ]
+}

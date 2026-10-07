@@ -1,0 +1,35 @@
+{
+  "demo": "project-understanding",
+  "scenarios": [
+    {
+      "name": "rich",
+      "review_verdict": "BLOCK",
+      "review_exit_code": 1,
+      "understanding_status": "available",
+      "model_calls": 3,
+      "receipt_hash_match": true,
+      "json_path": ".tmp\\project-understanding-demo\\result\\rich\\understanding.json",
+      "md_path": ".tmp\\project-understanding-demo\\result\\rich\\understanding.md"
+    },
+    {
+      "name": "receipt-only",
+      "review_verdict": "BLOCK",
+      "review_exit_code": 1,
+      "understanding_status": "available",
+      "model_calls": 3,
+      "receipt_hash_match": true,
+      "json_path": ".tmp\\project-understanding-demo\\result\\receipt-only\\understanding.json",
+      "md_path": ".tmp\\project-understanding-demo\\result\\receipt-only\\understanding.md"
+    },
+    {
+      "name": "conflict",
+      "review_verdict": "BLOCK",
+      "review_exit_code": 1,
+      "understanding_status": "available",
+      "model_calls": 3,
+      "receipt_hash_match": true,
+      "json_path": ".tmp\\project-understanding-demo\\result\\conflict\\understanding.json",
+      "md_path": ".tmp\\project-understanding-demo\\result\\conflict\\understanding.md"
+    }
+  ]
+}

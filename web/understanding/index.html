@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title data-i18n="title">项目理解 · Falsify</title>
+<link rel="stylesheet" href="/understanding/understanding.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <h1 data-i18n="title">项目理解</h1>
+    <p class="sub" data-i18n="subtitle">阅读一页可追溯的项目理解：它怎样运转、靠什么成立、证据改变了什么、哪些仍未知。本页只在本地运行，不上传任何内容。</p>
+    <div class="langbar">
+      <a href="?lang=zh" lang="zh" data-i18n-attr-href="hrefZh">中文</a>
+      <a href="?lang=en" lang="en" data-i18n-attr-href="hrefEn">English</a>
+    </div>
+  </header>
+
+  <section id="import-panel" class="panel" aria-labelledby="import-h">
+    <h2 id="import-h" data-i18n="importTitle">导入理解产物</h2>
+    <p data-i18n="importHint">选择 CLI 生成的 understanding.json 文件。文件在你的浏览器中读取，服务器不会访问你的磁盘路径。</p>
+    <label class="filelabel" for="file-input" data-i18n="chooseFile">选择 understanding.json</label>
+    <input id="file-input" type="file" accept="application/json,.json">
+    <div id="import-error" class="error" role="alert" hidden></div>
+    <div id="imported-summary" class="ok" hidden></div>
+  </section>
+
+  <div id="reader" hidden>
+    <section class="panel meta-panel" aria-labelledby="meta-h">
+      <h2 id="meta-h" data-i18n="metaTitle">关联的原审查</h2>
+      <dl id="meta-list" class="meta-list"></dl>
+      <p class="note" data-i18n="metaNote">以上为关联信息快照，仅表示与原审查的对应关系，不代表本项目已通过权威验证。</p>
+      <div id="scope-box" class="scope"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="m1">
+      <h2 id="m1" data-i18n="s1Title">1 · 它怎样运转</h2>
+      <div id="sec-goal"></div>
+      <div id="sec-chain"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="m2">
+      <h2 id="m2" data-i18n="s2Title">2 · 它靠什么成立</h2>
+      <div id="sec-assumptions"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="m3">
+      <h2 id="m3" data-i18n="s3Title">3 · 这次发现了什么</h2>
+      <div id="sec-findings"></div>
+    </section>
+
+    <section class="panel userpanel" aria-labelledby="m4">
+      <h2 id="m4" data-i18n="s4Title">4 · 我的解释与修正</h2>
+      <div id="sec-before"></div>
+      <div id="sec-revisions"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="m5">
+      <h2 id="m5" data-i18n="s5Title">5 · 还有什么没弄清</h2>
+      <div id="sec-unknowns"></div>
+      <div id="sec-prompts"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="src-h">
+      <h2 id="src-h" data-i18n="srcTitle">来源快照</h2>
+      <p class="note" data-i18n="srcNote">以下内容为生成时的来源快照，当前磁盘上的文件未复核。你可以重新选择来源文件，与快照比对哈希。</p>
+      <div id="sec-sources"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="exp-h">
+      <h2 id="exp-h" data-i18n="expTitle">导出</h2>
+      <p class="note" data-i18n="expNote">导出在本地完成，不会自动发布。省略原文不等于自动脱敏，解释文字中仍可能含有你的私人信息。</p>
+      <fieldset class="expopts">
+        <legend data-i18n="expLegend">导出内容选择</legend>
+        <label><input type="checkbox" id="opt-include-notes" checked> <span data-i18n="optNotes">包含我的原话 / 笔记 / 答案</span></label>
+        <label><input type="checkbox" id="opt-include-texts" checked> <span data-i18n="optTexts">包含原材料全文</span></label>
+      </fieldset>
+      <div class="expbtns">
+        <button id="btn-preview" data-i18n="btnPreview">预览导出内容</button>
+        <button id="btn-export-json" data-i18n="btnJson" disabled>下载 JSON</button>
+        <button id="btn-export-md" data-i18n="btnMd" disabled>下载 Markdown</button>
+      </div>
+      <div id="preview-area" hidden>
+        <h3 data-i18n="previewTitle">导出预览</h3>
+        <div id="preview-body"></div>
+        <p class="note" data-i18n="previewNote">预览显示了将要导出的机制说明、修正建议与推演题；取消勾选即可移除对应内容。</p>
+      </div>
+      <p class="note" data-i18n="refreshNote">刷新页面会清空未导出的编辑，请先导出再刷新。</p>
+    </section>
+  </div>
+</main>
+<script src="/understanding/understanding.js"></script>
+</body>
+</html>

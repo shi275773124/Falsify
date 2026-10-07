@@ -1,0 +1,25 @@
+{
+  "delivery": "project-understanding",
+  "date": "2026-10-07",
+  "freeze": "21/21 files sha256 match freeze-manifest.json (verified post-audit)",
+  "regression": {
+    "tests/test_understanding.py": "26 passed",
+    "tests/test_web.py": "15 passed + 1 pre-existing baseline failure (test_production_root_is_formal_console, verified unrelated via git stash)",
+    "full_planned_suite": "119 passed + 14 pre-existing baseline failures (all verified pre-existing via git stash; list in baseline-failures.txt)"
+  },
+  "demo": ".tmp/project-understanding-demo/demo-manifest.json — 3/3 scenarios available, receipt_hash_match=true, verdict BLOCK preserved, exit code 1 preserved, 3 model calls (brooks+L1+1 understanding)",
+  "browser_acceptance": ".tmp/project-understanding-demo/browser-acceptance/acceptance-report.json — 25 passed / 0 failed (import, five sections, source dialog + highlighted lines, confirm/retract, answer recording, full+minimal export, withheld re-import, XSS non-execution, 390px, 1440px, en locale)",
+  "audit": {
+    "auditor": "non-author independent security-review subagent, separate context, two rounds",
+    "report": ".tmp/project-understanding-delivery/audit-report-D.md",
+    "verdict": "PASS all areas; no medium/high/critical findings",
+    "integration_lead_recheck": "include-notes=false export leak attack — PASS"
+  },
+  "provider_smoke_test": "真实 provider 烟测未执行（本机未配置可用的 review provider 凭据）；该主张未验证，不作为已验证能力记录。",
+  "limitations": [
+    "首版无用户答案自动评判（有意）",
+    "只导入 JSON，不承诺导入 Markdown",
+    "引用校验为机械一致性，语义支持需人工阅读",
+    "基线仓库存在 14 个与本功能无关的既有失败测试（未顺手修改）"
+  ]
+}

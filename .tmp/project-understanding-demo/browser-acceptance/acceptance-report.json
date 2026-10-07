@@ -1,0 +1,131 @@
+{
+  "checks": [
+    {
+      "name": "import shows reader",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "meta verdict shown",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "section #sec-goal rendered",
+      "ok": true,
+      "detail": "目标source_observationsource_observation ·"
+    },
+    {
+      "name": "section #sec-assumptions rendered",
+      "ok": true,
+      "detail": "承重假设（最多三条）The platform export covers exa"
+    },
+    {
+      "name": "section #sec-findings rendered",
+      "ok": true,
+      "detail": "发现解释#1highMust FixThe 391 out-of-window "
+    },
+    {
+      "name": "section #sec-unknowns rendered",
+      "ok": true,
+      "detail": "未知missing_evidenceWhether long windows g"
+    },
+    {
+      "name": "source dialog opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "highlighted line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "revisions listed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "confirm marks item",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "retract restores suggestion",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "answer recorded indicator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "preview visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "export full has notes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "export full has revisions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "export keeps source text",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "md contains sections",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "minimal drops notes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "minimal withholds texts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "withheld import shows unverifiable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "xss not executed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "xss text shown as text",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "390px viewport ok",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "1440px viewport ok",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en locale strings",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "passed": 25,
+  "failed": 0
+}

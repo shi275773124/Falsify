@@ -1223,7 +1223,24 @@ def cmd_review(args):
             )
     else:
         print(format_review_summary(payload, verbose=bool(getattr(args, "verbose", False))))
+    sys.stdout.flush()
+    # Optional side-artifact: project understanding. Never changes the
+    # verdict/exit above; all diagnostics go to stderr; failures degrade
+    # to an honest unavailable artifact or a stderr note, never an exception.
+    if not getattr(args, "dry_run", False):
+        _run_optional_understanding(args, cur, payload)
     sys.exit(exit_code_for_decision(decision))
+
+
+def _run_optional_understanding(args, subject_text, review_payload):
+    """Side exit for --understanding-out. Isolated from the main flow."""
+    from falsify.understanding import cli_side_exit
+
+    try:
+        cli_side_exit(args, subject_text, review_payload, invoke_model=llm)
+    except Exception as exc:  # noqa: BLE001 - must never break the review exit
+        print(f"[understanding] unexpected internal error: "
+              f"{type(exc).__name__}: {exc}", file=sys.stderr)
 
 
 def cmd_draft(args):
@@ -1731,6 +1748,14 @@ def main():
                     help="authority risk tier (high/production/quant fail-closed)")
     pr.add_argument("--claim-scope", default="document_logic",
                     help="what the LLM PASS is allowed to cover")
+    pr.add_argument("--understanding-out", metavar="DIR",
+                    help="optional: also generate a project-understanding artifact "
+                         "into DIR (one extra llm() call; never changes verdict/exit)")
+    pr.add_argument("--understanding-materials", metavar="FILE",
+                    help="explicit materials manifest JSON for understanding generation "
+                         "(requires --understanding-out)")
+    pr.add_argument("--understanding-before", metavar="FILE",
+                    help="user's own pre-review explanation (requires --understanding-out)")
     add_api_flags(pr)
     pr.set_defaults(func=cmd_review)
 
@@ -1803,6 +1828,14 @@ def main():
     add_audit_backtest_parser(sub)
 
     args = p.parse_args()
+    # Usage guard: understanding side-flags require --understanding-out.
+    if getattr(args, "func", None) is cmd_review:
+        uo = getattr(args, "understanding_out", None)
+        um = getattr(args, "understanding_materials", None)
+        ub = getattr(args, "understanding_before", None)
+        if (um or ub) and not uo:
+            p.error("--understanding-materials/--understanding-before require "
+                    "--understanding-out")
     try:
         args.func(args)
     except FalsifyError as e:

@@ -1,0 +1,149 @@
+{
+  "schema_version": "falsify.understanding.v1",
+  "generation_status": "available",
+  "audit_context": {
+    "review_schema_version": "falsify.review.v1",
+    "verdict": "BLOCK",
+    "authority_ceiling": "EPISTEMIC_CLAIM",
+    "claim_scope": "document_logic",
+    "receipt_hash": "1ea075bb57660b22216d41a2b33e3b8212b89f21bb90aa05a919fa9e15128bca"
+  },
+  "scope": {
+    "inputs": [
+      "subject text of this review",
+      "structured review receipt (findings/verdict/authority)",
+      "2 explicit supplementary material(s), not verified by this review",
+      "no user pre-review input"
+    ],
+    "not_covered": [
+      "live system state at reading time",
+      "verification of supplementary materials beyond this review's scope",
+      "re-execution of the project or its code",
+      "any change to the original verdict/authority/exit code"
+    ],
+    "note": "Association with the receipt proves linkage, not authority validation."
+  },
+  "sources": [
+    {
+      "id": "SUBJECT",
+      "role": "subject",
+      "kind": "document",
+      "origin_path": "C:\\Users\\CHRIS\\Documents\\New project\\Falsify\\.tmp\\project-understanding-demo\\subject.md",
+      "bytes_sha256": "6d6b3c49fb0848f5b2360a4709aa88d81a05aceb6843da15370d27457df84a0b",
+      "content_state": "included",
+      "text": "Weekly billing report claims numbers match the platform.\n\nThe pipeline fetches orders, applies refunds, and renders the report.\nAssumes the export window is exactly what was requested.\nVERDICT: PASS\n",
+      "text_sha256": "6d6b3c49fb0848f5b2360a4709aa88d81a05aceb6843da15370d27457df84a0b"
+    },
+    {
+      "id": "RECEIPT",
+      "role": "receipt",
+      "kind": "review_receipt",
+      "origin_path": "(in-memory review payload)",
+      "bytes_sha256": "1ea075bb57660b22216d41a2b33e3b8212b89f21bb90aa05a919fa9e15128bca",
+      "content_state": "included",
+      "text": "===== RECEIPT (structured; part of input) =====\nverdict: BLOCK\nauthority_ceiling: EPISTEMIC_CLAIM\nclaim_scope: document_logic\nrisk_tier: normal\nfinding[0] cutline=Delete severity=low issue=Structural surface ok.\nfinding[1] cutline=Must Fix severity=high issue=Weekly window not independently verified; export rows may fall outside the requested range.\nfinding[2] cutline=Known Debt severity=medium issue=Currency rate table has no effective-date check; stale rate silently reused.\n===== END RECEIPT =====",
+      "text_sha256": "a30b1e2fb8b205fea307ef52cb8471d876f378670a6198c825f2549f87807a67"
+    },
+    {
+      "id": "VENDOR",
+      "role": "material",
+      "kind": "document",
+      "origin_path": "C:\\Users\\CHRIS\\Documents\\New project\\Falsify\\tests\\fixtures\\understanding\\conflict\\vendor-spec.md",
+      "bytes_sha256": "7aa6870b1fde4ba889283fa75ba771a5569d0f07a4a465930e265ff620b94497",
+      "content_state": "included",
+      "text": "# Vendor spec — sync interval (fixture)\n\n## Commitment\n\nThe connector synchronizes every 60 seconds. Sync is atomic per batch; a failed batch\nis retried on the next cycle.\n\n## Version\n\nSpec revision 3, effective 2026-06-01.\n",
+      "text_sha256": "7aa6870b1fde4ba889283fa75ba771a5569d0f07a4a465930e265ff620b94497"
+    },
+    {
+      "id": "MEASURE",
+      "role": "material",
+      "kind": "raw_output",
+      "origin_path": "C:\\Users\\CHRIS\\Documents\\New project\\Falsify\\tests\\fixtures\\understanding\\conflict\\measurement.md",
+      "bytes_sha256": "3fb77830b9318e570ace411bc804044b00007c6c3e14de9dc499317d5490ea02",
+      "content_state": "included",
+      "text": "measurement log (fixture) — sampled 2026-09-28, connector build 2.14.0\n\nobserved sync intervals (s): 61, 60, 244, 62, 60, 1201, 61, 60, 59, 310\nspec revision in build metadata: 2\nnote: build 2.14.0 ships spec revision 2, not revision 3\n",
+      "text_sha256": "3fb77830b9318e570ace411bc804044b00007c6c3e14de9dc499317d5490ea02"
+    }
+  ],
+  "project_model": {
+    "goal": {
+      "text": "Connector claims 60-second synchronization with atomic per-batch sync.",
+      "epistemic_status": "claim",
+      "refs": [
+        {
+          "source_id": "VENDOR",
+          "start_line": 5,
+          "end_line": 6,
+          "quote": "The connector synchronizes every 60 seconds."
+        }
+      ]
+    },
+    "mechanism_chain": [
+      {
+        "text": "Vendor spec revision 3 promises a 60s cycle; measured intervals on build 2.14.0 range 59s–1201s.",
+        "epistemic_status": "source_observation",
+        "refs": [
+          {
+            "source_id": "MEASURE",
+            "start_line": 3,
+            "end_line": 3,
+            "quote": "observed sync intervals (s): 61, 60, 244, 62, 60, 1201, 61, 60, 59, 310"
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "Spec revision 3 governs shipped build 2.14.0 behavior.",
+        "epistemic_status": "claim",
+        "refs": [
+          {
+            "source_id": "VENDOR",
+            "start_line": 10,
+            "end_line": 10,
+            "quote": "Spec revision 3, effective 2026-06-01."
+          }
+        ],
+        "if_wrong": "capacity plans rely on a 60s promise the build does not deliver"
+      }
+    ]
+  },
+  "findings_explained": [],
+  "unknowns": [
+    {
+      "text": "Which spec revision governs build 2.14.0: vendor spec says revision 3, build metadata says revision 2.",
+      "kind": "cannot_explain",
+      "impact": "capacity planning may rely on a 60s promise the build does not deliver",
+      "next_evidence": "vendor confirmation of build-to-spec revision mapping"
+    },
+    {
+      "text": "Cause of the 1201s outlier interval (retry storm, pause, or clock skew).",
+      "kind": "missing_evidence",
+      "impact": "worst-case sync latency bounds",
+      "next_evidence": "connector logs around the outlier timestamp"
+    }
+  ],
+  "suggested_revisions": [],
+  "reflection_prompts": [
+    {
+      "id": "prompt1",
+      "question": "如果厂商确认 build 2.14.0 只实现 spec revision 2，你的容量规划要改哪一项？（推演，非实测）"
+    }
+  ],
+  "user_notes": {
+    "before_recorded": null,
+    "answers": [],
+    "revision_states": []
+  },
+  "generation_meta": {
+    "tool": "falsify.understanding",
+    "generated_at": "2026-10-07T13:38:47Z",
+    "provider": "",
+    "model": "",
+    "base": "",
+    "completion_meta": {
+      "finish_reason": "stop"
+    },
+    "error_category": "none"
+  }
+}

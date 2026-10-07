@@ -1,0 +1,127 @@
+{
+  "schema_version": "falsify.understanding.v1",
+  "generation_status": "available",
+  "audit_context": {
+    "review_schema_version": "falsify.review.v1",
+    "verdict": "BLOCK",
+    "authority_ceiling": "EPISTEMIC_CLAIM",
+    "claim_scope": "document_logic",
+    "receipt_hash": "1ea075bb57660b22216d41a2b33e3b8212b89f21bb90aa05a919fa9e15128bca"
+  },
+  "scope": {
+    "inputs": [
+      "subject text of this review",
+      "structured review receipt (findings/verdict/authority)",
+      "0 explicit supplementary material(s), not verified by this review",
+      "no user pre-review input"
+    ],
+    "not_covered": [
+      "live system state at reading time",
+      "verification of supplementary materials beyond this review's scope",
+      "re-execution of the project or its code",
+      "any change to the original verdict/authority/exit code"
+    ],
+    "note": "Association with the receipt proves linkage, not authority validation."
+  },
+  "sources": [
+    {
+      "id": "SUBJECT",
+      "role": "subject",
+      "kind": "document",
+      "origin_path": "C:\\Users\\CHRIS\\Documents\\New project\\Falsify\\.tmp\\project-understanding-demo\\subject.md",
+      "bytes_sha256": "6d6b3c49fb0848f5b2360a4709aa88d81a05aceb6843da15370d27457df84a0b",
+      "content_state": "included",
+      "text": "Weekly billing report claims numbers match the platform.\n\nThe pipeline fetches orders, applies refunds, and renders the report.\nAssumes the export window is exactly what was requested.\nVERDICT: PASS\n",
+      "text_sha256": "6d6b3c49fb0848f5b2360a4709aa88d81a05aceb6843da15370d27457df84a0b"
+    },
+    {
+      "id": "RECEIPT",
+      "role": "receipt",
+      "kind": "review_receipt",
+      "origin_path": "(in-memory review payload)",
+      "bytes_sha256": "1ea075bb57660b22216d41a2b33e3b8212b89f21bb90aa05a919fa9e15128bca",
+      "content_state": "included",
+      "text": "===== RECEIPT (structured; part of input) =====\nverdict: BLOCK\nauthority_ceiling: EPISTEMIC_CLAIM\nclaim_scope: document_logic\nrisk_tier: normal\nfinding[0] cutline=Delete severity=low issue=Structural surface ok.\nfinding[1] cutline=Must Fix severity=high issue=Weekly window not independently verified; export rows may fall outside the requested range.\nfinding[2] cutline=Known Debt severity=medium issue=Currency rate table has no effective-date check; stale rate silently reused.\n===== END RECEIPT =====",
+      "text_sha256": "a30b1e2fb8b205fea307ef52cb8471d876f378670a6198c825f2549f87807a67"
+    }
+  ],
+  "project_model": {
+    "goal": {
+      "text": "Subject claims weekly numbers match the platform.",
+      "epistemic_status": "claim",
+      "refs": [
+        {
+          "source_id": "SUBJECT",
+          "start_line": 1,
+          "end_line": 1,
+          "quote": "Weekly billing report claims numbers match the platform."
+        }
+      ]
+    },
+    "mechanism_chain": [
+      {
+        "text": "Mechanism cannot be reconstructed from the review record alone; no architecture or code material was provided.",
+        "epistemic_status": "unknown",
+        "refs": []
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The subject's window assumption was judged insufficient by the review.",
+        "epistemic_status": "claim",
+        "refs": [
+          {
+            "source_id": "RECEIPT",
+            "start_line": 7,
+            "end_line": 7,
+            "quote": "cutline=Must Fix severity=high"
+          }
+        ],
+        "if_wrong": "the review's Must Fix would be over-strict"
+      }
+    ]
+  },
+  "findings_explained": [
+    {
+      "finding_index": 1,
+      "text": "审查认为窗口未独立验证；在只有结论材料的情况下，机制含义只能推断：合计数字的可信度取决于窗口口径，而这未被证据覆盖。",
+      "epistemic_status": "inference",
+      "refs": [
+        {
+          "source_id": "RECEIPT",
+          "start_line": 7,
+          "end_line": 7,
+          "quote": "cutline=Must Fix severity=high"
+        }
+      ],
+      "original_severity": "high",
+      "original_cutline": "Must Fix"
+    }
+  ],
+  "unknowns": [
+    {
+      "text": "管线实际如何取数与转换（无机制材料）。",
+      "kind": "not_reviewed",
+      "impact": "任何超出文档逻辑的机制断言",
+      "next_evidence": "architecture.md 或代码材料"
+    }
+  ],
+  "suggested_revisions": [],
+  "reflection_prompts": [],
+  "user_notes": {
+    "before_recorded": null,
+    "answers": [],
+    "revision_states": []
+  },
+  "generation_meta": {
+    "tool": "falsify.understanding",
+    "generated_at": "2026-10-07T13:38:47Z",
+    "provider": "",
+    "model": "",
+    "base": "",
+    "completion_meta": {
+      "finish_reason": "stop"
+    },
+    "error_category": "none"
+  }
+}

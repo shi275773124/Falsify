@@ -482,6 +482,13 @@ def docs_nav_html(current=None, lang="en"):
 
 FLOW_HOME_DIR = ROOT / "design" / "falsify-flow-candidate"
 FLOW_DOCS_DIR = ROOT / "design" / "falsify-flow-docs"
+UNDERSTANDING_DIR = WEB_DIR / "understanding"
+# Reading page assets are a fixed, explicit allowlist — never a directory walk.
+UNDERSTANDING_FILES = {
+    "index.html": "text/html",
+    "understanding.css": "text/css",
+    "understanding.js": "application/javascript",
+}
 
 def flow_docs_href(stem, lang, canonical=False):
     prefix = "/docs" if canonical else "/design/falsify-flow-docs"
@@ -1054,6 +1061,22 @@ class H(BaseHTTPRequestHandler):
         # Retired legacy stack: do not expose its stale metadata or external fonts.
         if path in {"/legacy/home", "/legacy/home.html"}:
             return self._json_error(410, "gone", "Legacy homepage has been retired.", head=head)
+
+        # Local project-understanding reading page (fixed allowlist; GET/HEAD only).
+        if path == "/understanding" or path == "/understanding/":
+            page = UNDERSTANDING_DIR / "index.html"
+            if page.is_file():
+                return self._send(200, page.read_bytes(), "text/html", head=head, cache="no-cache")
+            return self._json_error(404, "not_found", "Resource not found.", head=head)
+        if path.startswith("/understanding/"):
+            name = path[len("/understanding/"):]
+            if ".." in name or "/" in name or "\\" in name:
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            ctype = UNDERSTANDING_FILES.get(name)
+            target = UNDERSTANDING_DIR / name
+            if ctype is None or not target.is_file():
+                return self._json_error(404, "not_found", "Resource not found.", head=head)
+            return self._send(200, target.read_bytes(), ctype, head=head, cache="no-cache")
 
         if path in {"/docs", "/docs/", "/docs/index.html"}:
             return self._send(200, flow_docs_index(lang, canonical=True), "text/html", head=head, cache="no-cache")
