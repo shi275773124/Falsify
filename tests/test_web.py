@@ -86,6 +86,37 @@ def test_static_traversal_rejected():
     assert serve.safe_web_static("/static/../serve.py") is None
 
 
+def test_understanding_routes_serve_fixed_allowlist_only():
+    # Page + its two assets are the only servable files under /understanding/.
+    page = handler("/understanding?lang=zh")
+    page.do_GET()
+    assert page.status_code == 200
+    body = page.wfile.getvalue().decode("utf-8")
+    assert 'lang="zh-CN"' in body
+    assert "/understanding/understanding.js" in body
+    for asset, marker in (
+        ("/understanding/understanding.css", b":root"),
+        ("/understanding/understanding.js", b"validateArtifact"),
+    ):
+        h = handler(asset)
+        h.do_GET()
+        assert h.status_code == 200, asset
+        assert marker in h.wfile.getvalue()
+    # Allowlist: no directory walk, no traversal, no other files.
+    for bad in ("/understanding/../serve.py", "/understanding/secret.txt",
+                "/understanding/notes.md"):
+        h = handler(bad)
+        h.do_GET()
+        assert h.status_code == 404, bad
+    # POST stays on /review only — the reading page never receives uploads.
+    post = handler("/understanding", "POST")
+    post.headers = {"Content-Length": "2"}
+    from io import BytesIO as _B
+    post.rfile = _B(b"{}")
+    post.do_POST()
+    assert post.status_code == 404
+
+
 def test_design_path_rejects_markdown_drafts():
     """Design mirrors serve product assets only — never internal .md drafts."""
     assert serve.safe_design_path("/design/falsify-flow-docs/notes.md") is None

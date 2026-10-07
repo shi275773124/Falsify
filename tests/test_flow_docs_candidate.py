@@ -50,6 +50,19 @@ def test_flow_doc_chinese_uses_actual_translation_and_native_chrome():
     assert not any(marker in body for marker in MOJIBAKE_MARKERS)
 
 
+def test_flow_docs_never_render_question_mark_corrupted_chinese_sources():
+    expected_titles = {
+        "11-byok-and-policy": "本地使用与 BYOK",
+        "17-skills": "使用 Falsify 工作流包",
+        "20-cli-and-artifacts": "CLI 与产物参考",
+    }
+    for stem, title in expected_titles.items():
+        h, body = decoded_body(f"/docs/{stem}.html?lang=zh")
+        assert h.status_code == 200
+        assert title in body
+        assert "????" not in body
+
+
 def test_docs_routes_accept_html_and_md_canonical_paths():
     for path in ("/docs/00-getting-started.html", "/docs/00-getting-started.md", "/docs/19-security-and-contact.html"):
         h, body = decoded_body(path)

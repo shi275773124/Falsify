@@ -152,9 +152,22 @@ Claiming Falsify =
   · 只读了 SKILL.md / 白皮书
   · 另一个模型「同意」
   · proxy 脚本 / 手写 PASS
+  · 只跑了 falsify lint（markdown 标签检查 ≠ Brooks-Lint L0）
 ```
 
 packs 每个 `SKILL.md` 必须含本节链接（落地时批量加）。
+
+### 6.1 L0 Brooks-Lint 与 L2 lint 边界
+
+公开门禁回路见 [01-architecture](./01-architecture.md)：**Frame → L0 Brooks-Lint → Attack → Recompute → Cutline → Receipt**。
+
+| 层 | 权威出口 / 工具 | 说明 |
+|----|-----------------|------|
+| **L0** Brooks-Lint（框架审） | `python -m falsify review` / `run`（默认）· `python -m falsify brooks` · pack `skills/falsify-brooks-lint/` | 结构腐烂 / 可审计性；回执必须有 `brooks_lint` 证明块 |
+| **L1** Adversarial | 同 review 路径的攻击腿 | 可选攻击器，不是信任根 |
+| **L2** markdown lint | `python -m falsify lint` / `gate` stub | **不是** Brooks-Lint；仅标签/阻断器静态检查 |
+
+协议名 **Brooks-Lint (L0)**；营销别名可保留「框架审计」。详见 [09-brooks-lint](./09-brooks-lint.md)。
 
 ---
 

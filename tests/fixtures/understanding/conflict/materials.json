@@ -1,0 +1,6 @@
+{
+  "sources": [
+    {"id": "VENDOR", "path": "vendor-spec.md", "kind": "document"},
+    {"id": "MEASURE", "path": "measurement.md", "kind": "raw_output"}
+  ]
+}

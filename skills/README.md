@@ -25,6 +25,7 @@ Claiming Falsify requires:
 
 | Pack | Directory | Claim class |
 |------|-----------|-------------|
+| Brooks-Lint (L0) | `falsify-brooks-lint/` | structural decay / auditability (Framework layer) |
 | Deployment | `falsify-deployment-claim/` | logs green ≠ state |
 | AI PR | `falsify-ai-pr-review/` | PR / agent code claims |
 | Research | `falsify-research-report/` | memo / report claims |

@@ -34,12 +34,15 @@ Falsify 问的是：*沿权威路径，这个声明是否可辩护？*
 一条可检查的回路：
 
 1. **Frame（界定）** — 声明、负责人、权威路径、claim ceiling  
-2. **Attack（反查）** — 先找成本最低的反证（确定性检查优先）  
-3. **Recompute / re-read（复算/回读）** — 打到真实状态、计算、命令或原始来源  
-4. **Cutline（分级）** — Must Fix / Known Debt / Delete  
-5. **Receipt（回执）** — 保留裁决、证据路径、策略/工具版本与 freshness  
+2. **L0 Brooks-Lint（框架审）** — 在对抗攻击之前先扫结构腐烂 / 可审计性表面（营销别名「框架审计」；协议名是 Brooks-Lint）  
+3. **Attack（反查）** — 先找成本最低的反证（确定性检查优先）  
+4. **Recompute / re-read（复算/回读）** — 打到真实状态、计算、命令或原始来源  
+5. **Cutline（分级）** — Must Fix / Known Debt / Delete（含 L0 结构性 Must Fix）  
+6. **Receipt（回执）** — 保留裁决、证据路径、策略/工具版本、freshness，以及证明 L0 已跑（或明确 SCOPE_REFUSED / 带硬顶 cap 的 skip）的 **`brooks_lint` 块**
 
-`PASS` 不是永久有效。环境、工件、策略、freshness 或权威路径任一变化，回执应失效。
+`PASS` 不是永久有效。环境、工件、策略、freshness 或权威路径任一变化，回执应失效。承载声明的 `review` / `run` 若无 L0 证明，不得给出 `PASS` / `PASS_WITH_DEBT`。
+
+**不是同一工具：** `falsify lint` 是 **markdown 标签/阻断器的静态检查**（L2 gate 路径），**不是** Brooks-Lint。见 [Brooks-Lint](./09-brooks-lint.md)。
 
 ## 多 Agent 审查是什么（不是什么）
 
@@ -85,7 +88,9 @@ Falsify 问的是：*沿权威路径，这个声明是否可辩护？*
 ## 相关文档
 
 - [Getting Started](./00-getting-started.zh-CN.md)
+- [Brooks-Lint（L0 框架审）](./09-brooks-lint.md)
 - [GitHub Action 安装](./14-github-action-install.md)
-- [Adversarial Review](./05-adversarial-review.md)（可选攻击层）
+- [Adversarial Review](./05-adversarial-review.md)（L1 攻击层）
 - [Cutline / 风险裁刀](./06-risk-scalpel.md)
+- [工作流包](./17-skills.zh-CN.md)
 - [Open Core 边界](./12-open-core-boundary.md)

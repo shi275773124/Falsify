@@ -144,3 +144,6 @@ design/falsify-flow-candidate/COPY_*.md
 design/falsify-flow-candidate/FLUID_*.md
 design/falsify-flow-candidate/*.bak*
 design/falsify-flow-candidate/verification/
+
+.tmp/
+.RELEASE_SHA

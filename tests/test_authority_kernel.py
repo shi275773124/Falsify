@@ -61,6 +61,35 @@ def _audit_must_fix_pass():
     )
 
 
+def _brooks_ran(extra=""):
+    return (
+        "BROOKS_MODE: light\n"
+        "[BROOKS-LINT] No structural decay found.\n"
+        "Cutline: Delete\n"
+        "Evidence needed: n/a\n"
+        "Minimal action: none\n"
+        f"{extra}"
+        "BROOKS_STATUS: RAN"
+    )
+
+
+def _phase_llm(l1_text, *, draft_text="[AGENT-A] draft"):
+    """Route mocked LLM calls: L0 Brooks / Agent A / L1 skeptic."""
+
+    def fake_llm(system, user, args, dry_run=False, return_meta=False):
+        if system == falsify.cli.BROOKS_SYSTEM:
+            out = _brooks_ran()
+        elif system == falsify.AUTHOR_SYSTEM:
+            out = draft_text
+        else:
+            out = l1_text() if callable(l1_text) else l1_text
+        if return_meta:
+            return out, {"finish_reason": "stop"}
+        return out
+
+    return fake_llm
+
+
 def _review_args(draft, **kw):
     base = dict(
         file=str(draft), against=None, dry_run=False, out=None,
@@ -69,6 +98,7 @@ def _review_args(draft, **kw):
         provider="deepseek", model="deepseek-chat", base=None,
         risk_tier="normal", claim_scope="document_logic",
         claim_text="", author_id=None, reviewer_id=None,
+        skip_brooks=False,
     )
     base.update(kw)
     return argparse.Namespace(**base)
@@ -81,7 +111,7 @@ def _review_args(draft, **kw):
 def test_ks1_review_must_fix_plus_pass_blocks(monkeypatch, tmp_path, capsys):
     draft = tmp_path / "d.md"
     draft.write_text("[AGENT-A] claim", encoding="utf-8")
-    monkeypatch.setattr(falsify.cli, "llm", lambda *a, **k: _audit_must_fix_pass())
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_must_fix_pass()))
     with pytest.raises(SystemExit) as exc:
         falsify.cmd_review(_review_args(draft))
     assert exc.value.args == (1,)
@@ -91,6 +121,7 @@ def test_ks1_review_must_fix_plus_pass_blocks(monkeypatch, tmp_path, capsys):
     assert "Must Fix" in (payload.get("verdict_override") or "")
     assert payload["capital_authority"] == "NONE"
     assert payload["kernel_id"] == KERNEL_ID
+    assert payload["brooks_lint"]["ran"] is True
 
 
 # ---------------------------------------------------------------------------
@@ -101,22 +132,13 @@ def test_ks2_run_must_fix_plus_pass_blocks(monkeypatch, tmp_path):
     brief = tmp_path / "b.md"
     brief.write_text("brief", encoding="utf-8")
 
-    def fake_llm(system, user, args, dry_run=False, return_meta=False):
-        if system == falsify.AUTHOR_SYSTEM:
-            out = "[AGENT-A] draft"
-        else:
-            out = _audit_must_fix_pass()
-        if return_meta:
-            return out, {"finish_reason": "stop"}
-        return out
-
-    monkeypatch.setattr(falsify.cli, "llm", fake_llm)
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_must_fix_pass()))
     args = argparse.Namespace(
         file=str(brief), out=None, provider="deepseek", model="deepseek-chat",
         base=None, drafter=None, drafter_model=None, drafter_base=None,
         reviewer=None, reviewer_model=None, reviewer_base=None,
         risk_tier="normal", claim_scope="document_logic", claim_text="",
-        strict_known_debt_trigger=True,
+        strict_known_debt_trigger=True, skip_brooks=False,
     )
     with pytest.raises(SystemExit) as exc:
         falsify.cmd_run(args)
@@ -216,7 +238,7 @@ def test_ks7_finish_reason_fail_closed(fr, expect_status):
 def test_ks8_author_equals_reviewer_high_risk_blocks(monkeypatch, tmp_path, capsys):
     draft = tmp_path / "d.md"
     draft.write_text("[AGENT-A] claim", encoding="utf-8")
-    monkeypatch.setattr(falsify.cli, "llm", lambda *a, **k: _audit_pass())
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_pass()))
     args = _review_args(
         draft, risk_tier="high",
         author_id=("http", "https://api.deepseek.com/v1", "deepseek-chat"),
@@ -284,6 +306,7 @@ def test_ks11_pass_with_debt_high_risk_no_capital():
         independence_verdict="PASS",
         completion_status="COMPLETE",
         satisfied_obligations=[
+            "l0_brooks_ran",
             "llm_completion_complete", "single_terminal_verdict",
             "no_must_fix", "audit_coverage_proof",
             "independent_reviewer", "executable_evidence", "subject_binding",
@@ -376,29 +399,26 @@ def test_ks16_submit_trap_zero_real_orders():
 def test_matrix_all_entries_share_kernel_id(monkeypatch, tmp_path, capsys):
     draft = tmp_path / "d.md"
     draft.write_text("[AGENT-A] x", encoding="utf-8")
-    monkeypatch.setattr(falsify.cli, "llm", lambda *a, **k: _audit_pass())
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_pass()))
 
     with pytest.raises(SystemExit):
         falsify.cmd_review(_review_args(draft, json=True))
     review_payload = json.loads(capsys.readouterr().out)
     assert review_payload["kernel_id"] == KERNEL_ID
     assert review_payload["authority"]["schema_version"] == "falsify.authority.v1"
+    assert review_payload["brooks_lint"]["skill_id"] == "falsify-brooks-lint"
 
     # run
     brief = tmp_path / "b.md"
     brief.write_text("b", encoding="utf-8")
 
-    def fake_llm(system, user, args, dry_run=False, return_meta=False):
-        out = "[AGENT-A] d" if system == falsify.AUTHOR_SYSTEM else _audit_pass()
-        return (out, {"finish_reason": "stop"}) if return_meta else out
-
-    monkeypatch.setattr(falsify.cli, "llm", fake_llm)
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_pass(), draft_text="[AGENT-A] d"))
     run_args = argparse.Namespace(
         file=str(brief), out=None, provider="deepseek", model="deepseek-chat",
         base=None, drafter="claude", drafter_model="sonnet", drafter_base=None,
         reviewer="deepseek", reviewer_model="deepseek-chat", reviewer_base=None,
         risk_tier="normal", claim_scope="document_logic", claim_text="",
-        strict_known_debt_trigger=True,
+        strict_known_debt_trigger=True, skip_brooks=False,
     )
     with pytest.raises(SystemExit) as exc:
         falsify.cmd_run(run_args)
@@ -421,7 +441,7 @@ def test_matrix_all_entries_share_kernel_id(monkeypatch, tmp_path, capsys):
 def test_matrix_epistemic_pass_never_grants_capital(monkeypatch, tmp_path, capsys):
     draft = tmp_path / "d.md"
     draft.write_text("[AGENT-A] claim", encoding="utf-8")
-    monkeypatch.setattr(falsify.cli, "llm", lambda *a, **k: _audit_pass())
+    monkeypatch.setattr(falsify.cli, "llm", _phase_llm(_audit_pass()))
     with pytest.raises(SystemExit) as exc:
         falsify.cmd_review(_review_args(draft))
     assert exc.value.args == (0,)
@@ -429,6 +449,8 @@ def test_matrix_epistemic_pass_never_grants_capital(monkeypatch, tmp_path, capsy
     assert payload["verdict"] == "PASS"
     assert payload["authority_ceiling"] == "EPISTEMIC_CLAIM"
     assert payload["capital_authority"] == "NONE"
+    assert "l0_brooks_ran" in payload["authority"]["satisfied_obligations"]
+    assert payload["brooks_lint"]["ran"] is True
 
 
 # ---------------------------------------------------------------------------
@@ -470,6 +492,39 @@ def test_mutation_production_pass_requires_all_legs():
     )
     assert d["effective_verdict"] == "BLOCK"
     assert d["capital_authority"] == "NONE"
+
+
+def test_l0_brooks_required_on_review_not_gate_l2():
+    from falsify.authority_kernel import required_obligations_for
+
+    review_obs = required_obligations_for(
+        risk_tier="normal", claim_scope="document_logic",
+        authority_ceiling="EPISTEMIC_CLAIM", entry="review",
+    )
+    run_obs = required_obligations_for(
+        risk_tier="normal", claim_scope="document_logic",
+        authority_ceiling="EPISTEMIC_CLAIM", entry="run",
+    )
+    gate_obs = required_obligations_for(
+        risk_tier="normal", claim_scope="pr_markdown_lint",
+        authority_ceiling="L2_LINT", entry="gate",
+    )
+    assert "l0_brooks_ran" in review_obs
+    assert "l0_brooks_ran" in run_obs
+    assert "l0_brooks_ran" not in gate_obs
+    assert "l2_lint_clean" in gate_obs
+
+    missing = finalize_authority(
+        entry="review", risk_tier="normal",
+        model_verdict="PASS", llm_semantic_verdict="PASS",
+        completion_status="COMPLETE",
+        satisfied_obligations=[
+            "llm_completion_complete", "single_terminal_verdict",
+            "no_must_fix", "audit_coverage_proof",
+        ],
+    )
+    assert missing["effective_verdict"] == "BLOCK"
+    assert "l0_brooks_ran" in missing["missing_obligations"]
 
 
 def test_kernel_is_pure_no_io_import_side_effects():

@@ -1,0 +1,2 @@
+source_id	platform	access	obtainable_data	history_or_limit	local_state	locator	last_verified_utc	evidence_grade
+FAKE-SOURCE	attacker proxy	offline_fixture	OHLCV_1h	2026-01-01..2026-01-02	HAVE_VERIFIED_COMPLETE	fixture://offline	2026-07-15T00:00:00Z	fixture
